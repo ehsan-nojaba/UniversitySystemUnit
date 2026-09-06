@@ -1,0 +1,12 @@
+namespace UniversitySystem.Application.Common.Exceptions;
+
+/// <summary>
+/// Thrown when a requested resource cannot be found.
+/// Maps to HTTP 404 Not Found in the API layer.
+/// </summary>
+public sealed class NotFoundException : Exception
+{
+    public NotFoundException(string resourceName, object key) : base($"Resource '{resourceName}' with key '{key}' was not found.")
+    {
+    }
+}
