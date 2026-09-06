@@ -1,16 +1,13 @@
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Provides the current UTC date and time.
+/// Provides the current date and time.
 ///
-/// Abstracting <see cref="DateTime.UtcNow"/> behind an interface makes
-/// time-dependent code deterministic in tests and prevents accidental use
-/// of local time in a distributed, multi-timezone system.
-///
-/// Implementation: <c>UniversitySystem.Infrastructure.Services.DateTimeProvider</c>
+/// Abstracting <see cref="DateTime.Now"/> behind an interface makes
+/// time-dependent code deterministic and testable.
 /// </summary>
 public interface IDateTimeProvider
 {
-    /// <summary>Returns the current date and time in UTC.</summary>
-    DateTime UtcNow { get; }
+    /// <summary>Returns the current date and time.</summary>
+    DateTime Now { get; }
 }

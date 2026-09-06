@@ -1,19 +1,27 @@
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Provides the identity of the currently authenticated user.
+/// Provides identity information for the currently authenticated user.
 ///
-/// Used by the Persistence layer for audit trail population (CreatedBy, LastModifiedBy).
-/// Implementations must be null-safe: when no user is authenticated
-/// (e.g., background jobs or anonymous requests), <see cref="UserId"/> returns <c>null</c>.
-///
-/// Implementation: <c>UniversitySystem.Infrastructure.Services.CurrentUserService</c>
+/// Used across Application and Persistence layers (e.g. audit fields).
+/// Must be null-safe: for anonymous requests or background workers,
+/// <see cref="UserId"/> returns <c>null</c>, <see cref="IsAuthenticated"/> returns <c>false</c>,
+/// and <see cref="Roles"/> returns an empty list.
 /// </summary>
 public interface ICurrentUserService
 {
     /// <summary>
-    /// Returns the identifier of the currently authenticated user,
-    /// or <c>null</c> if no user is authenticated.
+    /// Gets the unique identifier of the currently authenticated user, or <c>null</c> if unauthenticated.
     /// </summary>
     string? UserId { get; }
+
+    /// <summary>
+    /// Indicates whether the current request is from an authenticated user.
+    /// </summary>
+    bool IsAuthenticated { get; }
+
+    /// <summary>
+    /// Gets the list of role names associated with the current user.
+    /// </summary>
+    IReadOnlyList<string> Roles { get; }
 }

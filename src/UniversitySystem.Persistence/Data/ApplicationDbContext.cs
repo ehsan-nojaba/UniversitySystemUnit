@@ -5,16 +5,6 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Persistence.Data;
 
-/// <summary>
-/// The central EF Core DbContext for the UniversitySystem.
-///
-/// Responsibilities:
-///   - Acts as the single Unit of Work for all database operations.
-///   - Applies all entity configurations from this assembly via Fluent API.
-///   - Automatically populates audit fields on <see cref="SaveChangesAsync"/>.
-///
-/// Business DbSets will be added in subsequent tasks as Entities are defined.
-/// </summary>
 public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     private readonly ICurrentUserService _currentUserService;
@@ -23,15 +13,14 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
         ICurrentUserService currentUserService,
-        IDateTimeProvider dateTimeProvider)
-        : base(options)
+        IDateTimeProvider dateTimeProvider) : base(options)
     {
         _currentUserService = currentUserService;
         _dateTimeProvider = dateTimeProvider;
     }
 
     // ── Business DbSets ──────────────────────────────────────────────────────────
-    // Will be added here in Task 4 as each Entity is defined.
+    // Will be added here as each Entity is defined.
     // Example: public DbSet<Student> Students => Set<Student>();
 
     // ────────────────────────────────────────────────────────────────────────────
@@ -59,7 +48,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     private void PopulateAuditFields()
     {
-        var utcNow = _dateTimeProvider.UtcNow;
+        var now = _dateTimeProvider.Now;
         var currentUserId = _currentUserService.UserId;
 
         foreach (var entry in ChangeTracker.Entries<BaseAuditableEntity>())
@@ -67,12 +56,12 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedAt = utcNow;
+                    entry.Entity.CreatedAt = now;
                     entry.Entity.CreatedBy = currentUserId;
                     break;
 
                 case EntityState.Modified:
-                    entry.Entity.LastModifiedAt = utcNow;
+                    entry.Entity.LastModifiedAt = now;
                     entry.Entity.LastModifiedBy = currentUserId;
                     break;
             }
