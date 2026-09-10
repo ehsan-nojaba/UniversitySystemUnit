@@ -1,0 +1,51 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using UniversitySystem.Domain.Entities;
+using UniversitySystem.Domain.Enums;
+
+namespace UniversitySystem.Persistence.Configurations;
+
+public sealed class StudentCourseHistoryConfiguration : IEntityTypeConfiguration<StudentCourseHistory>
+{
+    public void Configure(EntityTypeBuilder<StudentCourseHistory> builder)
+    {
+        builder.ToTable("StudentCourseHistories");
+
+        builder.HasKey(sch => sch.Id);
+
+        builder.Property(sch => sch.StudentId)
+            .IsRequired();
+
+        builder.Property(sch => sch.CourseId)
+            .IsRequired();
+
+        builder.Property(sch => sch.AcademicTermId)
+            .IsRequired();
+
+        builder.Property(sch => sch.Grade)
+            .HasColumnType("decimal(5,2)")
+            .IsRequired(false);
+
+        builder.Property(sch => sch.Status)
+            .IsRequired()
+            .HasConversion<byte>();
+
+        builder.HasIndex(sch => sch.StudentId)
+            .HasDatabaseName("IX_StudentCourseHistories_StudentId");
+
+        builder.HasOne(sch => sch.Student)
+            .WithMany(s => s.CourseHistory)
+            .HasForeignKey(sch => sch.StudentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(sch => sch.Course)
+            .WithMany()
+            .HasForeignKey(sch => sch.CourseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(sch => sch.AcademicTerm)
+            .WithMany()
+            .HasForeignKey(sch => sch.AcademicTermId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

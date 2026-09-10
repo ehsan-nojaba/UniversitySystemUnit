@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Common;
+using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Persistence.Data;
 
@@ -19,11 +20,43 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
         _dateTimeProvider = dateTimeProvider;
     }
 
-    // ── Business DbSets ──────────────────────────────────────────────────────────
-    // Will be added here as each Entity is defined.
-    // Example: public DbSet<Student> Students => Set<Student>();
+    // ── Identity ─────────────────────────────────────────────────────────────────
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
 
-    // ────────────────────────────────────────────────────────────────────────────
+    // ── Academic Structure ────────────────────────────────────────────────────────
+    public DbSet<Faculty> Faculties => Set<Faculty>();
+    public DbSet<Department> Departments => Set<Department>();
+    public DbSet<Major> Majors => Set<Major>();
+    public DbSet<Curriculum> Curriculums => Set<Curriculum>();
+    public DbSet<CurriculumCourse> CurriculumCourses => Set<CurriculumCourse>();
+
+    // ── People ────────────────────────────────────────────────────────────────────
+    public DbSet<Student> Students => Set<Student>();
+    public DbSet<Professor> Professors => Set<Professor>();
+
+    // ── Courses ───────────────────────────────────────────────────────────────────
+    public DbSet<Course> Courses => Set<Course>();
+    public DbSet<CoursePrerequisite> CoursePrerequisites => Set<CoursePrerequisite>();
+    public DbSet<AcademicTerm> AcademicTerms => Set<AcademicTerm>();
+
+    // ── Offering & Assignment ─────────────────────────────────────────────────────
+    public DbSet<CourseOffering> CourseOfferings => Set<CourseOffering>();
+    public DbSet<TeachingAssignment> TeachingAssignments => Set<TeachingAssignment>();
+    public DbSet<Enrollment> Enrollments => Set<Enrollment>();
+
+    // ── Pre-Registration ──────────────────────────────────────────────────────────
+    public DbSet<StudentPreRegistration> StudentPreRegistrations => Set<StudentPreRegistration>();
+    public DbSet<StudentPreRegistrationItem> StudentPreRegistrationItems => Set<StudentPreRegistrationItem>();
+    public DbSet<StudentCourseHistory> StudentCourseHistories => Set<StudentCourseHistory>();
+
+    // ── Teaching Requests ─────────────────────────────────────────────────────────
+    public DbSet<ProfessorTeachingRequest> ProfessorTeachingRequests => Set<ProfessorTeachingRequest>();
+    public DbSet<ProfessorTeachingRequestCourse> ProfessorTeachingRequestCourses => Set<ProfessorTeachingRequestCourse>();
+    public DbSet<ProfessorAvailability> ProfessorAvailabilities => Set<ProfessorAvailability>();
+
+    // ─────────────────────────────────────────────────────────────────────────────
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
