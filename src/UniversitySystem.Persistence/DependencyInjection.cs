@@ -46,6 +46,7 @@ public static class DependencyInjection
         services.AddScoped<Application.Features.AdminPreRegistration.Repositories.IAdminPreRegistrationRepository, Repositories.AdminPreRegistrationRepository>();
         services.AddScoped<Application.Features.Auth.Repositories.IAuthRepository, Repositories.AuthRepository>();
         services.AddScoped<Application.Features.StudentPreRegistration.Repositories.IStudentPreRegistrationRepository, Repositories.StudentPreRegistrationRepository>();
+        services.AddScoped<Application.Features.CourseOfferings.Repositories.ICourseOfferingRepository, Repositories.CourseOfferingRepository>();
 
         return services;
     }
