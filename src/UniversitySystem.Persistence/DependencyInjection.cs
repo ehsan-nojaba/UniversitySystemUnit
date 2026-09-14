@@ -41,6 +41,12 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(
             provider => provider.GetRequiredService<ApplicationDbContext>());
 
+        services.AddScoped<IUnitOfWork, Repositories.UnitOfWork>();
+        services.AddScoped<Application.Features.AdminPlanning.Repositories.IAdminPlanningRepository, Repositories.AdminPlanningRepository>();
+        services.AddScoped<Application.Features.AdminPreRegistration.Repositories.IAdminPreRegistrationRepository, Repositories.AdminPreRegistrationRepository>();
+        services.AddScoped<Application.Features.Auth.Repositories.IAuthRepository, Repositories.AuthRepository>();
+        services.AddScoped<Application.Features.StudentPreRegistration.Repositories.IStudentPreRegistrationRepository, Repositories.StudentPreRegistrationRepository>();
+
         return services;
     }
 }

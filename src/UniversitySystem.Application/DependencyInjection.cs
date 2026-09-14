@@ -43,6 +43,10 @@ public static class DependencyInjection
         });
 
         services.AddScoped<Common.Interfaces.IStudentCourseEligibilityService, Common.Services.StudentCourseEligibilityService>();
+        services.AddScoped<Features.AdminPlanning.Services.IAdminPlanningService, Features.AdminPlanning.Services.AdminPlanningService>();
+        services.AddScoped<Features.AdminPreRegistration.Services.IAdminPreRegistrationService, Features.AdminPreRegistration.Services.AdminPreRegistrationService>();
+        services.AddScoped<Features.Auth.Services.IAuthService, Features.Auth.Services.AuthService>();
+        services.AddScoped<Features.StudentPreRegistration.Services.IStudentPreRegistrationService, Features.StudentPreRegistration.Services.StudentPreRegistrationService>();
 
         return services;
     }
