@@ -32,13 +32,13 @@ public sealed class AdminPreRegistrationController : ControllerBase
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of courses with demand metrics.</returns>
     [HttpGet("demand")]
-    [ProducesResponseType(typeof(IReadOnlyList<CourseDemandDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<CourseDemandDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IReadOnlyList<CourseDemandDto>>> GetDemandSummary([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    public async Task<ActionResult<ICollection<CourseDemandDto>>> GetDemandSummary([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new GetCourseDemandSummaryQuery(academicTermId), cancellationToken));
+        return Ok(await _sender.Send(new GetCourseDemandSummaryQuery { AcademicTermId = academicTermId }, cancellationToken));
     }
 }

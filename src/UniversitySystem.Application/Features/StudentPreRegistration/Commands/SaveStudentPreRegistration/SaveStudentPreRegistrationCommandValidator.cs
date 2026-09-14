@@ -34,7 +34,7 @@ public sealed class SaveStudentPreRegistrationCommandValidator
         });
     }
 
-    private static bool HaveUniqueCourseIds(IReadOnlyList<DTOs.SelectedCourseItemDto>? courses)
+    private static bool HaveUniqueCourseIds(ICollection<DTOs.SelectedCourseItemDto>? courses)
     {
         if (courses is null || courses.Count <= 1)
             return true;

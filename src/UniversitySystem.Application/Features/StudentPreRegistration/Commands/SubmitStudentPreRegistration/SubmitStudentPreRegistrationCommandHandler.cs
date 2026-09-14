@@ -45,18 +45,14 @@ public sealed class SubmitStudentPreRegistrationCommandHandler
         // 1. Resolve current student
         if (string.IsNullOrWhiteSpace(_currentUserService.UserId) ||
             !long.TryParse(_currentUserService.UserId, out var userId))
-        {
             throw new UnauthorizedAccessException("کاربر جاری احراز هویت نشده است.");
-        }
 
         var student = await _context.Students
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
         if (student is null)
-        {
             throw new NotFoundException("پروفایل دانشجویی برای کاربر جاری یافت نشد.");
-        }
 
         // 2. Validate academic term
         var term = await _context.AcademicTerms
@@ -64,14 +60,10 @@ public sealed class SubmitStudentPreRegistrationCommandHandler
             .FirstOrDefaultAsync(t => t.Id == request.AcademicTermId, cancellationToken);
 
         if (term is null)
-        {
             throw new NotFoundException(nameof(AcademicTerm), request.AcademicTermId);
-        }
 
         if (!term.IsActive)
-        {
             throw new BusinessException("ترم تحصیلی انتخابی فعال نیست.");
-        }
 
         // 3. Find existing pre-registration
         var preRegistration = await _context.StudentPreRegistrations
@@ -82,21 +74,15 @@ public sealed class SubmitStudentPreRegistrationCommandHandler
                 cancellationToken);
 
         if (preRegistration is null)
-        {
             throw new NotFoundException("پیش‌ثبت‌نامی برای این ترم تحصیلی یافت نشد.");
-        }
 
         // 4. Ensure status is Draft
         if (preRegistration.Status != RequestStatus.Draft)
-        {
             throw new BusinessException("فقط پیش‌ثبت‌نام در وضعیت پیش‌نویس (Draft) قابل ثبت نهایی است.");
-        }
 
         // 5. Ensure at least one course is selected
         if (preRegistration.Items.Count == 0)
-        {
             throw new BusinessException("برای ثبت نهایی، باید حداقل یک درس انتخاب شده باشد.");
-        }
 
         // 6. Verify that selected courses are still eligible
         var eligibleCourses = await _eligibilityService.GetEligibleCoursesAsync(
@@ -109,9 +95,7 @@ public sealed class SubmitStudentPreRegistrationCommandHandler
         foreach (var item in preRegistration.Items)
         {
             if (!eligibleMap.ContainsKey(item.CourseId))
-            {
                 throw new BusinessException($"درس '{item.Course.Title}' دیگر برای این ترم قابل انتخاب نیست.");
-            }
         }
 
         // 7. Submit aggregate using IDateTimeProvider.UtcNow
@@ -122,24 +106,26 @@ public sealed class SubmitStudentPreRegistrationCommandHandler
         // 8. Construct response
         var courseItems = preRegistration.Items
             .OrderBy(i => i.Priority)
-            .Select(i => new PreRegistrationCourseItemDto(
-                i.CourseId,
-                i.Course.Code,
-                i.Course.Title,
-                i.Course.Credits,
-                i.Priority
-            ))
+            .Select(i => new PreRegistrationCourseItemDto
+            {
+                CourseId = i.CourseId,
+                Code = i.Course.Code,
+                Title = i.Course.Title,
+                Credits = i.Course.Credits,
+                Priority = i.Priority
+            })
             .ToList();
 
         int totalCredits = courseItems.Sum(c => c.Credits);
 
-        return new StudentPreRegistrationDto(
-            preRegistration.Id,
-            preRegistration.AcademicTermId,
-            preRegistration.Status.ToString(),
-            courseItems,
-            totalCredits,
-            preRegistration.SubmittedAt
-        );
+        return new StudentPreRegistrationDto
+        {
+            PreRegistrationId = preRegistration.Id,
+            AcademicTermId = preRegistration.AcademicTermId,
+            Status = preRegistration.Status.ToString(),
+            Courses = courseItems,
+            TotalCredits = totalCredits,
+            SubmittedAt = preRegistration.SubmittedAt
+        };
     }
 }

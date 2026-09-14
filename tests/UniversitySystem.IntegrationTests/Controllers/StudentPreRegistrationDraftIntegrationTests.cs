@@ -108,10 +108,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         var (user, _, term, c1, _, _) = await SeedScenarioAsync(suffix);
         var token = GenerateToken(user, RoleNames.Student);
 
-        var requestBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
 
         using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -127,7 +127,7 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         Assert.Equal(term.Id, draft.AcademicTermId);
         Assert.Equal("Draft", draft.Status);
         Assert.Single(draft.Courses);
-        Assert.Equal(c1.Id, draft.Courses[0].CourseId);
+        Assert.Equal(c1.Id, draft.Courses.First().CourseId);
         Assert.Equal(c1.Credits, draft.TotalCredits);
 
         // Act - Get Draft
@@ -152,10 +152,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         var token = GenerateToken(user, RoleNames.Student);
 
         // 1. First save: only C1
-        var initialBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var initialBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
         using var req1 = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         req1.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         req1.Content = JsonContent.Create(initialBody);
@@ -163,11 +163,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         Assert.Equal(HttpStatusCode.OK, res1.StatusCode);
 
         // 2. Update: replace C1 with C2, or have both C1 and C2
-        var updatedBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var updatedBody = new SaveStudentPreRegistrationRequest
         {
-            new(c2.Id, 1),
-            new(c1.Id, 2)
-        });
+            Courses = [new() { CourseId = c2.Id, Priority = 1 }, new() { CourseId = c1.Id, Priority = 2 }]
+        };
         using var req2 = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         req2.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         req2.Content = JsonContent.Create(updatedBody);
@@ -181,8 +180,8 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         Assert.NotNull(updatedDraft);
         Assert.Equal(2, updatedDraft.Courses.Count);
         Assert.Equal(c1.Credits + c2.Credits, updatedDraft.TotalCredits);
-        Assert.Equal(c2.Id, updatedDraft.Courses[0].CourseId); // Priority 1
-        Assert.Equal(c1.Id, updatedDraft.Courses[1].CourseId); // Priority 2
+        Assert.Equal(c2.Id, updatedDraft.Courses.ElementAt(0).CourseId); // Priority 1
+        Assert.Equal(c1.Id, updatedDraft.Courses.ElementAt(1).CourseId); // Priority 2
     }
 
     [Fact]
@@ -193,11 +192,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         var (user, _, term, c1, _, _) = await SeedScenarioAsync(suffix);
         var token = GenerateToken(user, RoleNames.Student);
 
-        var requestBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1),
-            new(c1.Id, 2)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }, new() { CourseId = c1.Id, Priority = 2 }]
+        };
 
         using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -218,10 +216,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         var (user, _, term, _, _, cIneligible) = await SeedScenarioAsync(suffix);
         var token = GenerateToken(user, RoleNames.Student);
 
-        var requestBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBody = new SaveStudentPreRegistrationRequest
         {
-            new(cIneligible.Id, 1)
-        });
+            Courses = [new() { CourseId = cIneligible.Id, Priority = 1 }]
+        };
 
         using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -254,10 +252,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         }
 
         // Try to update the submitted pre-registration
-        var requestBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
 
         using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -285,10 +283,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         var tokenB = GenerateToken(userB, RoleNames.Student);
 
         // 1. Student A saves a draft with C1A
-        var requestBodyA = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBodyA = new SaveStudentPreRegistrationRequest
         {
-            new(c1A.Id, 1)
-        });
+            Courses = [new() { CourseId = c1A.Id, Priority = 1 }]
+        };
         using var reqA = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         reqA.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenA);
         reqA.Content = JsonContent.Create(requestBodyA);
@@ -296,10 +294,10 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<WebAppl
         Assert.Equal(HttpStatusCode.OK, resA.StatusCode);
 
         // 2. Student B sends PUT with C1B
-        var requestBodyB = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var requestBodyB = new SaveStudentPreRegistrationRequest
         {
-            new(c1B.Id, 1)
-        });
+            Courses = [new() { CourseId = c1B.Id, Priority = 1 }]
+        };
         using var reqB = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         reqB.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenB);
         reqB.Content = JsonContent.Create(requestBodyB);

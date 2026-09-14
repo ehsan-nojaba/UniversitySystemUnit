@@ -13,7 +13,7 @@ public class GetEligibleCoursesQueryValidatorTests
     public void Validate_WhenAcademicTermIdIsGreaterThanZero_IsValid(long termId)
     {
         // Arrange
-        var query = new GetEligibleCoursesQuery(termId);
+        var query = new GetEligibleCoursesQuery { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(query);
@@ -30,7 +30,7 @@ public class GetEligibleCoursesQueryValidatorTests
     public void Validate_WhenAcademicTermIdIsZeroOrNegative_FailsValidation(long termId)
     {
         // Arrange
-        var query = new GetEligibleCoursesQuery(termId);
+        var query = new GetEligibleCoursesQuery { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(query);

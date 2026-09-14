@@ -13,10 +13,10 @@ public class SaveStudentPreRegistrationCommandValidatorTests
         // Arrange
         var courses = new List<SelectedCourseItemDto>
         {
-            new(CourseId: 1, Priority: 1),
-            new(CourseId: 2, Priority: 2)
+            new() { CourseId = 1, Priority = 1 },
+            new() { CourseId = 2, Priority = 2 }
         };
-        var command = new SaveStudentPreRegistrationCommand(AcademicTermId: 1, Courses: courses);
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = 1, Courses = courses };
 
         // Act
         var result = _validator.Validate(command);
@@ -32,8 +32,8 @@ public class SaveStudentPreRegistrationCommandValidatorTests
     public void Validate_WhenAcademicTermIdIsInvalid_FailsValidation(long termId)
     {
         // Arrange
-        var courses = new List<SelectedCourseItemDto> { new(1, 1) };
-        var command = new SaveStudentPreRegistrationCommand(termId, courses);
+        var courses = new List<SelectedCourseItemDto> { new() { CourseId = 1, Priority = 1 } };
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = termId, Courses = courses };
 
         // Act
         var result = _validator.Validate(command);
@@ -47,7 +47,7 @@ public class SaveStudentPreRegistrationCommandValidatorTests
     public void Validate_WhenCoursesEmpty_FailsValidation()
     {
         // Arrange
-        var command = new SaveStudentPreRegistrationCommand(1, new List<SelectedCourseItemDto>());
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = 1, Courses = [] };
 
         // Act
         var result = _validator.Validate(command);
@@ -63,10 +63,10 @@ public class SaveStudentPreRegistrationCommandValidatorTests
         // Arrange
         var courses = new List<SelectedCourseItemDto>
         {
-            new(CourseId: 5, Priority: 1),
-            new(CourseId: 5, Priority: 2)
+            new() { CourseId = 5, Priority = 1 },
+            new() { CourseId = 5, Priority = 2 }
         };
-        var command = new SaveStudentPreRegistrationCommand(1, courses);
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = 1, Courses = courses };
 
         // Act
         var result = _validator.Validate(command);
@@ -84,11 +84,8 @@ public class SaveStudentPreRegistrationCommandValidatorTests
     public void Validate_WhenCourseItemHasInvalidIdOrPriority_FailsValidation(long courseId, int priority)
     {
         // Arrange
-        var courses = new List<SelectedCourseItemDto>
-        {
-            new(courseId, priority)
-        };
-        var command = new SaveStudentPreRegistrationCommand(1, courses);
+        var courses = new List<SelectedCourseItemDto> { new() { CourseId = courseId, Priority = priority } };
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = 1, Courses = courses };
 
         // Act
         var result = _validator.Validate(command);

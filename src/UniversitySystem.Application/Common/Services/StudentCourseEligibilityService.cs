@@ -20,7 +20,7 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
         _context = context;
     }
 
-    public async Task<IReadOnlyList<EligibleCourseDto>> GetEligibleCoursesAsync(
+    public async Task<ICollection<EligibleCourseDto>> GetEligibleCoursesAsync(
         long studentId,
         long academicTermId,
         CancellationToken cancellationToken = default)
@@ -30,7 +30,7 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             .FirstOrDefaultAsync(s => s.Id == studentId, cancellationToken);
 
         if (student is null)
-            return Array.Empty<EligibleCourseDto>();
+            return [];
 
         // 1. Resolve active curriculum for student's major
         var curriculum = await _context.Curriculums
@@ -38,7 +38,7 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             .FirstOrDefaultAsync(c => c.MajorId == student.MajorId && c.IsActive, cancellationToken);
 
         if (curriculum is null)
-            return Array.Empty<EligibleCourseDto>();
+            return [];
 
         // 2. Fetch active curriculum courses
         var curriculumCourses = await _context.CurriculumCourses
@@ -56,7 +56,7 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             .ToListAsync(cancellationToken);
 
         if (curriculumCourses.Count == 0)
-            return Array.Empty<EligibleCourseDto>();
+            return [];
 
         // 3. Gather passed courses from history & enrollments
         var passedFromHistory = await _context.StudentCourseHistories
@@ -65,11 +65,12 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             .Select(h => h.CourseId)
             .ToListAsync(cancellationToken);
 
-        var passedFromEnrollment = await _context.Enrollments
-            .AsNoTracking()
-            .Where(e => e.StudentId == student.Id && e.Status == EnrollmentStatus.Completed)
-            .Join(_context.CourseOfferings, e => e.CourseOfferingId, co => co.Id, (e, co) => co.CourseId)
-            .ToListAsync(cancellationToken);
+        var passedFromEnrollment = await (
+            from e in _context.Enrollments.AsNoTracking()
+            join co in _context.CourseOfferings on e.CourseOfferingId equals co.Id
+            where e.StudentId == student.Id && e.Status == EnrollmentStatus.Completed
+            select co.CourseId
+        ).ToListAsync(cancellationToken);
 
         var passedSet = new HashSet<long>(passedFromHistory.Concat(passedFromEnrollment));
 
@@ -79,7 +80,7 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             .ToList();
 
         if (unpassedCourses.Count == 0)
-            return Array.Empty<EligibleCourseDto>();
+            return [];
 
         // 5. Gather prerequisites for candidate courses
         var candidateCourseIds = unpassedCourses.Select(c => c.CourseId).ToList();
@@ -106,22 +107,28 @@ public sealed class StudentCourseEligibilityService : IStudentCourseEligibilityS
             var coursePrereqs = prereqLookup[course.CourseId].ToList();
             bool allMet = coursePrereqs.All(p => passedSet.Contains(p.PrerequisiteCourseId));
 
-            if (allMet)
-            {
-                var prereqDtos = coursePrereqs
-                    .Select(p => new CoursePrerequisiteDto(p.PrerequisiteCourseId, p.PrerequisiteCode, p.PrerequisiteTitle))
-                    .ToList();
+            if (!allMet)
+                continue;
 
-                result.Add(new EligibleCourseDto(
-                    course.CourseId,
-                    course.Code,
-                    course.Title,
-                    course.Credits,
-                    course.RecommendedTerm,
-                    course.IsRequired,
-                    prereqDtos
-                ));
-            }
+            var prereqDtos = coursePrereqs
+                .Select(p => new CoursePrerequisiteDto
+                {
+                    PrerequisiteCourseId = p.PrerequisiteCourseId,
+                    Code = p.PrerequisiteCode,
+                    Title = p.PrerequisiteTitle
+                })
+                .ToList();
+
+            result.Add(new EligibleCourseDto
+            {
+                CourseId = course.CourseId,
+                Code = course.Code,
+                Title = course.Title,
+                Credits = course.Credits,
+                RecommendedTerm = course.RecommendedTerm,
+                IsRequired = course.IsRequired,
+                Prerequisites = prereqDtos
+            });
         }
 
         return result

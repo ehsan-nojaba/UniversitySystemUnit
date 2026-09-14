@@ -13,7 +13,7 @@ public class GetCourseDemandSummaryQueryValidatorTests
     public void Validate_WhenAcademicTermIdIsPositive_PassesValidation(long termId)
     {
         // Arrange
-        var query = new GetCourseDemandSummaryQuery(termId);
+        var query = new GetCourseDemandSummaryQuery { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(query);
@@ -30,7 +30,7 @@ public class GetCourseDemandSummaryQueryValidatorTests
     public void Validate_WhenAcademicTermIdIsZeroOrNegative_FailsValidation(long termId)
     {
         // Arrange
-        var query = new GetCourseDemandSummaryQuery(termId);
+        var query = new GetCourseDemandSummaryQuery { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(query);

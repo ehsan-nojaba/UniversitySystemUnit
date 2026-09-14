@@ -13,7 +13,7 @@ public class SubmitStudentPreRegistrationCommandValidatorTests
     public void Validate_WhenAcademicTermIdIsPositive_PassesValidation(long termId)
     {
         // Arrange
-        var command = new SubmitStudentPreRegistrationCommand(termId);
+        var command = new SubmitStudentPreRegistrationCommand { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(command);
@@ -30,7 +30,7 @@ public class SubmitStudentPreRegistrationCommandValidatorTests
     public void Validate_WhenAcademicTermIdIsZeroOrNegative_FailsValidation(long termId)
     {
         // Arrange
-        var command = new SubmitStudentPreRegistrationCommand(termId);
+        var command = new SubmitStudentPreRegistrationCommand { AcademicTermId = termId };
 
         // Act
         var result = _validator.Validate(command);

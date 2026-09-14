@@ -10,7 +10,7 @@ public class LoginCommandValidatorTests
     public void Validate_WhenUsernameAndPasswordAreProvided_IsValid()
     {
         // Arrange
-        var command = new LoginCommand("admin_user", "SecurePass123!");
+        var command = new LoginCommand { Username = "admin_user", Password = "SecurePass123!" };
 
         // Act
         var result = _validator.Validate(command);
@@ -27,7 +27,7 @@ public class LoginCommandValidatorTests
     public void Validate_WhenUsernameIsEmpty_FailsValidation(string? username)
     {
         // Arrange
-        var command = new LoginCommand(username!, "ValidPassword123");
+        var command = new LoginCommand { Username = username!, Password = "ValidPassword123" };
 
         // Act
         var result = _validator.Validate(command);
@@ -44,7 +44,7 @@ public class LoginCommandValidatorTests
     public void Validate_WhenPasswordIsEmpty_FailsValidation(string? password)
     {
         // Arrange
-        var command = new LoginCommand("valid_user", password!);
+        var command = new LoginCommand { Username = "valid_user", Password = password! };
 
         // Act
         var result = _validator.Validate(command);

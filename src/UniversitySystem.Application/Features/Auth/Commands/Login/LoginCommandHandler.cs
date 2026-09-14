@@ -12,7 +12,7 @@ namespace UniversitySystem.Application.Features.Auth.Commands.Login;
 /// 4. Retrieves user roles.
 /// 5. Issues signed JWT access token.
 /// </summary>
-public sealed class LoginCommandHandler(IApplicationDbContext _context , IPasswordHasher _passwordHasher , ITokenService _tokenService) : IRequestHandler<LoginCommand, LoginResponse>
+public sealed class LoginCommandHandler(IApplicationDbContext _context, IPasswordHasher _passwordHasher, ITokenService _tokenService) : IRequestHandler<LoginCommand, LoginResponse>
 {
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -21,28 +21,27 @@ public sealed class LoginCommandHandler(IApplicationDbContext _context , IPasswo
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == normalizedUsername, cancellationToken);
 
         if (user is null || !user.IsActive)
-        {
             throw new UnauthorizedAccessException("نام کاربری یا کلمه عبور نادرست است.");
-        }
 
-        bool isPasswordValid = _passwordHasher.Verify(request.Password, user.PasswordHash);
-        if (!isPasswordValid)
-        {
+        if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("نام کاربری یا کلمه عبور نادرست است.");
-        }
 
-        var roleNames = await _context.UserRoles.Where(ur => ur.UserId == user.Id) 
-            .Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
-            .ToListAsync(cancellationToken);
+        var roleNames = await (
+            from ur in _context.UserRoles
+            join r in _context.Roles on ur.RoleId equals r.Id
+            where ur.UserId == user.Id
+            select r.Name
+        ).ToListAsync(cancellationToken);
 
         var (accessToken, expiresAt) = _tokenService.GenerateToken(user, roleNames);
 
-        return new LoginResponse(
-            AccessToken: accessToken,
-            ExpiresAt: expiresAt,
-            UserId: user.Id,
-            FullName: user.FullName,
-            Roles: roleNames
-        );
+        return new LoginResponse
+        {
+            AccessToken = accessToken,
+            ExpiresAt = expiresAt,
+            UserId = user.Id,
+            FullName = user.FullName,
+            Roles = [.. roleNames]
+        };
     }
 }

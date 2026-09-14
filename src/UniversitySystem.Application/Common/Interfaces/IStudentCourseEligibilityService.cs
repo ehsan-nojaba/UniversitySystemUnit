@@ -15,5 +15,5 @@ public interface IStudentCourseEligibilityService
     /// <param name="academicTermId">The target academic term identifier.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Collection of eligible courses with prerequisite details.</returns>
-    Task<IReadOnlyList<EligibleCourseDto>> GetEligibleCoursesAsync(long studentId, long academicTermId, CancellationToken cancellationToken = default);
+    Task<ICollection<EligibleCourseDto>> GetEligibleCoursesAsync(long studentId, long academicTermId, CancellationToken cancellationToken = default);
 }

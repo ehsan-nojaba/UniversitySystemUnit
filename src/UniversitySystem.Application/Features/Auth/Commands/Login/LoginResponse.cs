@@ -6,5 +6,5 @@ public class LoginResponse
     public DateTime ExpiresAt { get; set; }
     public long UserId { get; set; }
     public string FullName { get; set; } = string.Empty;
-    public IReadOnlyList<string> Roles { get; set; } = [];
+    public string[] Roles { get; set; } = [];
 }

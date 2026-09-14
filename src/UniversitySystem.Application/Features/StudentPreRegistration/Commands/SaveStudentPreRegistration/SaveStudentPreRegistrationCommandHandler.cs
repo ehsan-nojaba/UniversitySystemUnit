@@ -42,18 +42,14 @@ public sealed class SaveStudentPreRegistrationCommandHandler
         // 1. Resolve current user & student
         if (string.IsNullOrWhiteSpace(_currentUserService.UserId) ||
             !long.TryParse(_currentUserService.UserId, out var userId))
-        {
             throw new UnauthorizedAccessException("کاربر جاری احراز هویت نشده است.");
-        }
 
         var student = await _context.Students
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
         if (student is null)
-        {
             throw new NotFoundException("پروفایل دانشجویی برای کاربر جاری یافت نشد.");
-        }
 
         // 2. Validate academic term
         var term = await _context.AcademicTerms
@@ -61,14 +57,10 @@ public sealed class SaveStudentPreRegistrationCommandHandler
             .FirstOrDefaultAsync(t => t.Id == request.AcademicTermId, cancellationToken);
 
         if (term is null)
-        {
             throw new NotFoundException(nameof(AcademicTerm), request.AcademicTermId);
-        }
 
         if (!term.IsActive)
-        {
             throw new BusinessException("ترم تحصیلی انتخابی فعال نیست.");
-        }
 
         // 3. Verify that all selected courses are eligible
         var eligibleCourses = await _eligibilityService.GetEligibleCoursesAsync(
@@ -81,9 +73,7 @@ public sealed class SaveStudentPreRegistrationCommandHandler
         foreach (var course in request.Courses)
         {
             if (!eligibleMap.ContainsKey(course.CourseId))
-            {
                 throw new BusinessException($"درس با شناسه {course.CourseId} جزو درس‌های قابل انتخاب برای این ترم نیست.");
-            }
         }
 
         // 4. Find existing pre-registration
@@ -100,17 +90,13 @@ public sealed class SaveStudentPreRegistrationCommandHandler
             _context.StudentPreRegistrations.Add(preRegistration);
 
             foreach (var item in request.Courses)
-            {
                 preRegistration.AddCourse(item.CourseId, item.Priority);
-            }
         }
         else
         {
             // ── Update existing draft ─────────────────────────────────────────
             if (preRegistration.Status != RequestStatus.Draft)
-            {
                 throw new BusinessException("امکان ویرایش پیش‌ثبت‌نامی که در وضعیت پیش‌نویس (Draft) نیست وجود ندارد.");
-            }
 
             var requestedCourseIds = request.Courses.Select(c => c.CourseId).ToHashSet();
 
@@ -120,9 +106,7 @@ public sealed class SaveStudentPreRegistrationCommandHandler
                 .ToList();
 
             foreach (var toRemove in itemsToRemove)
-            {
                 preRegistration.RemoveCourse(toRemove.CourseId);
-            }
 
             // Add or update requested items
             var existingItems = preRegistration.Items.ToDictionary(i => i.CourseId);
@@ -132,9 +116,7 @@ public sealed class SaveStudentPreRegistrationCommandHandler
                 if (existingItems.TryGetValue(item.CourseId, out var existingItem))
                 {
                     if (existingItem.Priority != item.Priority)
-                    {
                         preRegistration.UpdateCoursePriority(item.CourseId, item.Priority);
-                    }
                 }
                 else
                 {
@@ -151,24 +133,26 @@ public sealed class SaveStudentPreRegistrationCommandHandler
             .Select(c =>
             {
                 var info = eligibleMap[c.CourseId];
-                return new PreRegistrationCourseItemDto(
-                    c.CourseId,
-                    info.Code,
-                    info.Title,
-                    info.Credits,
-                    c.Priority
-                );
+                return new PreRegistrationCourseItemDto
+                {
+                    CourseId = c.CourseId,
+                    Code = info.Code,
+                    Title = info.Title,
+                    Credits = info.Credits,
+                    Priority = c.Priority
+                };
             })
             .ToList();
 
         int totalCredits = responseCourses.Sum(c => c.Credits);
 
-        return new StudentPreRegistrationDto(
-            preRegistration.Id,
-            preRegistration.AcademicTermId,
-            preRegistration.Status.ToString(),
-            responseCourses,
-            totalCredits
-        );
+        return new StudentPreRegistrationDto
+        {
+            PreRegistrationId = preRegistration.Id,
+            AcademicTermId = preRegistration.AcademicTermId,
+            Status = preRegistration.Status.ToString(),
+            Courses = responseCourses,
+            TotalCredits = totalCredits
+        };
     }
 }

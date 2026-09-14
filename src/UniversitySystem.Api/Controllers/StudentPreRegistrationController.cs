@@ -34,14 +34,14 @@ public sealed class StudentPreRegistrationController : ControllerBase
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of eligible courses with prerequisite details.</returns>
     [HttpGet("eligible-courses")]
-    [ProducesResponseType(typeof(IReadOnlyList<EligibleCourseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ICollection<EligibleCourseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IReadOnlyList<EligibleCourseDto>>> GetEligibleCourses([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    public async Task<ActionResult<ICollection<EligibleCourseDto>>> GetEligibleCourses([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new GetEligibleCoursesQuery(academicTermId), cancellationToken));
+        return Ok(await _sender.Send(new GetEligibleCoursesQuery { AcademicTermId = academicTermId }, cancellationToken));
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public sealed class StudentPreRegistrationController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<StudentPreRegistrationDto>> GetPreRegistration([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
-        var result = await _sender.Send(new GetStudentPreRegistrationQuery(academicTermId), cancellationToken);
+        var result = await _sender.Send(new GetStudentPreRegistrationQuery { AcademicTermId = academicTermId }, cancellationToken);
         return result is null ? NotFound(new ProblemDetails { Status = StatusCodes.Status404NotFound, Title = "Not Found", Detail = "پیش‌ثبت‌نامی برای این ترم تحصیلی یافت نشد." }) : Ok(result);
     }
 
@@ -69,7 +69,8 @@ public sealed class StudentPreRegistrationController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<StudentPreRegistrationDto>> SavePreRegistration([FromRoute] long academicTermId, [FromBody] SaveStudentPreRegistrationRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new SaveStudentPreRegistrationCommand(academicTermId, request.Courses), cancellationToken));
+        var command = new SaveStudentPreRegistrationCommand { AcademicTermId = academicTermId, Courses = request.Courses };
+        return Ok(await _sender.Send(command, cancellationToken));
     }
 
     /// <summary>
@@ -83,13 +84,14 @@ public sealed class StudentPreRegistrationController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<StudentPreRegistrationDto>> SubmitPreRegistration([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new SubmitStudentPreRegistrationCommand(academicTermId), cancellationToken));
+        return Ok(await _sender.Send(new SubmitStudentPreRegistrationCommand { AcademicTermId = academicTermId }, cancellationToken));
     }
 }
 
 /// <summary>
 /// HTTP request body for saving student pre-registration.
 /// </summary>
-public sealed record SaveStudentPreRegistrationRequest(
-    IReadOnlyList<SelectedCourseItemDto> Courses
-);
+public class SaveStudentPreRegistrationRequest
+{
+    public ICollection<SelectedCourseItemDto> Courses { get; set; } = [];
+}

@@ -27,18 +27,14 @@ public sealed class GetStudentPreRegistrationQueryHandler
         // 1. Resolve current student
         if (string.IsNullOrWhiteSpace(_currentUserService.UserId) ||
             !long.TryParse(_currentUserService.UserId, out var userId))
-        {
             throw new UnauthorizedAccessException("کاربر جاری احراز هویت نشده است.");
-        }
 
         var student = await _context.Students
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
 
         if (student is null)
-        {
             throw new NotFoundException("پروفایل دانشجویی برای کاربر جاری یافت نشد.");
-        }
 
         // 2. Fetch pre-registration with items and course details
         var preRegistration = await _context.StudentPreRegistrations
@@ -50,30 +46,30 @@ public sealed class GetStudentPreRegistrationQueryHandler
                 cancellationToken);
 
         if (preRegistration is null)
-        {
             return null;
-        }
 
         var courseItems = preRegistration.Items
             .OrderBy(i => i.Priority)
-            .Select(i => new PreRegistrationCourseItemDto(
-                i.CourseId,
-                i.Course.Code,
-                i.Course.Title,
-                i.Course.Credits,
-                i.Priority
-            ))
+            .Select(i => new PreRegistrationCourseItemDto
+            {
+                CourseId = i.CourseId,
+                Code = i.Course.Code,
+                Title = i.Course.Title,
+                Credits = i.Course.Credits,
+                Priority = i.Priority
+            })
             .ToList();
 
         int totalCredits = courseItems.Sum(c => c.Credits);
 
-        return new StudentPreRegistrationDto(
-            preRegistration.Id,
-            preRegistration.AcademicTermId,
-            preRegistration.Status.ToString(),
-            courseItems,
-            totalCredits,
-            preRegistration.SubmittedAt
-        );
+        return new StudentPreRegistrationDto
+        {
+            PreRegistrationId = preRegistration.Id,
+            AcademicTermId = preRegistration.AcademicTermId,
+            Status = preRegistration.Status.ToString(),
+            Courses = courseItems,
+            TotalCredits = totalCredits,
+            SubmittedAt = preRegistration.SubmittedAt
+        };
     }
 }

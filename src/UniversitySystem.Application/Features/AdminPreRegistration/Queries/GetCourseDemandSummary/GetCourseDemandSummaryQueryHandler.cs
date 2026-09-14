@@ -13,7 +13,7 @@ namespace UniversitySystem.Application.Features.AdminPreRegistration.Queries.Get
 /// Aggregates submitted pre-registrations at the database level.
 /// </summary>
 public sealed class GetCourseDemandSummaryQueryHandler
-    : IRequestHandler<GetCourseDemandSummaryQuery, IReadOnlyList<CourseDemandDto>>
+    : IRequestHandler<GetCourseDemandSummaryQuery, ICollection<CourseDemandDto>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -22,7 +22,7 @@ public sealed class GetCourseDemandSummaryQueryHandler
         _context = context;
     }
 
-    public async Task<IReadOnlyList<CourseDemandDto>> Handle(
+    public async Task<ICollection<CourseDemandDto>> Handle(
         GetCourseDemandSummaryQuery request,
         CancellationToken cancellationToken)
     {
@@ -32,9 +32,7 @@ public sealed class GetCourseDemandSummaryQueryHandler
             .AnyAsync(t => t.Id == request.AcademicTermId, cancellationToken);
 
         if (!termExists)
-        {
             throw new NotFoundException(nameof(AcademicTerm), request.AcademicTermId);
-        }
 
         // 2. Aggregate demand at the database level for submitted requests only
         var rawDemand = await _context.StudentPreRegistrationItems
@@ -62,17 +60,16 @@ public sealed class GetCourseDemandSummaryQueryHandler
             .ToListAsync(cancellationToken);
 
         // 3. Map to DTOs
-        var result = rawDemand
-            .Select(d => new CourseDemandDto(
-                d.CourseId,
-                d.CourseCode,
-                d.CourseTitle,
-                d.StudentCount,
-                Math.Round(d.AveragePriority, 2),
-                d.StudentCount * d.Credits
-            ))
+        return rawDemand
+            .Select(d => new CourseDemandDto
+            {
+                CourseId = d.CourseId,
+                CourseCode = d.CourseCode,
+                CourseTitle = d.CourseTitle,
+                StudentCount = d.StudentCount,
+                AveragePriority = Math.Round(d.AveragePriority, 2),
+                TotalRequestedCredits = d.StudentCount * d.Credits
+            })
             .ToList();
-
-        return result;
     }
 }

@@ -112,10 +112,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         var token = GenerateToken(user, RoleNames.Student);
 
         // 1. Create draft
-        var saveBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var saveBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
         using var putReq = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         putReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         putReq.Content = JsonContent.Create(saveBody);
@@ -136,7 +136,7 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         Assert.Equal("Submitted", result.Status);
         Assert.NotNull(result.SubmittedAt);
         Assert.Single(result.Courses);
-        Assert.Equal(c1.Id, result.Courses[0].CourseId);
+        Assert.Equal(c1.Id, result.Courses.First().CourseId);
 
         // Verify in DB
         using var scope = _factory.Services.CreateScope();
@@ -184,10 +184,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         var token = GenerateToken(user, RoleNames.Student);
 
         // 1. Create draft
-        var saveBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var saveBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
         using var putReq = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         putReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         putReq.Content = JsonContent.Create(saveBody);
@@ -217,10 +217,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         var token = GenerateToken(user, RoleNames.Student);
 
         // 1. Create draft
-        var initialBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var initialBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
         using var putReq1 = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         putReq1.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         putReq1.Content = JsonContent.Create(initialBody);
@@ -233,10 +233,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         Assert.Equal(HttpStatusCode.OK, submitRes.StatusCode);
 
         // 3. Try to edit after submit
-        var editBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var editBody = new SaveStudentPreRegistrationRequest
         {
-            new(c2.Id, 1)
-        });
+            Courses = [new() { CourseId = c2.Id, Priority = 1 }]
+        };
         using var putReq2 = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         putReq2.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         putReq2.Content = JsonContent.Create(editBody);
@@ -266,10 +266,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         var adminToken = GenerateToken(adminUser, RoleNames.EducationAdmin);
 
         // 1. Student creates a draft (NOT submitted)
-        var saveBody = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var saveBody = new SaveStudentPreRegistrationRequest
         {
-            new(c1.Id, 1)
-        });
+            Courses = [new() { CourseId = c1.Id, Priority = 1 }]
+        };
         using var putReq = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/student/pre-registration/{term.Id}");
         putReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", studentToken);
         putReq.Content = JsonContent.Create(saveBody);
@@ -337,26 +337,24 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebA
         var adminToken = GenerateToken(adminUser, RoleNames.EducationAdmin);
 
         // Student 1 submits: Course 3 (p1), Course 1 (p2)
-        var body1 = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var body1 = new SaveStudentPreRegistrationRequest
         {
-            new(c3.Id, 1),
-            new(c1.Id, 2)
-        });
+            Courses = [new() { CourseId = c3.Id, Priority = 1 }, new() { CourseId = c1.Id, Priority = 2 }]
+        };
         await SaveAndSubmit(token1, term.Id, body1);
 
         // Student 2 submits: Course 3 (p2), Course 2 (p1)
-        var body2 = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var body2 = new SaveStudentPreRegistrationRequest
         {
-            new(c3.Id, 2),
-            new(c2.Id, 1)
-        });
+            Courses = [new() { CourseId = c3.Id, Priority = 2 }, new() { CourseId = c2.Id, Priority = 1 }]
+        };
         await SaveAndSubmit(token2, term.Id, body2);
 
         // Student 3 submits: Course 3 (p3)
-        var body3 = new SaveStudentPreRegistrationRequest(new List<SelectedCourseItemDto>
+        var body3 = new SaveStudentPreRegistrationRequest
         {
-            new(c3.Id, 3)
-        });
+            Courses = [new() { CourseId = c3.Id, Priority = 3 }]
+        };
         await SaveAndSubmit(token3, term.Id, body3);
 
         // Act - Query Demand

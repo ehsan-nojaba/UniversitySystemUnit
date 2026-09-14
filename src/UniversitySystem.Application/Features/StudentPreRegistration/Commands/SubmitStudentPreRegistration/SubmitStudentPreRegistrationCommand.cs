@@ -6,5 +6,7 @@ namespace UniversitySystem.Application.Features.StudentPreRegistration.Commands.
 /// <summary>
 /// Command to finalize and submit a student's pre-registration draft for a given academic term.
 /// </summary>
-public sealed record SubmitStudentPreRegistrationCommand(long AcademicTermId)
-    : IRequest<StudentPreRegistrationDto>;
+public class SubmitStudentPreRegistrationCommand : IRequest<StudentPreRegistrationDto>
+{
+    public long AcademicTermId { get; set; }
+}

@@ -20,7 +20,7 @@ public class AuthControllerIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task Login_WhenCredentialsEmpty_ReturnsBadRequestWithValidationErrors()
     {
         // Arrange
-        var command = new LoginCommand("", "");
+        var command = new LoginCommand { Username = "", Password = "" };
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/v1/auth/login", command);
@@ -39,7 +39,7 @@ public class AuthControllerIntegrationTests : IClassFixture<WebApplicationFactor
     public async Task Login_WhenUserNotFound_ReturnsUnauthorized()
     {
         // Arrange
-        var command = new LoginCommand("non_existent_user_xyz", "RandomPassword123!");
+        var command = new LoginCommand { Username = "non_existent_user_xyz", Password = "RandomPassword123!" };
 
         // Act
         var response = await _client.PostAsJsonAsync("/api/v1/auth/login", command);

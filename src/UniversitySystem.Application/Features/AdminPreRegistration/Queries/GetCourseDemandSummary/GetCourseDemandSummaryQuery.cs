@@ -7,5 +7,7 @@ namespace UniversitySystem.Application.Features.AdminPreRegistration.Queries.Get
 /// Query to retrieve aggregated student demand per course for a given academic term.
 /// Only submitted pre-registrations are considered.
 /// </summary>
-public sealed record GetCourseDemandSummaryQuery(long AcademicTermId)
-    : IRequest<IReadOnlyList<CourseDemandDto>>;
+public class GetCourseDemandSummaryQuery : IRequest<ICollection<CourseDemandDto>>
+{
+    public long AcademicTermId { get; set; }
+}
