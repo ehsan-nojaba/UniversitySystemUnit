@@ -24,4 +24,9 @@ public interface ICurrentUserService
     /// Gets the list of role names associated with the current user.
     /// </summary>
     IReadOnlyList<string> Roles { get; }
+
+    /// <summary>
+    /// Determines whether the current authenticated user belongs to the specified role.
+    /// </summary>
+    bool IsInRole(string role);
 }

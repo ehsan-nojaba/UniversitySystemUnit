@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت درس انتخابی تدریس: درسی که استاد تمایل به تدریس آن در ترم موردنظر دارد به همراه اولویت.
+/// </summary>
 public class ProfessorTeachingRequestCourse : BaseAuditableEntity
 {
     public long ProfessorTeachingRequestId { get; private set; }

@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت درس: نمایانگر یک درس دانشگاهی شامل کد، عنوان، تعداد واحد و پیش‌نیازهای آن.
+/// </summary>
 public class Course : BaseAuditableEntity
 {
     public string Code { get; private set; } = default!;

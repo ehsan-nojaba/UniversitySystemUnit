@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت کاربر: حساب کاربری پایه در سامانه جهت لاگین، احراز هویت و نگهداری اطلاعات هویتی.
+/// </summary>
 public class User : BaseAuditableEntity
 {
     public string Username { get; private set; } = default!;

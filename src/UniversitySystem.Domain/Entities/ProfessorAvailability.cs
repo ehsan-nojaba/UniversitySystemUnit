@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت زمان‌بندی حضور استاد: بازه‌های زمانی اعلام آمادگی استاد در روزهای هفته جهت تدریس.
+/// </summary>
 public class ProfessorAvailability : BaseAuditableEntity
 {
     public long ProfessorTeachingRequestId { get; private set; }

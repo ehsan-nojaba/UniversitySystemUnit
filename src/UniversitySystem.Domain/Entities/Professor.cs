@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت استاد: نمایانگر عضو هیئت علمی یا مدرس دانشگاه مرتبط با یک حساب کاربری و دارای کد پرسنلی.
+/// </summary>
 public class Professor : BaseAuditableEntity
 {
     public long UserId { get; private set; }

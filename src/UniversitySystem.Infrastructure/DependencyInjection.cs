@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,8 @@ public static class DependencyInjection
         // ── 2. Cross-Cutting & Utility Services ────────────────────────────────
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ITokenService, TokenService>();
 
         // ── 3. JWT Configuration (Options Pattern) ─────────────────────────────
         var jwtSection = configuration.GetSection(JwtSettings.SectionName);
@@ -57,6 +60,8 @@ public static class DependencyInjection
                 ValidIssuer = !string.IsNullOrWhiteSpace(jwtSettings.Issuer) ? jwtSettings.Issuer : "UniversitySystem",
                 ValidAudience = !string.IsNullOrWhiteSpace(jwtSettings.Audience) ? jwtSettings.Audience : "UniversitySystem",
                 IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                RoleClaimType = ClaimTypes.Role,
+                NameClaimType = ClaimTypes.Name,
                 ClockSkew = TimeSpan.Zero
             };
         });

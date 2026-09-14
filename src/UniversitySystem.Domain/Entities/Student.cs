@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت دانشجو: نمایانگر پرونده تحصیلی دانشجو، شماره دانشجویی، رشته و سال ورود.
+/// </summary>
 public class Student : BaseAuditableEntity
 {
     public long UserId { get; private set; }

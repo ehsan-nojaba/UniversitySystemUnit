@@ -4,9 +4,7 @@ using UniversitySystem.Domain.Enums;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// Represents a Student's actual enrollment in a CourseOffering.
-/// This is the operational record of enrollment, distinct from StudentCourseHistory
-/// which serves as the permanent academic record.
+/// موجودیت ثبت‌نام درس: نمایانگر ثبت‌نام قطعی دانشجو در یک درس ارائه‌شده در طول نیم‌سال تحصیلی.
 /// </summary>
 public class Enrollment : BaseAuditableEntity
 {

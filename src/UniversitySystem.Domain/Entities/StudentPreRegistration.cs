@@ -3,6 +3,9 @@ using UniversitySystem.Domain.Enums;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت فرم پیش‌ثبت‌نام دانشجو: ثبت درخواست و لیست دروس انتخابی دانشجو برای یک نیم‌سال تحصیلی در وضعیت‌های پیش‌نویس، ثبت نهایی یا لغو.
+/// </summary>
 public class StudentPreRegistration : BaseAuditableEntity
 {
     public long StudentId { get; private set; }
@@ -41,6 +44,15 @@ public class StudentPreRegistration : BaseAuditableEntity
         var item = _items.FirstOrDefault(i => i.CourseId == courseId);
         if (item is not null)
             _items.Remove(item);
+    }
+
+    public void UpdateCoursePriority(long courseId, int priority)
+    {
+        EnsureEditable();
+
+        var item = _items.FirstOrDefault(i => i.CourseId == courseId);
+        if (item is not null)
+            item.UpdatePriority(priority);
     }
 
     public void Submit(DateTime utcNow)

@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت رشته تحصیلی: رشته تخصصی دانشگاهی متعلق به یک گروه آموزشی که دانشجویان در آن تحصیل می‌کنند.
+/// </summary>
 public class Major : BaseAuditableEntity
 {
     public long DepartmentId { get; private set; }

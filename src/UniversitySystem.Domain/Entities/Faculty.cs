@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت دانشکده: بالاترین سطح ساختار دانشگاهی که شامل گروه‌های آموزشی مختلف است.
+/// </summary>
 public class Faculty : BaseAuditableEntity
 {
     public string Code { get; private set; } = default!;

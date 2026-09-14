@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت تخصیص تدریس: ثبت انتساب رسمی و نهایی یک درس ارائه شده به یک استاد در نیم‌سال تحصیلی.
+/// </summary>
 public class TeachingAssignment : BaseAuditableEntity
 {
     public long CourseOfferingId { get; private set; }

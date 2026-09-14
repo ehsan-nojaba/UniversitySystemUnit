@@ -10,4 +10,7 @@ public interface IDateTimeProvider
 {
     /// <summary>Returns the current date and time.</summary>
     DateTime Now { get; }
+
+    /// <summary>Returns the current UTC date and time.</summary>
+    DateTime UtcNow { get; }
 }

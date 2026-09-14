@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت چارت درسی: سرفصل و برنامه آموزشی مصوب یک رشته تحصیلی در یک نسخه مشخص.
+/// </summary>
 public class Curriculum : BaseAuditableEntity
 {
     public long MajorId { get; private set; }

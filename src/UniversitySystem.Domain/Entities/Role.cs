@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت نقش کاربری: مشخص‌کننده نقش‌ها و سطوح دسترسی کاربران در سامانه دانشگاهی (مانند دانشجو، استاد، آموزش).
+/// </summary>
 public class Role : BaseAuditableEntity
 {
     public string Name { get; private set; } = default!;

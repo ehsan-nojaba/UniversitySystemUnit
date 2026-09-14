@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت ارائه درس: مشخص‌کننده ارائه یک درس در یک ترم تحصیلی با ظرفیت کلاسی معین.
+/// </summary>
 public class CourseOffering : BaseAuditableEntity
 {
     public long CourseId { get; private set; }

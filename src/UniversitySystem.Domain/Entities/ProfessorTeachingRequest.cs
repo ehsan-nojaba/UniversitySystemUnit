@@ -3,6 +3,9 @@ using UniversitySystem.Domain.Enums;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت درخواست تدریس استاد: ثبت درخواست استاد برای تدریس در یک ترم تحصیلی به همراه دروس و زمان‌های پیشنهادی.
+/// </summary>
 public class ProfessorTeachingRequest : BaseAuditableEntity
 {
     public long ProfessorId { get; private set; }

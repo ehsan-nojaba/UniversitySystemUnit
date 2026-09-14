@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت گروه آموزشی: دپارتمان یا گروه آموزشی تخصصی زیرمجموعه یک دانشکده.
+/// </summary>
 public class Department : BaseAuditableEntity
 {
     public long FacultyId { get; private set; }

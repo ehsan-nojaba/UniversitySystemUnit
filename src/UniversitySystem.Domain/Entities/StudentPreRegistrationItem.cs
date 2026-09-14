@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت آیتم پیش‌ثبت‌نام: هر درس انتخاب شده توسط دانشجو در فرم پیش‌ثبت‌نام به همراه اولویت ترجیحی (Priority).
+/// </summary>
 public class StudentPreRegistrationItem : BaseAuditableEntity
 {
     public long StudentPreRegistrationId { get; private set; }
@@ -17,6 +20,11 @@ public class StudentPreRegistrationItem : BaseAuditableEntity
     {
         StudentPreRegistrationId = studentPreRegistrationId;
         CourseId = courseId;
+        Priority = priority;
+    }
+
+    internal void UpdatePriority(int priority)
+    {
         Priority = priority;
     }
 }

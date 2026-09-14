@@ -42,6 +42,8 @@ public static class DependencyInjection
             cfg.AddMaps(assembly);
         });
 
+        services.AddScoped<Common.Interfaces.IStudentCourseEligibilityService, Common.Services.StudentCourseEligibilityService>();
+
         return services;
     }
 }

@@ -2,6 +2,9 @@ using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
 
+/// <summary>
+/// موجودیت ترم تحصیلی: نمایانگر یک نیم‌سال تحصیلی در دانشگاه، بازه زمانی شروع و پایان و وضعیت فعال بودن آن.
+/// </summary>
 public class AcademicTerm : BaseAuditableEntity
 {
     public string Code { get; private set; } = default!;

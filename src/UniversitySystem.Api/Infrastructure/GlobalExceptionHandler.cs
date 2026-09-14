@@ -74,6 +74,13 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 null
             ),
 
+            UnauthorizedAccessException unauthorizedAccessException => (
+                StatusCodes.Status401Unauthorized,
+                "Unauthorized",
+                unauthorizedAccessException.Message,
+                null
+            ),
+
             BusinessException businessException => (
                 StatusCodes.Status400BadRequest,
                 "Business Rule Violation",
