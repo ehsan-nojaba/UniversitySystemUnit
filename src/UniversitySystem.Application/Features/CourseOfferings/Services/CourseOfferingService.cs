@@ -6,7 +6,10 @@ using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 
-public sealed class CourseOfferingService(ICourseOfferingRepository repository, IUnitOfWork unitOfWork) : ICourseOfferingService
+public sealed class CourseOfferingService(
+    ICourseOfferingRepository repository,
+    IUnitOfWork unitOfWork,
+    IProfessorScheduleConflictChecker conflictChecker) : ICourseOfferingService
 {
     public async Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
@@ -69,5 +72,29 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             Capacity = offering.Capacity,
             IsActive = offering.IsActive
         };
+    }
+
+    public async Task<ICollection<CourseOfferingScheduleDto>> GetScheduleAsync(long courseOfferingId, CancellationToken cancellationToken = default)
+    {
+        var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
+        if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+
+        return await repository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
+    }
+
+    public async Task<ICollection<CourseOfferingScheduleDto>> SaveScheduleAsync(
+        long courseOfferingId,
+        IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots,
+        CancellationToken cancellationToken = default)
+    {
+        var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
+        if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+
+        await conflictChecker.CheckConflictsAsync(courseOfferingId, slots, cancellationToken);
+
+        await repository.SaveSchedulesAsync(courseOfferingId, slots, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return await repository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
     }
 }

@@ -62,5 +62,41 @@ public sealed class CourseOfferingRepository(ApplicationDbContext context) : ICo
         ).ToListAsync(cancellationToken);
     }
 
+    public async Task<CourseOffering?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await context.CourseOfferings.FirstOrDefaultAsync(co => co.Id == id, cancellationToken);
+    }
+
+    public async Task<ICollection<CourseOfferingScheduleDto>> GetSchedulesByOfferingIdAsync(long offeringId, CancellationToken cancellationToken = default)
+    {
+        return await (
+            from s in context.CourseOfferingSchedules.AsNoTracking()
+            where s.CourseOfferingId == offeringId
+            orderby s.DayOfWeek, s.StartTime
+            select new CourseOfferingScheduleDto
+            {
+                Id = s.Id,
+                CourseOfferingId = s.CourseOfferingId,
+                DayOfWeek = s.DayOfWeek,
+                StartTime = s.StartTime,
+                EndTime = s.EndTime
+            }
+        ).ToListAsync(cancellationToken);
+    }
+
+    public async Task SaveSchedulesAsync(long offeringId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
+    {
+        var existing = await context.CourseOfferingSchedules
+            .Where(s => s.CourseOfferingId == offeringId)
+            .ToListAsync(cancellationToken);
+
+        context.CourseOfferingSchedules.RemoveRange(existing);
+
+        foreach (var slot in slots)
+        {
+            context.CourseOfferingSchedules.Add(new CourseOfferingSchedule(offeringId, slot.DayOfWeek, slot.StartTime, slot.EndTime));
+        }
+    }
+
     public void Add(CourseOffering offering) => context.CourseOfferings.Add(offering);
 }

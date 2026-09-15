@@ -43,6 +43,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     // ── Offering & Assignment ─────────────────────────────────────────────────────
     public DbSet<CourseOffering> CourseOfferings => Set<CourseOffering>();
+    public DbSet<CourseOfferingSchedule> CourseOfferingSchedules => Set<CourseOfferingSchedule>();
     public DbSet<TeachingAssignment> TeachingAssignments => Set<TeachingAssignment>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
 

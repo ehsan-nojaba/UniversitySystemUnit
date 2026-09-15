@@ -35,6 +35,7 @@ public interface IApplicationDbContext
 
     // ── Offering & Assignment ──────────────────────────────────────────────────────
     DbSet<CourseOffering> CourseOfferings { get; }
+    DbSet<CourseOfferingSchedule> CourseOfferingSchedules { get; }
     DbSet<TeachingAssignment> TeachingAssignments { get; }
     DbSet<Enrollment> Enrollments { get; }
 

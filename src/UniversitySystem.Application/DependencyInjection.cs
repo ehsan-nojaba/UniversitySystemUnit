@@ -48,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<Features.Auth.Services.IAuthService, Features.Auth.Services.AuthService>();
         services.AddScoped<Features.StudentPreRegistration.Services.IStudentPreRegistrationService, Features.StudentPreRegistration.Services.StudentPreRegistrationService>();
         services.AddScoped<Features.CourseOfferings.Services.ICourseOfferingService, Features.CourseOfferings.Services.CourseOfferingService>();
+        services.AddScoped<Features.CourseOfferings.Services.IProfessorScheduleConflictChecker, Features.CourseOfferings.Services.ProfessorScheduleConflictChecker>();
         services.AddScoped<Features.TeachingAssignments.Services.ITeachingAssignmentService, Features.TeachingAssignments.Services.TeachingAssignmentService>();
 
         return services;

@@ -21,6 +21,9 @@ public class CourseOffering : BaseAuditableEntity
     private readonly List<Enrollment> _enrollments = new();
     public IReadOnlyCollection<Enrollment> Enrollments => _enrollments.AsReadOnly();
 
+    private readonly List<CourseOfferingSchedule> _schedules = new();
+    public IReadOnlyCollection<CourseOfferingSchedule> Schedules => _schedules.AsReadOnly();
+
     private CourseOffering() { }
 
     public CourseOffering(long courseId, long academicTermId, int capacity)

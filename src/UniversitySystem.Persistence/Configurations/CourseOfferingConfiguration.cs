@@ -52,5 +52,10 @@ public sealed class CourseOfferingConfiguration : IEntityTypeConfiguration<Cours
             .WithOne(e => e.CourseOffering)
             .HasForeignKey(e => e.CourseOfferingId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(co => co.Schedules)
+            .WithOne(s => s.CourseOffering)
+            .HasForeignKey(s => s.CourseOfferingId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
