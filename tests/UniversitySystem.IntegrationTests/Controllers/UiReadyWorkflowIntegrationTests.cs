@@ -1,4 +1,3 @@
-using Swashbuckle.AspNetCore.Swagger;
 using System.Text.Json;
 using System.Net;
 using System.Net.Http.Headers;
@@ -139,14 +138,31 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
     }
 
     [Fact]
-    public void Swagger_Exposes_The_Ui_Endpoints()
+    public async Task Scalar_And_OpenApi_Expose_Ui_Endpoints_And_Bearer_Authentication()
     {
-        using var scope = factory.Services.CreateScope();
-        var document = scope.ServiceProvider.GetRequiredService<ISwaggerProvider>().GetSwagger("v1");
-        Assert.Contains("/api/v1/auth/me", document.Paths.Keys);
-        Assert.Contains("/api/v1/lookups/academic-terms", document.Paths.Keys);
-        Assert.Contains("/api/v1/lookups/courses", document.Paths.Keys);
-        Assert.Contains("/api/v1/lookups/professors", document.Paths.Keys);
+        using var developmentFactory = new UniversityApiFactory { EnvironmentName = "Development" };
+        using var client = developmentFactory.CreateClient(new() { BaseAddress = new Uri("https://localhost") });
+        var page = await client.GetStringAsync("/scalar/v1");
+        Assert.Contains("scalar", page, StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var paths = document.RootElement.GetProperty("paths");
+        Assert.True(paths.TryGetProperty("/api/v1/auth/me", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/lookups/academic-terms", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/lookups/courses", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/lookups/professors", out _));
+        Assert.Equal("bearer", document.RootElement.GetProperty("components").GetProperty("securitySchemes").GetProperty("Bearer").GetProperty("scheme").GetString());
+        Assert.Equal("Bearer", paths.GetProperty("/api/v1/auth/me").GetProperty("get").GetProperty("security")[0].EnumerateObject().First().Name);
+        var loginPath = paths.EnumerateObject().Single(path => path.Name.Equals("/api/v1/auth/login", StringComparison.OrdinalIgnoreCase));
+        Assert.False(loginPath.Value.GetProperty("post").TryGetProperty("security", out _));
+        Assert.Equal("ورود به سامانه", loginPath.Value.GetProperty("post").GetProperty("summary").GetString());
+        var loginResponses = loginPath.Value.GetProperty("post").GetProperty("responses");
+        Assert.True(loginResponses.TryGetProperty("200", out _));
+        Assert.True(loginResponses.TryGetProperty("400", out _));
+        Assert.True(loginResponses.TryGetProperty("401", out _));
+        Assert.Contains("LoginResponse", loginResponses.GetProperty("200").GetProperty("content").GetProperty("application/json").GetProperty("schema").GetProperty("$ref").GetString());
+        var createResponses = paths.GetProperty("/api/v1/admin/course-offerings").GetProperty("post").GetProperty("responses");
+        Assert.True(createResponses.TryGetProperty("201", out _));
+        Assert.False(createResponses.TryGetProperty("200", out _));
     }
 
     [Fact]

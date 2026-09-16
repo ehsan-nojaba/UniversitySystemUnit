@@ -1,3 +1,7 @@
+using UniversitySystem.Api.Contracts;
+using Mapster;
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +18,25 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/student/enrollments")]
 [Authorize(Roles = RoleNames.Student)]
-public sealed class StudentEnrollmentsController(ISender sender) : ControllerBase
+public sealed class StudentEnrollmentsController(ISender _mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<EnrollmentDto>>> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
-        => Ok(await sender.Send(new GetStudentEnrollmentsQuery(academicTermId), cancellationToken));
-    [HttpPost]
-    public async Task<ActionResult<EnrollmentDto>> Create(CreateEnrollmentCommand request, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "مشاهده ثبت‌نام‌های قطعی دانشجو", Description = "عملیات مشاهده ثبت‌نام‌های قطعی دانشجو؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<EnrollmentDto>))]
+    public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        var result = await sender.Send(request, cancellationToken);
-        return CreatedAtAction(nameof(Get), new { academicTermId = result.AcademicTermId }, result);
+        var param = new GetStudentEnrollmentsQuery(academicTermId);
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
+
+    [HttpPost]
+    [SwaggerOperation(Summary = "ثبت‌نام قطعی در ارائه درس", Description = "عملیات ثبت‌نام قطعی در ارائه درس؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(201, "عملیات موفق", typeof(EnrollmentDto))]
+    public async Task<IActionResult> Create([FromBody] CreateEnrollmentRequest request, CancellationToken cancellationToken)
+    {
+        var param = request.Adapt<CreateEnrollmentCommand>();
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse(nameof(Get), new { academicTermId = response.AcademicTermId });
     }
 }

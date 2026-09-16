@@ -1,3 +1,5 @@
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +15,15 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/teaching-requests")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminTeachingRequestsController(ISender sender) : ControllerBase
+public sealed class AdminTeachingRequestsController(ISender _mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<TeachingRequestSummaryDto>>> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
-        => Ok(await sender.Send(new GetTeachingRequestSummaryQuery(academicTermId), cancellationToken));
+    [SwaggerOperation(Summary = "مشاهده درخواست‌های تدریس استادها", Description = "عملیات مشاهده درخواست‌های تدریس استادها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<TeachingRequestSummaryDto>))]
+    public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    {
+        var param = new GetTeachingRequestSummaryQuery(academicTermId);
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
 }

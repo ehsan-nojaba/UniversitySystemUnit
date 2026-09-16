@@ -4,7 +4,6 @@ using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Constants;
 
 namespace UniversitySystem.Api.Controllers;
-
 /// <summary>
 /// مسیرهای موقت بررسی دسترسی نقش‌ها؛ فرایند آموزشی واقعی انجام نمی‌دهد.
 /// </summary>
@@ -13,7 +12,6 @@ namespace UniversitySystem.Api.Controllers;
 public sealed class TestAuthController : ControllerBase
 {
     private readonly ICurrentUserService _currentUserService;
-
     public TestAuthController(ICurrentUserService currentUserService)
     {
         _currentUserService = currentUserService;
@@ -26,12 +24,7 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.Student)]
     public IActionResult StudentEndpoint()
     {
-        return Ok(new
-        {
-            Message = "Access granted to Student endpoint.",
-            _currentUserService.UserId,
-            _currentUserService.Roles
-        });
+        return Ok(new { Message = "Access granted to Student endpoint.", _currentUserService.UserId, _currentUserService.Roles });
     }
 
     /// <summary>
@@ -41,12 +34,7 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.Professor)]
     public IActionResult ProfessorEndpoint()
     {
-        return Ok(new
-        {
-            Message = "Access granted to Professor endpoint.",
-            _currentUserService.UserId,
-            _currentUserService.Roles
-        });
+        return Ok(new { Message = "Access granted to Professor endpoint.", _currentUserService.UserId, _currentUserService.Roles });
     }
 
     /// <summary>
@@ -56,11 +44,6 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.EducationAdmin)]
     public IActionResult AdminEndpoint()
     {
-        return Ok(new
-        {
-            Message = "Access granted to EducationAdmin endpoint.",
-            _currentUserService.UserId,
-            _currentUserService.Roles
-        });
+        return Ok(new { Message = "Access granted to EducationAdmin endpoint.", _currentUserService.UserId, _currentUserService.Roles });
     }
 }

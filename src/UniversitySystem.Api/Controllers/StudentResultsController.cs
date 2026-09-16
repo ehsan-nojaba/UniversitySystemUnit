@@ -1,3 +1,5 @@
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +15,15 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/student/pre-registration")]
 [Authorize(Roles = RoleNames.Student)]
-public sealed class StudentResultsController(ISender sender) : ControllerBase
+public sealed class StudentResultsController(ISender _mediator) : ControllerBase
 {
     [HttpGet("{academicTermId:long}/result")]
-    public async Task<ActionResult<StudentResultDto>> Get(long academicTermId, CancellationToken cancellationToken)
-        => Ok(await sender.Send(new GetStudentResultQuery(academicTermId), cancellationToken));
+    [SwaggerOperation(Summary = "مشاهده نتیجه پیش‌انتخاب و ارائه‌های قابل ثبت‌نام", Description = "عملیات مشاهده نتیجه پیش‌انتخاب و ارائه‌های قابل ثبت‌نام؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(StudentResultDto))]
+    public async Task<IActionResult> Get([FromRoute] long academicTermId, CancellationToken cancellationToken)
+    {
+        var param = new GetStudentResultQuery(academicTermId);
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
 }

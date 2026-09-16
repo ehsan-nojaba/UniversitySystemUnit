@@ -1,3 +1,6 @@
+using Mapster;
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,140 +18,103 @@ using UniversitySystem.Application.Features.TeachingAssignments.Queries.GetTeach
 using UniversitySystem.Domain.Constants;
 
 namespace UniversitySystem.Api.Controllers;
-
 /// <summary>
 /// ورودی HTTP بخش «ارائه درس، تخصیص استاد و برنامه زمانی کلاس»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
 [ApiController]
 [Route("api/v1/admin/course-offerings")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminCourseOfferingsController(ISender sender) : ControllerBase
+public sealed class AdminCourseOfferingsController(ISender _mediator) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(ICollection<CourseOfferingDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ICollection<CourseOfferingDto>>> GetByTerm([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "مشاهده ارائه‌های ترم", Description = "عملیات مشاهده ارائه‌های ترم؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOfferingDto>))]
+    public async Task<IActionResult> GetByTerm([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await sender.Send(new GetCourseOfferingsQuery { AcademicTermId = academicTermId }, cancellationToken));
+        var param = new GetCourseOfferingsQuery
+        {
+            AcademicTermId = academicTermId
+        };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(CourseOfferingDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CourseOfferingDto>> Create([FromBody] CreateCourseOfferingRequest request, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "ثبت اطلاعات جدید", Description = "عملیات ثبت اطلاعات جدید؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(201, "عملیات موفق", typeof(CourseOfferingDto))]
+    public async Task<IActionResult> Create([FromBody] CreateCourseOfferingRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreateCourseOfferingCommand
-        {
-            AcademicTermId = request.AcademicTermId,
-            CourseId = request.CourseId,
-            Capacity = request.Capacity
-        };
-        var result = await sender.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetByTerm), new { academicTermId = result.AcademicTermId }, result);
+        var param = request.Adapt<CreateCourseOfferingCommand>();
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse(nameof(GetByTerm), new { academicTermId = response.AcademicTermId });
     }
 
     [HttpPut("{id:long}")]
-    [ProducesResponseType(typeof(CourseOfferingDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CourseOfferingDto>> Update([FromRoute] long id, [FromBody] UpdateCourseOfferingRequest request, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "ویرایش ارائه", Description = "عملیات ویرایش ارائه؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(CourseOfferingDto))]
+    public async Task<IActionResult> Update([FromRoute] long id, [FromBody] UpdateCourseOfferingRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdateCourseOfferingCommand
-        {
-            Id = id,
-            Capacity = request.Capacity,
-            IsActive = request.IsActive
-        };
-        return Ok(await sender.Send(command, cancellationToken));
+        var param = request.Adapt<UpdateCourseOfferingCommand>();
+        param.Id = id;
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 
     [HttpGet("{courseOfferingId:long}/professors")]
-    [ProducesResponseType(typeof(ICollection<TeachingAssignmentDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ICollection<TeachingAssignmentDto>>> GetProfessors([FromRoute] long courseOfferingId, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "مشاهده استادهای تخصیص‌یافته", Description = "عملیات مشاهده استادهای تخصیص ‌یافته؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<TeachingAssignmentDto>))]
+    public async Task<IActionResult> GetProfessors([FromRoute] long courseOfferingId, CancellationToken cancellationToken)
     {
-        return Ok(await sender.Send(new GetTeachingAssignmentsQuery { CourseOfferingId = courseOfferingId }, cancellationToken));
+        var param = new GetTeachingAssignmentsQuery
+        {
+            CourseOfferingId = courseOfferingId
+        };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 
     [HttpPost("{courseOfferingId:long}/professors")]
-    [ProducesResponseType(typeof(TeachingAssignmentDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeachingAssignmentDto>> AssignProfessor(
-        [FromRoute] long courseOfferingId,
-        [FromBody] AssignProfessorRequest request,
-        CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "تخصیص استاد", Description = "عملیات تخصیص استاد؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(201, "عملیات موفق", typeof(TeachingAssignmentDto))]
+    public async Task<IActionResult> AssignProfessor([FromRoute] long courseOfferingId, [FromBody] AssignProfessorRequest request, CancellationToken cancellationToken)
     {
-        var command = new AssignProfessorCommand
-        {
-            CourseOfferingId = courseOfferingId,
-            ProfessorId = request.ProfessorId
-        };
-        var result = await sender.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetProfessors), new { courseOfferingId }, result);
+        var param = request.Adapt<AssignProfessorCommand>();
+        param.CourseOfferingId = courseOfferingId;
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse(nameof(GetProfessors), new { courseOfferingId });
     }
 
     [HttpDelete("{courseOfferingId:long}/professors/{professorId:long}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> RemoveProfessor(
-        [FromRoute] long courseOfferingId,
-        [FromRoute] long professorId,
-        CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "حذف تخصیص استاد", Description = "عملیات حذف تخصیص استاد؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(204, "عملیات موفق")]
+    public async Task<IActionResult> RemoveProfessor([FromRoute] long courseOfferingId, [FromRoute] long professorId, CancellationToken cancellationToken)
     {
-        await sender.Send(new RemoveProfessorAssignmentCommand
-        {
-            CourseOfferingId = courseOfferingId,
-            ProfessorId = professorId
-        }, cancellationToken);
-        return NoContent();
+        var param = new RemoveProfessorAssignmentCommand { CourseOfferingId = courseOfferingId, ProfessorId = professorId };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse(204);
     }
 
     [HttpGet("{courseOfferingId:long}/schedule")]
-    [ProducesResponseType(typeof(ICollection<CourseOfferingScheduleDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ICollection<CourseOfferingScheduleDto>>> GetSchedule(
-        [FromRoute] long courseOfferingId,
-        CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "مشاهده برنامه کلاس", Description = "عملیات مشاهده برنامه کلاس؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOfferingScheduleDto>))]
+    public async Task<IActionResult> GetSchedule([FromRoute] long courseOfferingId, CancellationToken cancellationToken)
     {
-        return Ok(await sender.Send(new GetCourseOfferingScheduleQuery { CourseOfferingId = courseOfferingId }, cancellationToken));
+        var param = new GetCourseOfferingScheduleQuery
+        {
+            CourseOfferingId = courseOfferingId
+        };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 
     [HttpPut("{courseOfferingId:long}/schedule")]
-    [ProducesResponseType(typeof(ICollection<CourseOfferingScheduleDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ICollection<CourseOfferingScheduleDto>>> SaveSchedule(
-        [FromRoute] long courseOfferingId,
-        [FromBody] SaveCourseOfferingScheduleRequest request,
-        CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "ذخیره برنامه کلاس", Description = "عملیات ذخیره برنامه کلاس؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOfferingScheduleDto>))]
+    public async Task<IActionResult> SaveSchedule([FromRoute] long courseOfferingId, [FromBody] SaveCourseOfferingScheduleRequest request, CancellationToken cancellationToken)
     {
-        var command = new SaveCourseOfferingScheduleCommand
-        {
-            CourseOfferingId = courseOfferingId,
-            Slots = request.Slots
-        };
-        return Ok(await sender.Send(command, cancellationToken));
+        var param = request.Adapt<SaveCourseOfferingScheduleCommand>();
+        param.CourseOfferingId = courseOfferingId;
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 }

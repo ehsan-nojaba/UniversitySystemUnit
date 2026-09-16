@@ -434,3 +434,15 @@
 | [UiSupportRepository.cs](../src/UniversitySystem.Persistence/Repositories/UiSupportRepository.cs) | خواندن فهرست‌ها و پروفایل از EF، بدون داده رمز |
 | [LookupController.cs](../src/UniversitySystem.Api/Controllers/LookupController.cs) | مسیرهای انتخاب ترم، درس و استاد با دسترسی نقش‌ها |
 | [CurrentUserController.cs](../src/UniversitySystem.Api/Controllers/CurrentUserController.cs) | مسیر دریافت اطلاعات حساب جاری |
+
+## مستندات پاسخ HTTP
+
+[ApiResponseConvention.cs](../src/UniversitySystem.Api/Infrastructure/ApiResponseConvention.cs) مشخصات پاسخ موفق و خطاهای مسیرها را متمرکز به ApiExplorer معرفی می‌کند. کنترلرها ProducesResponseType ندارند؛ نوع پاسخ همچنان در Scalar نمایش داده می‌شود. تبدیل خطای واقعی به ProblemDetails در GlobalExceptionHandler انجام می‌شود.
+
+## الگوی اکشن‌های کنترلر
+
+هر اکشن ابتدا مسیر HTTP، سپس SwaggerOperation با توضیح فارسی و SwaggerResponse با نوع پاسخ موفق دارد. ApiResponseConvention این اطلاعات را به OpenAPI داخلی منتقل می‌کند؛ نمایش مستندات همچنان با Scalar انجام می‌شود. خطاهای مشترک به‌صورت مرکزی ثبت می‌شوند.
+
+در اکشن‌های دارای بدنه، Request مخصوص API با Mapster به Command تبدیل می‌شود و شناسه مسیر پس از تبدیل تنظیم می‌شود. متغیر param به _mediator.Send ارسال می‌شود؛ پاسخ با ToApiResponse به HTTP تبدیل می‌شود. Send متد اصلی MediatR است. پاسخ‌های ایجاد دارای کد ۲۰۱ و Location و حذف دارای کد ۲۰۴ هستند؛ پاسخ‌های معمولی ۲۰۰ و نتیجه پیدا‌نشده ۴۰۴ دارند.
+
+LoginRequest داده فرم ورود و CreateEnrollmentRequest شناسه ارائه انتخابی دانشجو را نگه می‌دارند. ApiResponseExtensions فقط پاسخ HTTP می‌سازد و منطق آموزشی داخل سرویس‌ها می‌ماند.

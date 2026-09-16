@@ -1,3 +1,4 @@
+using Scalar.AspNetCore;
 using UniversitySystem.Api;
 using UniversitySystem.Application;
 using UniversitySystem.Infrastructure;
@@ -14,14 +15,11 @@ var app = builder.Build();
 // ── Middleware Pipeline ────────────────────────────────────────────────────────
 // 1. Centralized global exception handler
 app.UseExceptionHandler();
-// 2. Swagger / OpenAPI (Development only)
+// مستندات تعاملی فقط در محیط توسعه نمایش داده می‌شوند.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "University System API v1");
-    });
+    app.MapOpenApi();
+    app.MapScalarApiReference(options => options.WithTitle("University System API").AddPreferredSecuritySchemes("Bearer"));
 }
 
 // 3. Security & Protocol

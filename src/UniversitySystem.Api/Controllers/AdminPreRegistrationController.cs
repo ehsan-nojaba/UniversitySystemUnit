@@ -1,3 +1,5 @@
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +8,6 @@ using UniversitySystem.Application.Features.AdminPreRegistration.Queries.GetCour
 using UniversitySystem.Domain.Constants;
 
 namespace UniversitySystem.Api.Controllers;
-
 /// <summary>
 /// ورودی HTTP بخش «تقاضای دانشجوها برای درس‌های یک ترم»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
@@ -15,11 +16,10 @@ namespace UniversitySystem.Api.Controllers;
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminPreRegistrationController : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public AdminPreRegistrationController(ISender sender)
+    private readonly ISender _mediator;
+    public AdminPreRegistrationController(ISender mediator)
     {
-        _sender = sender;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -27,17 +27,19 @@ public sealed class AdminPreRegistrationController : ControllerBase
     /// Only submitted pre-registrations are included.
     /// Results are sorted descending by demand (StudentCount).
     /// </summary>
-    /// <param name="academicTermId">The target academic term identifier.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name = "academicTermId">The target academic term identifier.</param>
+    /// <param name = "cancellationToken">Cancellation token.</param>
     /// <returns>List of courses with demand metrics.</returns>
     [HttpGet("demand")]
-    [ProducesResponseType(typeof(ICollection<CourseDemandDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ICollection<CourseDemandDto>>> GetDemandSummary([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "مشاهده تقاضای دانشجوها", Description = "عملیات مشاهده تقاضای دانشجوها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseDemandDto>))]
+    public async Task<IActionResult> GetDemandSummary([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new GetCourseDemandSummaryQuery { AcademicTermId = academicTermId }, cancellationToken));
+        var param = new GetCourseDemandSummaryQuery
+        {
+            AcademicTermId = academicTermId
+        };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 }

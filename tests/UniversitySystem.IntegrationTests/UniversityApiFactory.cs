@@ -11,11 +11,12 @@ using UniversitySystem.Persistence.Data;
 namespace UniversitySystem.IntegrationTests;
 public sealed class UniversityApiFactory : WebApplicationFactory<Program>
 {
+    public string EnvironmentName { get; init; } = "Testing";
     private readonly SqliteConnection connection = new("Data Source=:memory:");
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         connection.Open();
-        builder.UseEnvironment("Testing");
+        builder.UseEnvironment(EnvironmentName);
         builder.ConfigureLogging(logging => logging.ClearProviders().AddConsole());
         builder.ConfigureServices(services =>
         {

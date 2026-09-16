@@ -1,3 +1,5 @@
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +8,6 @@ using UniversitySystem.Application.Features.AdminPlanning.Queries.GetAcademicPla
 using UniversitySystem.Domain.Constants;
 
 namespace UniversitySystem.Api.Controllers;
-
 /// <summary>
 /// ورودی HTTP بخش «نمای برنامه‌ریزی آموزش»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
@@ -15,18 +16,19 @@ namespace UniversitySystem.Api.Controllers;
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminPlanningController : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public AdminPlanningController(ISender sender) => _sender = sender;
+    private readonly ISender _mediator;
+    public AdminPlanningController(ISender mediator) => _mediator = mediator;
 
     [HttpGet("overview")]
-    [ProducesResponseType(typeof(AcademicPlanningOverviewDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AcademicPlanningOverviewDto>> GetOverview([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "نمای برنامه‌ریزی آموزش", Description = "عملیات نمای برنامه‌ریزی آموزش؛ دسترسی مطابق نقش مجاز این مسیر است.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(AcademicPlanningOverviewDto))]
+    public async Task<IActionResult> GetOverview([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        return Ok(await _sender.Send(new GetAcademicPlanningOverviewQuery { AcademicTermId = academicTermId }, cancellationToken));
+        var param = new GetAcademicPlanningOverviewQuery
+        {
+            AcademicTermId = academicTermId
+        };
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 }

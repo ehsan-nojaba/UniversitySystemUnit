@@ -1,30 +1,32 @@
+using UniversitySystem.Api.Contracts;
+using Mapster;
+using Swashbuckle.AspNetCore.Annotations;
+using UniversitySystem.Api.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application.Features.Auth.Commands.Login;
 
 namespace UniversitySystem.Api.Controllers;
-
 /// <summary>
 /// ورودی HTTP بخش «ورود و دریافت توکن»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
 public sealed class AuthController : ApiControllerBase
 {
-    private readonly ISender _sender;
-
-    public AuthController(ISender sender)
+    private readonly ISender _mediator;
+    public AuthController(ISender mediator)
     {
-        _sender = sender;
+        _mediator = mediator;
     }
 
     [AllowAnonymous]
     [HttpPost("login")]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
+    [SwaggerOperation(Summary = "ورود به سامانه", Description = "نام کاربری و رمز عبور را بررسی می‌کند و توکن ورود را برمی‌گرداند. این مسیر نیاز به توکن ندارد.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(LoginResponse))]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var response = await _sender.Send(command, cancellationToken);
-        return Ok(response);
+        var param = request.Adapt<LoginCommand>();
+        var response = await _mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
     }
 }
