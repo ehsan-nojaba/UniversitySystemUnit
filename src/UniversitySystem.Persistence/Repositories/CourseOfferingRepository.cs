@@ -5,101 +5,55 @@ using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
-
 /// <summary>
 /// دسترسی EF به مشخصات ارائه، درس، ترم و بازه‌های کلاس؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
 /// </summary>
-public sealed class CourseOfferingRepository(ApplicationDbContext context) : ICourseOfferingRepository
+public sealed class CourseOfferingRepository(ApplicationDbContext _context) : ICourseOfferingRepository
 {
     public async Task<AcademicTerm?> GetAcademicTermAsync(long termId, CancellationToken cancellationToken = default)
     {
-        return await (
-            from t in context.AcademicTerms.AsNoTracking()
-            where t.Id == termId
-            select t
-        ).FirstOrDefaultAsync(cancellationToken);
+        return await _context.AcademicTerms.AsNoTracking().FirstOrDefaultAsync(t => t.Id == termId, cancellationToken);
     }
 
     public async Task<Course?> GetCourseAsync(long courseId, CancellationToken cancellationToken = default)
     {
-        return await (
-            from c in context.Courses.AsNoTracking()
-            where c.Id == courseId
-            select c
-        ).FirstOrDefaultAsync(cancellationToken);
+        return await _context.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == courseId, cancellationToken);
     }
 
     public async Task<CourseOffering?> GetByIdWithCourseAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await context.CourseOfferings
-            .Include(co => co.Course)
-            .FirstOrDefaultAsync(co => co.Id == id, cancellationToken);
+        return await _context.CourseOfferings.Include(co => co.Course).FirstOrDefaultAsync(co => co.Id == id, cancellationToken);
     }
 
     public async Task<bool> OfferingExistsAsync(long termId, long courseId, CancellationToken cancellationToken = default)
     {
-        return await (
-            from co in context.CourseOfferings.AsNoTracking()
-            where co.AcademicTermId == termId && co.CourseId == courseId
-            select co.Id
-        ).AnyAsync(cancellationToken);
+        return await _context.CourseOfferings.AsNoTracking().AnyAsync(co => co.AcademicTermId == termId && co.CourseId == courseId, cancellationToken);
     }
 
     public async Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long termId, CancellationToken cancellationToken = default)
     {
-        return await (
-            from co in context.CourseOfferings.AsNoTracking()
-            join c in context.Courses.AsNoTracking() on co.CourseId equals c.Id
-            where co.AcademicTermId == termId
-            orderby c.Code
-            select new CourseOfferingDto
-            {
-                CourseOfferingId = co.Id,
-                AcademicTermId = co.AcademicTermId,
-                CourseId = co.CourseId,
-                CourseCode = c.Code,
-                CourseTitle = c.Title,
-                Capacity = co.Capacity,
-                IsActive = co.IsActive
-            }
-        ).ToListAsync(cancellationToken);
+        return await (from co in _context.CourseOfferings.AsNoTracking() join c in _context.Courses.AsNoTracking() on co.CourseId equals c.Id where co.AcademicTermId == termId orderby c.Code select new CourseOfferingDto { CourseOfferingId = co.Id, AcademicTermId = co.AcademicTermId, CourseId = co.CourseId, CourseCode = c.Code, CourseTitle = c.Title, Capacity = co.Capacity, IsActive = co.IsActive } ).ToListAsync(cancellationToken);
     }
 
     public async Task<CourseOffering?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await context.CourseOfferings.FirstOrDefaultAsync(co => co.Id == id, cancellationToken);
+        return await _context.CourseOfferings.FirstOrDefaultAsync(co => co.Id == id, cancellationToken);
     }
 
     public async Task<ICollection<CourseOfferingScheduleDto>> GetSchedulesByOfferingIdAsync(long offeringId, CancellationToken cancellationToken = default)
     {
-        return await (
-            from s in context.CourseOfferingSchedules.AsNoTracking()
-            where s.CourseOfferingId == offeringId
-            orderby s.DayOfWeek, s.StartTime
-            select new CourseOfferingScheduleDto
-            {
-                Id = s.Id,
-                CourseOfferingId = s.CourseOfferingId,
-                DayOfWeek = s.DayOfWeek,
-                StartTime = s.StartTime,
-                EndTime = s.EndTime
-            }
-        ).ToListAsync(cancellationToken);
+        return await _context.CourseOfferingSchedules.AsNoTracking().Where(s => s.CourseOfferingId == offeringId).OrderBy(s => s.DayOfWeek).ThenBy(s => s.StartTime).Select(s => new CourseOfferingScheduleDto { Id = s.Id, CourseOfferingId = s.CourseOfferingId, DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToListAsync(cancellationToken);
     }
 
     public async Task SaveSchedulesAsync(long offeringId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
     {
-        var existing = await context.CourseOfferingSchedules
-            .Where(s => s.CourseOfferingId == offeringId)
-            .ToListAsync(cancellationToken);
-
-        context.CourseOfferingSchedules.RemoveRange(existing);
-
+        var existing = await _context.CourseOfferingSchedules.Where(s => s.CourseOfferingId == offeringId).ToListAsync(cancellationToken);
+        _context.CourseOfferingSchedules.RemoveRange(existing);
         foreach (var slot in slots)
         {
-            context.CourseOfferingSchedules.Add(new CourseOfferingSchedule(offeringId, slot.DayOfWeek, slot.StartTime, slot.EndTime));
+            _context.CourseOfferingSchedules.Add(new CourseOfferingSchedule(offeringId, slot.DayOfWeek, slot.StartTime, slot.EndTime));
         }
     }
 
-    public void Add(CourseOffering offering) => context.CourseOfferings.Add(offering);
+    public void Add(CourseOffering offering) => _context.CourseOfferings.Add(offering);
 }

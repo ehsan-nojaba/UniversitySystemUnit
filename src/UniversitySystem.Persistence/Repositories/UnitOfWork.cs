@@ -6,7 +6,7 @@ namespace UniversitySystem.Persistence.Repositories;
 /// <summary>
 /// تغییرات ریپازیتوری‌های همان درخواست را با DbContext مشترک ذخیره می‌کند؛ منطق آموزشی ندارد.
 /// </summary>
-public sealed class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
+public sealed class UnitOfWork(ApplicationDbContext _context) : IUnitOfWork
 {
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => context.SaveChangesAsync(cancellationToken);
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);
 }

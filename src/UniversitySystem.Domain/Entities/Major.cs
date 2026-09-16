@@ -1,7 +1,6 @@
 using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
-
 /// <summary>
 /// رشته تحصیلی دانشجو؛ برای پیدا کردن چارت درسی مناسب استفاده می‌شود.
 /// </summary>
@@ -11,7 +10,6 @@ public class Major : BaseAuditableEntity
     public string Code { get; private set; } = default!;
     public string Title { get; private set; } = default!;
     public bool IsActive { get; private set; }
-
     public Department Department { get; private set; } = default!;
 
     private readonly List<Student> _students = new();
@@ -20,12 +18,16 @@ public class Major : BaseAuditableEntity
     private readonly List<Curriculum> _curriculums = new();
     public IReadOnlyCollection<Curriculum> Curriculums => _curriculums.AsReadOnly();
 
-    private Major() { }
+    private Major()
+    {
+    }
 
     public Major(long departmentId, string code, string title)
     {
         if (departmentId <= 0)
+        {
             throw new ArgumentException("Major must have a valid Department.", nameof(departmentId));
+        }
 
         DepartmentId = departmentId;
         Code = code.Trim();
@@ -34,6 +36,5 @@ public class Major : BaseAuditableEntity
     }
 
     public void Activate() => IsActive = true;
-
     public void Deactivate() => IsActive = false;
 }

@@ -8,21 +8,18 @@ using UniversitySystem.Application.Features.TeachingAssignments.Repositories;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.TeachingAssignments.Services;
-
 /// <summary>
 /// اجرای قواعد و هماهنگی عملیات بخش «تخصیص استاد به ارائه درس»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
 /// </summary>
-public sealed class TeachingAssignmentService(
-    ITeachingAssignmentRepository repository,
-    IUnitOfWork unitOfWork,
-    IDateTimeProvider dateTimeProvider,
-    ICourseOfferingRepository offeringRepository,
-    IProfessorScheduleConflictChecker conflictChecker) : ITeachingAssignmentService
+public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider, ICourseOfferingRepository offeringRepository, IProfessorScheduleConflictChecker conflictChecker) : ITeachingAssignmentService
 {
     public async Task<ICollection<TeachingAssignmentDto>> GetAssignmentsAsync(long courseOfferingId, CancellationToken cancellationToken = default)
     {
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
-        if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        if (offering is null)
+        {
+            throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        }
 
         return await repository.GetAssignmentsByOfferingIdAsync(courseOfferingId, cancellationToken);
     }
@@ -30,29 +27,37 @@ public sealed class TeachingAssignmentService(
     public async Task<TeachingAssignmentDto> AssignProfessorAsync(long courseOfferingId, long professorId, CancellationToken cancellationToken = default)
     {
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
-        if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        if (offering is null)
+        {
+            throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        }
 
         var professor = await repository.GetProfessorAsync(professorId, cancellationToken);
-        if (professor is null) throw new NotFoundException(nameof(Professor), professorId);
+        if (professor is null)
+        {
+            throw new NotFoundException(nameof(Professor), professorId);
+        }
 
         var isAssigned = await repository.IsProfessorAssignedAsync(courseOfferingId, professorId, cancellationToken);
-        if (isAssigned) throw new BusinessException("این استاد قبلاً به این ارائه تخصیص داده شده است.");
+        if (isAssigned)
+        {
+            throw new BusinessException("این استاد قبلاً به این ارائه تخصیص داده شده است.");
+        }
 
         var term = await offeringRepository.GetAcademicTermAsync(offering.AcademicTermId, cancellationToken);
         if (!offering.IsActive || term is null || !term.IsActive)
+        {
             throw new BusinessException("Offering and academic term must be active.");
+        }
+
         var schedules = await offeringRepository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
-        await conflictChecker.CheckProfessorAssignmentAsync(courseOfferingId, professorId,
-            schedules.Select(s => new CourseOfferingScheduleSlotDto
-            { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), cancellationToken);
+        await conflictChecker.CheckProfessorAssignmentAsync(courseOfferingId, professorId, schedules.Select(s => new CourseOfferingScheduleSlotDto { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), cancellationToken);
         var assignedAt = dateTimeProvider.UtcNow;
         var assignment = new TeachingAssignment(courseOfferingId, professorId, assignedAt);
         repository.Add(assignment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        var (requested, priority) = await repository.GetProfessorCourseRequestInfoAsync(professorId, offering.AcademicTermId, offering.CourseId, cancellationToken);
+        var(requested, priority) = await repository.GetProfessorCourseRequestInfoAsync(professorId, offering.AcademicTermId, offering.CourseId, cancellationToken);
         var fullName = await repository.GetProfessorFullNameAsync(professorId, cancellationToken);
-
         return new TeachingAssignmentDto
         {
             TeachingAssignmentId = assignment.Id,
@@ -67,10 +72,16 @@ public sealed class TeachingAssignmentService(
     public async Task RemoveAssignmentAsync(long courseOfferingId, long professorId, CancellationToken cancellationToken = default)
     {
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
-        if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        if (offering is null)
+        {
+            throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
+        }
 
         var assignment = await repository.GetAssignmentAsync(courseOfferingId, professorId, cancellationToken);
-        if (assignment is null) throw new NotFoundException("تخصیص تدریس مورد نظر یافت نشد.");
+        if (assignment is null)
+        {
+            throw new NotFoundException("تخصیص تدریس مورد نظر یافت نشد.");
+        }
 
         repository.Remove(assignment);
         await unitOfWork.SaveChangesAsync(cancellationToken);

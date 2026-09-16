@@ -1,7 +1,6 @@
 using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
-
 /// <summary>
 /// دانشکده؛ بالاترین سطح ساختار آموزشی این پروژه و محل گروه‌های آموزشی است.
 /// </summary>
@@ -14,15 +13,21 @@ public class Faculty : BaseAuditableEntity
     private readonly List<Department> _departments = new();
     public IReadOnlyCollection<Department> Departments => _departments.AsReadOnly();
 
-    private Faculty() { }
+    private Faculty()
+    {
+    }
 
     public Faculty(string code, string title)
     {
         if (string.IsNullOrWhiteSpace(code))
+        {
             throw new ArgumentException("Faculty code cannot be empty.", nameof(code));
+        }
 
         if (string.IsNullOrWhiteSpace(title))
+        {
             throw new ArgumentException("Faculty title cannot be empty.", nameof(title));
+        }
 
         Code = code.Trim();
         Title = title.Trim();
@@ -30,6 +35,5 @@ public class Faculty : BaseAuditableEntity
     }
 
     public void Activate() => IsActive = true;
-
     public void Deactivate() => IsActive = false;
 }

@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using UniversitySystem.Persistence.Data;
-namespace UniversitySystem.IntegrationTests;
 
+namespace UniversitySystem.IntegrationTests;
 public sealed class UniversityApiFactory : WebApplicationFactory<Program>
 {
     private readonly SqliteConnection connection = new("Data Source=:memory:");
@@ -28,9 +28,13 @@ public sealed class UniversityApiFactory : WebApplicationFactory<Program>
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
         });
     }
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        if (disposing) connection.Dispose();
+        if (disposing)
+        {
+            connection.Dispose();
+        }
     }
 }

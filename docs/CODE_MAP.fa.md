@@ -411,3 +411,26 @@
 - `tests/UniversitySystem.IntegrationTests/UniversityApiFactory.cs`: میزبان مستقل تست با SQLite موقت؛ تست‌ها از دیتابیس اصلی استفاده نمی‌کنند.
 - `tests/UniversitySystem.UnitTests`: بررسی‌های کوچک اعتبارسنجی، خطاها و سرویس‌های هویت.
 - `tests/UniversitySystem.IntegrationTests`: بررسی HTTP، نقش‌ها و بخش‌های آموزشی؛ اجرای کامل آن‌ها برای مرحله بعد باقی مانده است.
+
+## APIهای راه‌اندازی UI — UiSupport
+
+| فایل | مسئولیت |
+|---|---|
+| [AcademicTermOptionDto.cs](../src/UniversitySystem.Application/Features/UiSupport/DTOs/AcademicTermOptionDto.cs) | گزینه انتخاب ترم در UI، همراه وضعیت فعالیت و تاریخ شروع و پایان. |
+| [CourseOptionDto.cs](../src/UniversitySystem.Application/Features/UiSupport/DTOs/CourseOptionDto.cs) | مشخصات درس فعال برای فرم درخواست استاد و ایجاد ارائه آموزش؛ مجاز بودن درس دانشجو API جدا دارد. |
+| [CurrentUserDto.cs](../src/UniversitySystem.Application/Features/UiSupport/DTOs/CurrentUserDto.cs) | اطلاعات حساب جاری برای راه‌اندازی UI؛ اطلاعات حساس رمز در پاسخ وجود ندارد. |
+| [ProfessorOptionDto.cs](../src/UniversitySystem.Application/Features/UiSupport/DTOs/ProfessorOptionDto.cs) | مشخصات استاد دارای حساب فعال، برای انتخاب استاد توسط آموزش. |
+| [StudentProfileDto.cs](../src/UniversitySystem.Application/Features/UiSupport/DTOs/StudentProfileDto.cs) | پروفایل نمایشی دانشجو همراه شماره دانشجویی، رشته و سال ورود. |
+| [GetAcademicTermsQuery.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetAcademicTerms/GetAcademicTermsQuery.cs) | درخواست خواندن GetAcademicTerms برای راه‌اندازی UI. |
+| [GetAcademicTermsQueryHandler.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetAcademicTerms/GetAcademicTermsQueryHandler.cs) | تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF. |
+| [GetActiveCoursesQuery.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetActiveCourses/GetActiveCoursesQuery.cs) | درخواست خواندن GetActiveCourses برای راه‌اندازی UI. |
+| [GetActiveCoursesQueryHandler.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetActiveCourses/GetActiveCoursesQueryHandler.cs) | تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF. |
+| [GetActiveProfessorsQuery.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetActiveProfessors/GetActiveProfessorsQuery.cs) | درخواست خواندن GetActiveProfessors برای راه‌اندازی UI. |
+| [GetActiveProfessorsQueryHandler.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetActiveProfessors/GetActiveProfessorsQueryHandler.cs) | تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF. |
+| [GetCurrentUserQuery.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetCurrentUser/GetCurrentUserQuery.cs) | درخواست خواندن GetCurrentUser برای راه‌اندازی UI. |
+| [GetCurrentUserQueryHandler.cs](../src/UniversitySystem.Application/Features/UiSupport/Queries/GetCurrentUser/GetCurrentUserQueryHandler.cs) | تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF. |
+| [IUiSupportRepository.cs](../src/UniversitySystem.Application/Features/UiSupport/Repositories/IUiSupportRepository.cs) | قرارداد خواندن اطلاعات راه‌اندازی فرم‌ها و حساب جاری؛ کوئری EF در Persistence اجرا می‌شود. |
+| [UiSupportService.cs](../src/UniversitySystem.Application/Features/UiSupport/Services/UiSupportService.cs) | فهرست‌های فرم و پروفایل حساب جاری را فراهم می‌کند؛ مالک حساب از هویت احراز‌شده تعیین می‌شود. |
+| [UiSupportRepository.cs](../src/UniversitySystem.Persistence/Repositories/UiSupportRepository.cs) | خواندن فهرست‌ها و پروفایل از EF، بدون داده رمز |
+| [LookupController.cs](../src/UniversitySystem.Api/Controllers/LookupController.cs) | مسیرهای انتخاب ترم، درس و استاد با دسترسی نقش‌ها |
+| [CurrentUserController.cs](../src/UniversitySystem.Api/Controllers/CurrentUserController.cs) | مسیر دریافت اطلاعات حساب جاری |

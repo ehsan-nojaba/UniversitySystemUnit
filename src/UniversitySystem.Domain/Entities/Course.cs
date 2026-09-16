@@ -1,7 +1,6 @@
 using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
-
 /// <summary>
 /// تعریف پایه درس شامل کد، عنوان و تعداد واحد؛ مستقل از ترم، استاد و ظرفیت کلاس است.
 /// </summary>
@@ -18,7 +17,9 @@ public class Course : BaseAuditableEntity
     private readonly List<CourseOffering> _offerings = new();
     public IReadOnlyCollection<CourseOffering> Offerings => _offerings.AsReadOnly();
 
-    private Course() { }
+    private Course()
+    {
+    }
 
     public Course(string code, string title, int credits)
     {
@@ -32,10 +33,11 @@ public class Course : BaseAuditableEntity
     {
         bool alreadyExists = _prerequisites.Any(p => p.PrerequisiteCourseId == prerequisiteCourseId);
         if (!alreadyExists)
+        {
             _prerequisites.Add(new CoursePrerequisite(Id, prerequisiteCourseId));
+        }
     }
 
     public void Activate() => IsActive = true;
-
     public void Deactivate() => IsActive = false;
 }

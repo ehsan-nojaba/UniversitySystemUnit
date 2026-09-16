@@ -1,7 +1,6 @@
 using UniversitySystem.Domain.Common;
 
 namespace UniversitySystem.Domain.Entities;
-
 /// <summary>
 /// ارائه واقعی یک درس در یک ترم، همراه ظرفیت و وضعیت فعالیت؛ تخصیص استاد و زمان کلاس به آن متصل می‌شوند.
 /// </summary>
@@ -11,7 +10,6 @@ public class CourseOffering : BaseAuditableEntity
     public long AcademicTermId { get; private set; }
     public int Capacity { get; private set; }
     public bool IsActive { get; private set; }
-
     public Course Course { get; private set; } = default!;
     public AcademicTerm AcademicTerm { get; private set; } = default!;
 
@@ -24,18 +22,26 @@ public class CourseOffering : BaseAuditableEntity
     private readonly List<CourseOfferingSchedule> _schedules = new();
     public IReadOnlyCollection<CourseOfferingSchedule> Schedules => _schedules.AsReadOnly();
 
-    private CourseOffering() { }
+    private CourseOffering()
+    {
+    }
 
     public CourseOffering(long courseId, long academicTermId, int capacity)
     {
         if (courseId <= 0)
+        {
             throw new ArgumentException("CourseOffering must have a valid Course.", nameof(courseId));
+        }
 
         if (academicTermId <= 0)
+        {
             throw new ArgumentException("CourseOffering must have a valid AcademicTerm.", nameof(academicTermId));
+        }
 
         if (capacity <= 0)
+        {
             throw new ArgumentException("Capacity must be a positive number.", nameof(capacity));
+        }
 
         CourseId = courseId;
         AcademicTermId = academicTermId;
@@ -46,12 +52,13 @@ public class CourseOffering : BaseAuditableEntity
     public void UpdateCapacity(int capacity)
     {
         if (capacity <= 0)
+        {
             throw new ArgumentException("Capacity must be a positive number.", nameof(capacity));
+        }
 
         Capacity = capacity;
     }
 
     public void Activate() => IsActive = true;
-
     public void Deactivate() => IsActive = false;
 }

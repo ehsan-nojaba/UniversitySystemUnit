@@ -1,0 +1,177 @@
+using Swashbuckle.AspNetCore.Swagger;
+using System.Text.Json;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+using UniversitySystem.Application.Common.Interfaces;
+using UniversitySystem.Application.Features.Auth.Commands.Login;
+using UniversitySystem.Application.Features.CourseOfferings.DTOs;
+using UniversitySystem.Application.Features.Enrollments.DTOs;
+using UniversitySystem.Application.Features.UiSupport.DTOs;
+using UniversitySystem.Domain.Constants;
+using UniversitySystem.Domain.Entities;
+using UniversitySystem.Persistence.Data;
+
+namespace UniversitySystem.IntegrationTests.Controllers;
+public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityApiFactory>
+{
+    private readonly UniversityApiFactory factory;
+    public UiReadyWorkflowIntegrationTests(UniversityApiFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    [Fact]
+    public async Task Student_Professor_Admin_Workflow_Is_Ready_For_Ui()
+    {
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        var term = new AcademicTerm("T" + suffix, "ترم نمونه", DateTime.UtcNow, DateTime.UtcNow.AddMonths(4));
+        var faculty = new Faculty("F" + suffix, "دانشکده");
+        db.AddRange(term, faculty);
+        await db.SaveChangesAsync();
+        var department = new Department(faculty.Id, "D" + suffix, "گروه");
+        db.Add(department);
+        await db.SaveChangesAsync();
+        var major = new Major(department.Id, "M" + suffix, "مهندسی کامپیوتر");
+        var course = new Course("C" + suffix, "پایگاه داده", 3);
+        var inactive = new Course("I" + suffix, "غیرفعال", 3);
+        inactive.Deactivate();
+        var studentUser = new User("s" + suffix, hasher.Hash("TestPassword123!"), "دانشجو", "نمونه");
+        var professorUser = new User("p" + suffix, hasher.Hash("TestPassword123!"), "استاد", "نمونه");
+        var adminUser = new User("a" + suffix, hasher.Hash("TestPassword123!"), "آموزش", "نمونه");
+        db.AddRange(major, course, inactive, studentUser, professorUser, adminUser);
+        await db.SaveChangesAsync();
+        var student = new Student(studentUser.Id, "S" + suffix, major.Id, 1403);
+        var professor = new Professor(professorUser.Id, "P" + suffix);
+        var curriculum = new Curriculum(major.Id, "چارت", suffix);
+        curriculum.AddCourse(course.Id, 1, true);
+        db.AddRange(student, professor, curriculum);
+        await db.SaveChangesAsync();
+        foreach (var pair in new[]
+        {
+            (studentUser, RoleNames.Student),
+            (professorUser, RoleNames.Professor),
+            (adminUser, RoleNames.EducationAdmin)
+        }
+
+        )
+        {
+            var role = db.Roles.FirstOrDefault(r => r.Name == pair.Item2);
+            if (role is null)
+            {
+                role = new Role(pair.Item2);
+                db.Add(role);
+                await db.SaveChangesAsync();
+            }
+
+            pair.Item1.AssignRole(role);
+        }
+
+        await db.SaveChangesAsync();
+        using var studentClient = await LoginAsync(studentUser.Username);
+        using var professorClient = await LoginAsync(professorUser.Username);
+        using var adminClient = await LoginAsync(adminUser.Username);
+        var me = await studentClient.GetFromJsonAsync<CurrentUserDto>("/api/v1/auth/me");
+        Assert.Equal(student.Id, me!.Student!.Id);
+        Assert.Contains(RoleNames.Student, me.Roles);
+        Assert.Equal(HttpStatusCode.Forbidden, (await studentClient.GetAsync("/api/v1/lookups/professors")).StatusCode);
+        var courses = await professorClient.GetFromJsonAsync<List<CourseOptionDto>>("/api/v1/lookups/courses");
+        Assert.Contains(courses!, c => c.Id == course.Id);
+        Assert.DoesNotContain(courses!, c => c.Id == inactive.Id);
+        var terms = await studentClient.GetFromJsonAsync<List<AcademicTermOptionDto>>("/api/v1/lookups/academic-terms");
+        Assert.Contains(terms!, t => t.Id == term.Id);
+        var professors = await adminClient.GetFromJsonAsync<List<ProfessorOptionDto>>("/api/v1/lookups/professors");
+        Assert.Contains(professors!, p => p.Id == professor.Id);
+        var studentPath = $"/api/v1/student/pre-registration/{term.Id}";
+        Assert.Equal(HttpStatusCode.OK, (await studentClient.PutAsJsonAsync(studentPath, new { courses = new[] { new { courseId = course.Id, priority = 1 } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await studentClient.PostAsync(studentPath + "/submit", null)).StatusCode);
+        var professorPath = $"/api/v1/professor/teaching-request/{term.Id}";
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 1 } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath + "/availability", new { availability = new[] { new { dayOfWeek = 6, startTime = "08:00:00", endTime = "12:00:00" } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PostAsync(professorPath + "/submit", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 2 } } })).StatusCode);
+        var created = await adminClient.PostAsJsonAsync("/api/v1/admin/course-offerings", new { academicTermId = term.Id, courseId = course.Id, capacity = 1 });
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var offering = (await created.Content.ReadFromJsonAsync<CourseOfferingDto>())!;
+        var offeringPath = $"/api/v1/admin/course-offerings/{offering.CourseOfferingId}";
+        Assert.Equal(HttpStatusCode.Created, (await adminClient.PostAsJsonAsync(offeringPath + "/professors", new { professorId = professor.Id })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await adminClient.PutAsJsonAsync(offeringPath + "/schedule", new { slots = new[] { new { dayOfWeek = 6, startTime = "08:00:00", endTime = "10:00:00" } } })).StatusCode);
+        var resultResponse = await studentClient.GetAsync(studentPath + "/result");
+        Assert.Equal(HttpStatusCode.OK, resultResponse.StatusCode);
+        using var result = JsonDocument.Parse(await resultResponse.Content.ReadAsStringAsync());
+        var resultOffering = result.RootElement.GetProperty("courses")[0].GetProperty("offerings")[0];
+        Assert.Equal(1, resultOffering.GetProperty("remainingCapacity").GetInt32());
+        Assert.Equal(professor.Id, resultOffering.GetProperty("professors")[0].GetProperty("professorId").GetInt64());
+        Assert.Equal(1, resultOffering.GetProperty("schedule").GetArrayLength());
+        var enrollmentResponse = await studentClient.PostAsJsonAsync("/api/v1/student/enrollments", new { courseOfferingId = offering.CourseOfferingId });
+        Assert.Equal(HttpStatusCode.Created, enrollmentResponse.StatusCode);
+        var enrollment = (await enrollmentResponse.Content.ReadFromJsonAsync<EnrollmentDto>())!;
+        Assert.Equal(course.Id, enrollment.CourseId);
+        Assert.Equal(HttpStatusCode.BadRequest, (await studentClient.PostAsJsonAsync("/api/v1/student/enrollments", new { courseOfferingId = offering.CourseOfferingId })).StatusCode);
+        var enrollments = await studentClient.GetFromJsonAsync<List<EnrollmentDto>>($"/api/v1/student/enrollments?academicTermId={term.Id}");
+        Assert.Single(enrollments!);
+        Assert.Equal(HttpStatusCode.OK, (await adminClient.GetAsync($"/api/v1/admin/reports?academicTermId={term.Id}")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Cors_Only_Allows_Configured_Local_Ui_Origin()
+    {
+        using var client = factory.CreateClient();
+        foreach (var origin in new[]
+        {
+            "http://localhost:5173",
+            "https://untrusted.example"
+        }
+
+        )
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Options, "/api/v1/auth/login");
+            request.Headers.Add("Origin", origin);
+            request.Headers.Add("Access-Control-Request-Method", "POST");
+            request.Headers.Add("Access-Control-Request-Headers", "content-type");
+            var response = await client.SendAsync(request);
+            Assert.Equal(origin == "http://localhost:5173", response.Headers.Contains("Access-Control-Allow-Origin"));
+        }
+    }
+
+    [Fact]
+    public void Swagger_Exposes_The_Ui_Endpoints()
+    {
+        using var scope = factory.Services.CreateScope();
+        var document = scope.ServiceProvider.GetRequiredService<ISwaggerProvider>().GetSwagger("v1");
+        Assert.Contains("/api/v1/auth/me", document.Paths.Keys);
+        Assert.Contains("/api/v1/lookups/academic-terms", document.Paths.Keys);
+        Assert.Contains("/api/v1/lookups/courses", document.Paths.Keys);
+        Assert.Contains("/api/v1/lookups/professors", document.Paths.Keys);
+    }
+
+    [Fact]
+    public async Task Current_User_Rejects_Anonymous_And_Deactivated_Account()
+    {
+        using var client = factory.CreateClient();
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/auth/me")).StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var user = new User("inactive" + Guid.NewGuid().ToString("N"), "unused", "Inactive", "User");
+        user.Deactivate();
+        db.Add(user);
+        await db.SaveChangesAsync();
+        var token = scope.ServiceProvider.GetRequiredService<ITokenService>().GenerateToken(user, [RoleNames.Student]).Item1;
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/auth/me")).StatusCode);
+    }
+
+    private async Task<HttpClient> LoginAsync(string username)
+    {
+        var client = factory.CreateClient();
+        var response = await client.PostAsJsonAsync("/api/v1/auth/login", new { username, password = "TestPassword123!" });
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var login = (await response.Content.ReadFromJsonAsync<LoginResponse>())!;
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", login.AccessToken);
+        return client;
+    }
+}
