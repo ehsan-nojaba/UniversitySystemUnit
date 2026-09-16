@@ -1,9 +1,7 @@
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Abstracts password hashing and verification.
-/// Implementation lives in Infrastructure; Application never sees the algorithm details.
-/// Plain-text passwords must never be logged or stored.
+/// قرارداد هش و بررسی رمز؛ سرویس ورود را از روش فنی هش مستقل می‌کند.
 /// </summary>
 public interface IPasswordHasher
 {

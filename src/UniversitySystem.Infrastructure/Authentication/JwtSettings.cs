@@ -1,8 +1,7 @@
 namespace UniversitySystem.Infrastructure.Authentication;
 
 /// <summary>
-/// Strongly-typed configuration settings for JWT Bearer authentication.
-/// Bound to the "Jwt" section of the application configuration.
+/// تنظیمات توکن شامل صادرکننده، مخاطب، کلید امضا و مدت اعتبار؛ مدل آموزشی یا جدول دیتابیس نیست.
 /// </summary>
 public class JwtSettings
 {

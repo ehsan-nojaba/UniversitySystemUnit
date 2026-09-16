@@ -3,7 +3,7 @@ using FluentValidation;
 namespace UniversitySystem.Application.Features.AdminPreRegistration.Queries.GetCourseDemandSummary;
 
 /// <summary>
-/// Validator for <see cref="GetCourseDemandSummaryQuery"/>.
+/// اعتبارسنجی ورودی عملیات «دریافت تقاضای درس از درخواست‌های ارسال‌شده» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
 /// </summary>
 public sealed class GetCourseDemandSummaryQueryValidator
     : AbstractValidator<GetCourseDemandSummaryQuery>

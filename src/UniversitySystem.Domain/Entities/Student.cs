@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت دانشجو: نمایانگر پرونده تحصیلی دانشجو، شماره دانشجویی، رشته و سال ورود.
+/// پروفایل دانشجو؛ حساب کاربری را به شماره دانشجویی، رشته و سال ورود متصل می‌کند.
 /// </summary>
 public class Student : BaseAuditableEntity
 {

@@ -1,8 +1,10 @@
 using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
-using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEligibleCourses;
 
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Services;
 
+/// <summary>
+/// قرارداد عملیات بخش «پیش‌انتخاب واحد دانشجو»؛ پیاده‌سازی در سرویس هم‌نام قرار دارد.
+/// </summary>
 public interface IStudentPreRegistrationService
 {
     Task<StudentPreRegistrationDto> SaveDraftAsync(long academicTermId, ICollection<SelectedCourseItemDto> courses, CancellationToken cancellationToken = default);

@@ -1,3 +1,5 @@
+using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
+using UniversitySystem.Persistence.Data;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -11,13 +13,13 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
-public class StudentEligibleCoursesIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityApiFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly UniversityApiFactory _factory;
     private readonly HttpClient _client;
     private readonly ITokenService _tokenService;
 
-    public StudentEligibleCoursesIntegrationTests(WebApplicationFactory<Program> factory)
+    public StudentEligibleCoursesIntegrationTests(UniversityApiFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();

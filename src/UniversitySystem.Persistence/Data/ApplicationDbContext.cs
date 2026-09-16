@@ -1,11 +1,14 @@
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Common;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Persistence.Data;
 
+/// <summary>
+/// مرکز EF برای خواندن و ذخیره موجودیت‌ها؛ تنظیمات جدول‌ها را بارگذاری می‌کند و زمان‌های ثبت و ویرایش را به UTC می‌نویسد.
+/// </summary>
 public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     private readonly ICurrentUserService _currentUserService;
@@ -82,7 +85,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     private void PopulateAuditFields()
     {
-        var now = _dateTimeProvider.Now;
+        var now = _dateTimeProvider.UtcNow;
         var currentUserId = _currentUserService.UserId;
 
         foreach (var entry in ChangeTracker.Entries<BaseAuditableEntity>())

@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace UniversitySystem.Application.Common.Behaviors;
 
+/// <summary>
+/// اجرای درخواست‌های Application را برای پیگیری در لاگ ثبت می‌کند.
+/// </summary>
 public sealed class LoggingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

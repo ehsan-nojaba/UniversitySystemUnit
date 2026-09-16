@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت پیش‌نیاز درس: تعریف‌کننده وابستگی پیش‌نیازی میان یک درس و درس پیش‌نیاز آن.
+/// رابط میان درس و پیش‌نیاز آن؛ برای بررسی مجاز بودن انتخاب درس استفاده می‌شود.
 /// </summary>
 public class CoursePrerequisite : BaseAuditableEntity
 {

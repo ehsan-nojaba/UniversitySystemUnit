@@ -1,10 +1,13 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
 
 namespace UniversitySystem.Persistence.Configurations;
 
+/// <summary>
+/// تنظیم نگاشت مدل ProfessorTeachingRequest به جدول دیتابیس، شامل ستون‌ها، رابطه‌ها و محدودیت‌ها؛ منطق فرایند در این فایل قرار ندارد.
+/// </summary>
 public sealed class ProfessorTeachingRequestConfiguration : IEntityTypeConfiguration<ProfessorTeachingRequest>
 {
     public void Configure(EntityTypeBuilder<ProfessorTeachingRequest> builder)

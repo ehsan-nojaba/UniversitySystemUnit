@@ -6,8 +6,7 @@ using UniversitySystem.Domain.Constants;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>
-/// Temporary endpoints for verifying Role-Based Authorization.
-/// Allows testing authorization policies for Student, Professor, and EducationAdmin roles.
+/// مسیرهای موقت بررسی دسترسی نقش‌ها؛ فرایند آموزشی واقعی انجام نمی‌دهد.
 /// </summary>
 [ApiController]
 [Route("api/v1/test")]

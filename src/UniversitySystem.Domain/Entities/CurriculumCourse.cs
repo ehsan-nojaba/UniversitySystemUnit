@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت درس چارت: ارتباط دهنده درس با چارت درسی مشخص، به همراه ترم پیشنهادی و اجباری بودن آن.
+/// عضویت یک درس در چارت؛ ترم پیشنهادی و الزامی بودن درس را نگه می‌دارد.
 /// </summary>
 public class CurriculumCourse : BaseAuditableEntity
 {

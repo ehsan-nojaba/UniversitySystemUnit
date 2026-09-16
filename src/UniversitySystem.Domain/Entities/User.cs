@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت کاربر: حساب کاربری پایه در سامانه جهت لاگین، احراز هویت و نگهداری اطلاعات هویتی.
+/// حساب ورود کاربر؛ نام کاربری، هش رمز و وضعیت فعال بودن را نگه می‌دارد و به نقش‌ها و پروفایل دانشجو یا استاد متصل است.
 /// </summary>
 public class User : BaseAuditableEntity
 {

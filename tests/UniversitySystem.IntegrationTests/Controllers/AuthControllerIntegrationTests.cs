@@ -7,11 +7,11 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
-public class AuthControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class AuthControllerIntegrationTests : IClassFixture<UniversityApiFactory>
 {
     private readonly HttpClient _client;
 
-    public AuthControllerIntegrationTests(WebApplicationFactory<Program> factory)
+    public AuthControllerIntegrationTests(UniversityApiFactory factory)
     {
         _client = factory.CreateClient();
     }

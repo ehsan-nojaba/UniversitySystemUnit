@@ -4,7 +4,7 @@ using UniversitySystem.Api.Infrastructure;
 namespace UniversitySystem.Api;
 
 /// <summary>
-/// Registers presentation and API-specific services into the dependency injection container.
+/// سرویس‌های Api را در DI ثبت می‌کند؛ نقطه اتصال قراردادها و پیاده‌سازی‌های این لایه است.
 /// </summary>
 public static class DependencyInjection
 {

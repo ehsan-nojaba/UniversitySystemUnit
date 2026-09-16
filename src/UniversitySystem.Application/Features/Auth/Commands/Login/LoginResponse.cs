@@ -1,5 +1,8 @@
 namespace UniversitySystem.Application.Features.Auth.Commands.Login;
 
+/// <summary>
+/// پاسخ ورود موفق شامل توکن دسترسی، زمان انقضا، شناسه و نام کاربر و نقش‌های او.
+/// </summary>
 public class LoginResponse
 {
     public string AccessToken { get; set; } = string.Empty;

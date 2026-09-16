@@ -2,6 +2,9 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 
+/// <summary>
+/// قرارداد عملیات بخش «ارائه درس و برنامه زمانی کلاس»؛ پیاده‌سازی در سرویس هم‌نام قرار دارد.
+/// </summary>
 public interface ICourseOfferingService
 {
     Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long academicTermId, CancellationToken cancellationToken = default);

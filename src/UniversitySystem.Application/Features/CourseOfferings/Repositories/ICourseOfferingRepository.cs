@@ -3,6 +3,9 @@ using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Repositories;
 
+/// <summary>
+/// قرارداد دسترسی به داده بخش «ارائه درس و برنامه زمانی کلاس»؛ خواندن و ثبت داده را از تصمیم‌های آموزشی سرویس جدا می‌کند.
+/// </summary>
 public interface ICourseOfferingRepository
 {
     Task<AcademicTerm?> GetAcademicTermAsync(long termId, CancellationToken cancellationToken = default);

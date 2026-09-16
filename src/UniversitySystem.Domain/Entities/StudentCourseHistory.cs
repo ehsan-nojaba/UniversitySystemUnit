@@ -4,7 +4,7 @@ using UniversitySystem.Domain.Enums;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت کارنامه و سابقه درسی دانشجو: ثبت نمرات و وضعیت قبولی/ردی دروس اخذ شده در ترم‌های گذشته.
+/// سابقه درس دانشجو شامل ترم، نمره و وضعیت قبولی؛ در بررسی درس‌های پاس‌شده و پیش‌نیازها استفاده می‌شود.
 /// </summary>
 public class StudentCourseHistory : BaseAuditableEntity
 {

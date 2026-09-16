@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت گروه آموزشی: دپارتمان یا گروه آموزشی تخصصی زیرمجموعه یک دانشکده.
+/// گروه آموزشی زیرمجموعه دانشکده؛ رشته‌های مرتبط را دسته‌بندی می‌کند.
 /// </summary>
 public class Department : BaseAuditableEntity
 {

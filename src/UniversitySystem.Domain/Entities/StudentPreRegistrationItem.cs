@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت آیتم پیش‌ثبت‌نام: هر درس انتخاب شده توسط دانشجو در فرم پیش‌ثبت‌نام به همراه اولویت ترجیحی (Priority).
+/// یک درس در درخواست پیش‌انتخاب؛ شناسه درس و اولویت دانشجو را نگه می‌دارد و ثبت‌نام قطعی نیست.
 /// </summary>
 public class StudentPreRegistrationItem : BaseAuditableEntity
 {

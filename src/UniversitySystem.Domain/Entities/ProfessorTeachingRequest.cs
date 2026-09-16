@@ -4,7 +4,7 @@ using UniversitySystem.Domain.Enums;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت درخواست تدریس استاد: ثبت درخواست استاد برای تدریس در یک ترم تحصیلی به همراه دروس و زمان‌های پیشنهادی.
+/// درخواست تدریس استاد برای یک ترم؛ درس‌ها، اولویت‌ها و زمان‌های آزاد را جمع می‌کند و پس از ارسال قابل ویرایش نیست.
 /// </summary>
 public class ProfessorTeachingRequest : BaseAuditableEntity
 {
@@ -35,9 +35,28 @@ public class ProfessorTeachingRequest : BaseAuditableEntity
     {
         EnsureEditable();
 
+        if (courseId <= 0 || priority <= 0) throw new ArgumentOutOfRangeException(nameof(courseId));
         bool alreadyAdded = _courses.Any(c => c.CourseId == courseId);
         if (!alreadyAdded)
             _courses.Add(new ProfessorTeachingRequestCourse(Id, courseId, priority));
+    }
+
+    public void UpdateCoursePriority(long courseId, int priority)
+    {
+        EnsureEditable();
+        var course = _courses.Single(c => c.CourseId == courseId);
+        course.UpdatePriority(priority);
+    }
+
+    public void ReplaceAvailability(IEnumerable<(DayOfWeek Day, TimeOnly Start, TimeOnly End)> intervals)
+    {
+        EnsureEditable();
+        var values = intervals.ToList();
+        if (values.Any(v => !Enum.IsDefined(v.Day) || v.Start >= v.End)
+            || values.Select((v, i) => values.Skip(i + 1).Any(n => v.Day == n.Day && v.Start < n.End && n.Start < v.End)).Any(x => x))
+            throw new InvalidOperationException("Availability intervals must be valid and cannot overlap.");
+        _availabilities.Clear();
+        foreach (var value in values) AddAvailability(value.Day, value.Start, value.End);
     }
 
     public void RemoveCourse(long courseId)
@@ -53,9 +72,12 @@ public class ProfessorTeachingRequest : BaseAuditableEntity
     {
         EnsureEditable();
 
+        if (!Enum.IsDefined(dayOfWeek)) throw new ArgumentOutOfRangeException(nameof(dayOfWeek));
         if (endTime <= startTime)
             throw new InvalidOperationException("EndTime must be after StartTime.");
 
+        if (_availabilities.Any(a => a.DayOfWeek == dayOfWeek && a.StartTime < endTime && startTime < a.EndTime))
+            throw new InvalidOperationException("Availability intervals cannot overlap.");
         bool alreadyExists = _availabilities.Any(a =>
             a.DayOfWeek == dayOfWeek &&
             a.StartTime == startTime &&

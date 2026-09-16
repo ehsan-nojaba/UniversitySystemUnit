@@ -4,9 +4,7 @@ using UniversitySystem.Application.Common.Interfaces;
 namespace UniversitySystem.Infrastructure.Authentication;
 
 /// <summary>
-/// Secure password hashing and verification using PBKDF2 with HMAC-SHA256.
-/// Implements constant-time comparison to protect against timing attacks.
-/// Plain-text passwords are never logged or stored.
+/// رمز را هش می‌کند و رمز ورودی را با هش ذخیره‌شده بررسی می‌کند؛ رمز خام ذخیره نمی‌شود.
 /// </summary>
 public sealed class PasswordHasher : IPasswordHasher
 {

@@ -5,6 +5,9 @@ using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به اطلاعات ترم، مشخصات درس، تعداد تقاضا و علاقه استاد برای برنامه‌ریزی؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class AdminPlanningRepository(ApplicationDbContext context) : IAdminPlanningRepository
 {
     public async Task<AcademicTermInfoModel?> GetAcademicTermInfoAsync(long termId, CancellationToken cancellationToken = default)

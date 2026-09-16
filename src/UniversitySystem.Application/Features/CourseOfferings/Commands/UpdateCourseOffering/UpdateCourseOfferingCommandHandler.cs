@@ -4,6 +4,9 @@ using UniversitySystem.Application.Features.CourseOfferings.Services;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Commands.UpdateCourseOffering;
 
+/// <summary>
+/// درخواست «ویرایش ظرفیت و وضعیت ارائه» را از MediatR دریافت می‌کند و به سرویس مربوط می‌سپارد؛ کوئری دیتابیس اجرا نمی‌کند.
+/// </summary>
 public sealed class UpdateCourseOfferingCommandHandler(ICourseOfferingService service)
     : IRequestHandler<UpdateCourseOfferingCommand, CourseOfferingDto>
 {

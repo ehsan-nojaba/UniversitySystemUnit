@@ -10,13 +10,13 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
-public class RoleBasedAuthorizationIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class RoleBasedAuthorizationIntegrationTests : IClassFixture<UniversityApiFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly UniversityApiFactory _factory;
     private readonly HttpClient _client;
     private readonly ITokenService _tokenService;
 
-    public RoleBasedAuthorizationIntegrationTests(WebApplicationFactory<Program> factory)
+    public RoleBasedAuthorizationIntegrationTests(UniversityApiFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();

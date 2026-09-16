@@ -4,7 +4,7 @@ using UniversitySystem.Domain.Enums;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت ثبت‌نام درس: نمایانگر ثبت‌نام قطعی دانشجو در یک درس ارائه‌شده در طول نیم‌سال تحصیلی.
+/// ثبت‌نام قطعی دانشجو در یک ارائه؛ زمان ثبت‌نام، وضعیت و نمره نهایی را نگه می‌دارد.
 /// </summary>
 public class Enrollment : BaseAuditableEntity
 {

@@ -5,6 +5,9 @@ using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.AdminPreRegistration.Services;
 
+/// <summary>
+/// اجرای قواعد و هماهنگی عملیات بخش «جمع‌بندی تقاضای درس دانشجویان»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
+/// </summary>
 public sealed class AdminPreRegistrationService(IAdminPreRegistrationRepository repository) : IAdminPreRegistrationService
 {
     public async Task<ICollection<CourseDemandDto>> GetCourseDemandSummaryAsync(long academicTermId, CancellationToken cancellationToken = default)

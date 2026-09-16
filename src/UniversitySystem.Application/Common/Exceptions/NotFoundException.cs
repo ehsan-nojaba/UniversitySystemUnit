@@ -1,8 +1,7 @@
 namespace UniversitySystem.Application.Common.Exceptions;
 
 /// <summary>
-/// Thrown when a requested resource cannot be found.
-/// Maps to HTTP 404 Not Found in the API layer.
+/// خطای پیدا نشدن اطلاعات درخواستی؛ در API به پاسخ ۴۰۴ تبدیل می‌شود.
 /// </summary>
 public sealed class NotFoundException : Exception
 {

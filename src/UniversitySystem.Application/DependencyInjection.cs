@@ -1,20 +1,15 @@
-using System.Reflection;
 using FluentValidation;
-using MediatR;
+using System.Reflection;
+using UniversitySystem.Application.Features.AdminReports.Services;
+using UniversitySystem.Application.Features.ProfessorTeachingRequests.Services;
+using UniversitySystem.Application.Features.StudentResults.Services;
 using Microsoft.Extensions.DependencyInjection;
 using UniversitySystem.Application.Common.Behaviors;
 
 namespace UniversitySystem.Application;
 
 /// <summary>
-/// Registers all Application layer services with the dependency injection container.
-/// Called once from the Composition Root (UniversitySystem.Api).
-///
-/// Responsibilities:
-///   - MediatR handlers (auto-discovered from this assembly)
-///   - Pipeline behaviors in execution order
-///   - FluentValidation validators (auto-discovered from this assembly)
-///   - AutoMapper profiles (auto-discovered from this assembly)
+/// سرویس‌های Application را در DI ثبت می‌کند؛ نقطه اتصال قراردادها و پیاده‌سازی‌های این لایه است.
 /// </summary>
 public static class DependencyInjection
 {
@@ -35,13 +30,6 @@ public static class DependencyInjection
 
         services.AddValidatorsFromAssembly(assembly);
 
-        services.AddAutoMapper(cfg =>
-        {
-            // License key is read from the AUTOMAPPER_LICENSE_KEY environment variable.
-            // See: https://automapper.io for community license details.
-            cfg.AddMaps(assembly);
-        });
-
         services.AddScoped<Common.Interfaces.IStudentCourseEligibilityService, Common.Services.StudentCourseEligibilityService>();
         services.AddScoped<Features.AdminPlanning.Services.IAdminPlanningService, Features.AdminPlanning.Services.AdminPlanningService>();
         services.AddScoped<Features.AdminPreRegistration.Services.IAdminPreRegistrationService, Features.AdminPreRegistration.Services.AdminPreRegistrationService>();
@@ -51,6 +39,10 @@ public static class DependencyInjection
         services.AddScoped<Features.CourseOfferings.Services.IProfessorScheduleConflictChecker, Features.CourseOfferings.Services.ProfessorScheduleConflictChecker>();
         services.AddScoped<Features.TeachingAssignments.Services.ITeachingAssignmentService, Features.TeachingAssignments.Services.TeachingAssignmentService>();
 
+        services.AddScoped<Features.Enrollments.Services.EnrollmentService>();
+        services.AddScoped<Features.StudentResults.Services.StudentResultService>();
+        services.AddScoped<Features.AdminReports.Services.AdminReportService>();
+        services.AddScoped<Features.ProfessorTeachingRequests.Services.ProfessorTeachingRequestService>();
         return services;
     }
 }

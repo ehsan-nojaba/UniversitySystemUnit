@@ -3,10 +3,11 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 
 /// <summary>
-/// سرویس بررسی تداخل زمانی و تطابق بازه حضور اساتید در زمان‌بندی ارائه دروس.
+/// مدل کمکی IProfessorScheduleConflictChecker؛ مسئولیت آن در راهنمای فارسی پروژه توضیح داده شده است.
 /// </summary>
 public interface IProfessorScheduleConflictChecker
 {
+    Task CheckProfessorAssignmentAsync(long courseOfferingId, long professorId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default);
     /// <summary>
     /// بررسی تداخل زمانی اساتید تخصیص‌یافته به یک ارائه درس با سایر ارائه‌های همان ترم
     /// و اعتبارسنجی انطباق با بازه‌های زمانی اعلام‌شده حضور استاد در آن ترم.

@@ -5,6 +5,9 @@ using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به تقاضای تجمیع‌شده از درخواست‌های ارسال‌شده دانشجویان؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class AdminPreRegistrationRepository(ApplicationDbContext context) : IAdminPreRegistrationRepository
 {
     public async Task<bool> AcademicTermExistsAsync(long termId, CancellationToken cancellationToken = default)

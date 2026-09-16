@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UniversitySystem.Domain.Enums;
 
+/// <summary>
+/// وضعیت ثبت‌نام قطعی: ثبت‌نام‌شده، گذرانده، مردود یا حذف‌شده.
+/// </summary>
 public enum EnrollmentStatus : byte
 {
     [Display(Name = "ثبت‌نام‌شده")]

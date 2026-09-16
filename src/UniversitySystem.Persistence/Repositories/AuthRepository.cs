@@ -5,6 +5,9 @@ using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به حساب کاربر و نقش‌های او برای ورود؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class AuthRepository(ApplicationDbContext context) : IAuthRepository
 {
     public async Task<User?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken = default)

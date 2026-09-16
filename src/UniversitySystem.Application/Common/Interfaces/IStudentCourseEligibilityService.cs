@@ -1,10 +1,9 @@
-using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEligibleCourses;
+using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Service to compute course eligibility for students.
-/// Reusable across query and command handlers without duplication of eligibility rules.
+/// قرارداد محاسبه درس‌های مجاز دانشجو با توجه به چارت، درس‌های پاس‌شده و پیش‌نیازها؛ در پیش‌انتخاب و ثبت‌نام دوباره استفاده می‌شود.
 /// </summary>
 public interface IStudentCourseEligibilityService
 {

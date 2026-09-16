@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UniversitySystem.Api.Contracts;
 using UniversitySystem.Application.Features.StudentPreRegistration.Commands.SaveStudentPreRegistration;
 using UniversitySystem.Application.Features.StudentPreRegistration.Commands.SubmitStudentPreRegistration;
 using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
@@ -11,8 +12,7 @@ using UniversitySystem.Domain.Constants;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>
-/// Student pre-registration endpoints.
-/// Restricted strictly to authenticated students.
+/// ورودی HTTP بخش «درس‌های مجاز، ذخیره و ارسال پیش‌انتخاب دانشجو»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
 [ApiController]
 [Route("api/v1/student/pre-registration")]
@@ -86,12 +86,4 @@ public sealed class StudentPreRegistrationController : ControllerBase
     {
         return Ok(await _sender.Send(new SubmitStudentPreRegistrationCommand { AcademicTermId = academicTermId }, cancellationToken));
     }
-}
-
-/// <summary>
-/// HTTP request body for saving student pre-registration.
-/// </summary>
-public class SaveStudentPreRegistrationRequest
-{
-    public ICollection<SelectedCourseItemDto> Courses { get; set; } = [];
 }

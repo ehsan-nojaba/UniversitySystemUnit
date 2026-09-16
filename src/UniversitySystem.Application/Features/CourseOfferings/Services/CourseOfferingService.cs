@@ -2,14 +2,19 @@ using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 using UniversitySystem.Application.Features.CourseOfferings.Repositories;
+using UniversitySystem.Application.Features.Enrollments.Repositories;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 
+/// <summary>
+/// اجرای قواعد و هماهنگی عملیات بخش «ارائه درس و برنامه زمانی کلاس»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
+/// </summary>
 public sealed class CourseOfferingService(
     ICourseOfferingRepository repository,
     IUnitOfWork unitOfWork,
-    IProfessorScheduleConflictChecker conflictChecker) : ICourseOfferingService
+    IProfessorScheduleConflictChecker conflictChecker,
+    IEnrollmentRepository enrollmentRepository) : ICourseOfferingService
 {
     public async Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
@@ -53,6 +58,8 @@ public sealed class CourseOfferingService(
         var offering = await repository.GetByIdWithCourseAsync(id, cancellationToken);
         if (offering is null) throw new NotFoundException(nameof(CourseOffering), id);
 
+        if (await enrollmentRepository.GetEnrollmentCountAsync(id, cancellationToken) > capacity)
+            throw new BusinessException("Capacity cannot be less than the number of enrolled students.");
         offering.UpdateCapacity(capacity);
         if (isActive.HasValue)
         {
@@ -90,6 +97,9 @@ public sealed class CourseOfferingService(
         var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
         if (offering is null) throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
 
+        var term = await repository.GetAcademicTermAsync(offering.AcademicTermId, cancellationToken);
+        if (!offering.IsActive || term is null || !term.IsActive)
+            throw new BusinessException("Offering and academic term must be active.");
         await conflictChecker.CheckConflictsAsync(courseOfferingId, slots, cancellationToken);
 
         await repository.SaveSchedulesAsync(courseOfferingId, slots, cancellationToken);

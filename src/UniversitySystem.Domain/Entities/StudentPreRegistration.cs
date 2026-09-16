@@ -4,7 +4,7 @@ using UniversitySystem.Domain.Enums;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت فرم پیش‌ثبت‌نام دانشجو: ثبت درخواست و لیست دروس انتخابی دانشجو برای یک نیم‌سال تحصیلی در وضعیت‌های پیش‌نویس، ثبت نهایی یا لغو.
+/// درخواست پیش‌انتخاب دانشجو برای یک ترم؛ درس‌های موردنیاز و وضعیت پیش‌نویس یا ارسال‌شده را مدیریت می‌کند.
 /// </summary>
 public class StudentPreRegistration : BaseAuditableEntity
 {

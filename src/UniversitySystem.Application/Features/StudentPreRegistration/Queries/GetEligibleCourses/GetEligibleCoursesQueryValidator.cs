@@ -3,7 +3,7 @@ using FluentValidation;
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEligibleCourses;
 
 /// <summary>
-/// Validates <see cref="GetEligibleCoursesQuery"/> parameters.
+/// اعتبارسنجی ورودی عملیات «دریافت درس‌های مجاز دانشجو» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
 /// </summary>
 public sealed class GetEligibleCoursesQueryValidator : AbstractValidator<GetEligibleCoursesQuery>
 {

@@ -4,6 +4,9 @@ using UniversitySystem.Application.Features.Auth.Repositories;
 
 namespace UniversitySystem.Application.Features.Auth.Services;
 
+/// <summary>
+/// حساب فعال کاربر را پیدا می‌کند، رمز را بررسی می‌کند و با نقش‌های کاربر توکن ورود می‌سازد.
+/// </summary>
 public sealed class AuthService(IAuthRepository repository, IPasswordHasher passwordHasher, ITokenService tokenService) : IAuthService
 {
     public async Task<LoginResponse> LoginAsync(string username, string password, CancellationToken cancellationToken = default)

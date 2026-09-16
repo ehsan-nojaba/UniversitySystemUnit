@@ -1,7 +1,7 @@
 namespace UniversitySystem.Application.Features.AdminPreRegistration.DTOs;
 
 /// <summary>
-/// Aggregated student demand metrics for a course within a specific academic term.
+/// خلاصه تقاضای یک درس از پیش‌انتخاب‌های ارسال‌شده دانشجویان؛ برای تصمیم ارائه استفاده می‌شود.
 /// </summary>
 public class CourseDemandDto
 {

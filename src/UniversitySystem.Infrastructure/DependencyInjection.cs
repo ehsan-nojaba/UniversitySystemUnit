@@ -11,7 +11,7 @@ using UniversitySystem.Infrastructure.Services;
 namespace UniversitySystem.Infrastructure;
 
 /// <summary>
-/// Registers Infrastructure layer services into the ASP.NET Core dependency injection container.
+/// سرویس‌های Infrastructure را در DI ثبت می‌کند؛ نقطه اتصال قراردادها و پیاده‌سازی‌های این لایه است.
 /// </summary>
 public static class DependencyInjection
 {

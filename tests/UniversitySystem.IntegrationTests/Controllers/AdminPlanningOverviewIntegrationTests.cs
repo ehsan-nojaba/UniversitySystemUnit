@@ -1,3 +1,4 @@
+using UniversitySystem.Persistence.Data;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -11,13 +12,13 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
-public class AdminPlanningOverviewIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApiFactory>
 {
     private readonly HttpClient _client;
     private readonly IServiceProvider _services;
     private readonly ITokenService _tokenService;
 
-    public AdminPlanningOverviewIntegrationTests(WebApplicationFactory<Program> factory)
+    public AdminPlanningOverviewIntegrationTests(UniversityApiFactory factory)
     {
         _client = factory.CreateClient();
         _services = factory.Services;

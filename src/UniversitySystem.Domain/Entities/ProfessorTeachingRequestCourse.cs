@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت درس انتخابی تدریس: درسی که استاد تمایل به تدریس آن در ترم موردنظر دارد به همراه اولویت.
+/// یک درس پیشنهادی استاد در درخواست تدریس؛ علاقه و اولویت استاد را ثبت می‌کند و به معنی تخصیص نهایی نیست.
 /// </summary>
 public class ProfessorTeachingRequestCourse : BaseAuditableEntity
 {
@@ -14,6 +14,11 @@ public class ProfessorTeachingRequestCourse : BaseAuditableEntity
     public ProfessorTeachingRequest ProfessorTeachingRequest { get; private set; } = default!;
     public Course Course { get; private set; } = default!;
 
+    internal void UpdatePriority(int priority)
+    {
+        if (priority <= 0) throw new ArgumentOutOfRangeException(nameof(priority));
+        Priority = priority;
+    }
     private ProfessorTeachingRequestCourse() { }
 
     internal ProfessorTeachingRequestCourse(long professorTeachingRequestId, long courseId, int priority)

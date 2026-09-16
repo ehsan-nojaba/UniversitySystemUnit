@@ -4,8 +4,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Commands.SaveStudentPreRegistration;
 
 /// <summary>
-/// Command to create or update a student's pre-registration draft for an academic term.
-/// The student identity is derived from the current user security context.
+/// درخواست انجام عملیات «ذخیره یا ویرایش پیش‌نویس پیش‌انتخاب»؛ داده ورودی عملیات را نگه می‌دارد و به Handler ارسال می‌شود.
 /// </summary>
 public class SaveStudentPreRegistrationCommand : IRequest<StudentPreRegistrationDto>
 {

@@ -3,7 +3,7 @@ using FluentValidation;
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Commands.SaveStudentPreRegistration;
 
 /// <summary>
-/// Validates <see cref="SaveStudentPreRegistrationCommand"/> inputs.
+/// اعتبارسنجی ورودی عملیات «ذخیره یا ویرایش پیش‌نویس پیش‌انتخاب» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
 /// </summary>
 public sealed class SaveStudentPreRegistrationCommandValidator
     : AbstractValidator<SaveStudentPreRegistrationCommand>

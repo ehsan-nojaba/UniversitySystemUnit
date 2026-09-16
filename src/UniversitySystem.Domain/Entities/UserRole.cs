@@ -1,7 +1,7 @@
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت واسط کاربر-نقش: انتساب یک نقش مشخص به یک کاربر خاص در سیستم.
+/// رابط میان حساب کاربر و نقش؛ یک کاربر می‌تواند چند نقش داشته باشد.
 /// </summary>
 public class UserRole
 {

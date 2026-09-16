@@ -1,15 +1,23 @@
 using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Common.Interfaces;
+using UniversitySystem.Application.Features.CourseOfferings.DTOs;
+using UniversitySystem.Application.Features.CourseOfferings.Repositories;
+using UniversitySystem.Application.Features.CourseOfferings.Services;
 using UniversitySystem.Application.Features.TeachingAssignments.DTOs;
 using UniversitySystem.Application.Features.TeachingAssignments.Repositories;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.TeachingAssignments.Services;
 
+/// <summary>
+/// اجرای قواعد و هماهنگی عملیات بخش «تخصیص استاد به ارائه درس»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
+/// </summary>
 public sealed class TeachingAssignmentService(
     ITeachingAssignmentRepository repository,
     IUnitOfWork unitOfWork,
-    IDateTimeProvider dateTimeProvider) : ITeachingAssignmentService
+    IDateTimeProvider dateTimeProvider,
+    ICourseOfferingRepository offeringRepository,
+    IProfessorScheduleConflictChecker conflictChecker) : ITeachingAssignmentService
 {
     public async Task<ICollection<TeachingAssignmentDto>> GetAssignmentsAsync(long courseOfferingId, CancellationToken cancellationToken = default)
     {
@@ -30,6 +38,13 @@ public sealed class TeachingAssignmentService(
         var isAssigned = await repository.IsProfessorAssignedAsync(courseOfferingId, professorId, cancellationToken);
         if (isAssigned) throw new BusinessException("این استاد قبلاً به این ارائه تخصیص داده شده است.");
 
+        var term = await offeringRepository.GetAcademicTermAsync(offering.AcademicTermId, cancellationToken);
+        if (!offering.IsActive || term is null || !term.IsActive)
+            throw new BusinessException("Offering and academic term must be active.");
+        var schedules = await offeringRepository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
+        await conflictChecker.CheckProfessorAssignmentAsync(courseOfferingId, professorId,
+            schedules.Select(s => new CourseOfferingScheduleSlotDto
+            { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), cancellationToken);
         var assignedAt = dateTimeProvider.UtcNow;
         var assignment = new TeachingAssignment(courseOfferingId, professorId, assignedAt);
         repository.Add(assignment);

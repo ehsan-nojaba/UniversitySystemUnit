@@ -5,6 +5,9 @@ using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.AdminPlanning.Services;
 
+/// <summary>
+/// تقاضای پیش‌انتخاب ارسال‌شده و علاقه استادهای ارسال‌شده را برای هر درس کنار هم قرار می‌دهد و بر اساس تقاضا مرتب می‌کند؛ تصمیم ارائه را خودکار نمی‌گیرد.
+/// </summary>
 public sealed class AdminPlanningService(IAdminPlanningRepository repository) : IAdminPlanningService
 {
     public async Task<AcademicPlanningOverviewDto> GetPlanningOverviewAsync(long academicTermId, CancellationToken cancellationToken = default)
@@ -17,8 +20,9 @@ public sealed class AdminPlanningService(IAdminPlanningRepository repository) : 
         var professorInterests = await repository.GetSubmittedProfessorInterestsAsync(academicTermId, cancellationToken);
 
         var demandDict = studentDemands.ToDictionary(x => x.CourseId, x => x.DemandCount);
-        var profInterestsGrouped = ( from p in professorInterests group p by p.CourseId into g
-            select g
+        var profInterestsGrouped = (from p in professorInterests
+                                    group p by p.CourseId into g
+                                    select g
         ).ToDictionary(
             g => g.Key,
             g => (ICollection<ProfessorInterestDto>)(

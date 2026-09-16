@@ -5,8 +5,7 @@ using UniversitySystem.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Composition Root ───────────────────────────────────────────────────────────
-// Each layer registers its own dependencies. No implementation details leak here.
+// نقطه شروع برنامه؛ هر لایه سرویس‌های خودش را ثبت می‌کند و API آن‌ها را به هم متصل می‌کند.
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -44,6 +43,6 @@ app.MapControllers();
 app.Run();
 
 /// <summary>
-/// Expose Program class for WebApplicationFactory in Integration Tests.
+/// مدل کمکی Program؛ مسئولیت آن در راهنمای فارسی پروژه توضیح داده شده است.
 /// </summary>
 public partial class Program;

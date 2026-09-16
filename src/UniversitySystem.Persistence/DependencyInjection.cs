@@ -2,17 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using UniversitySystem.Application.Common.Interfaces;
+using UniversitySystem.Application.Features.AdminReports.Repositories;
+using UniversitySystem.Application.Features.CourseOfferings.Repositories;
+using UniversitySystem.Application.Features.ProfessorTeachingRequests.Repositories;
+using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence;
 
 /// <summary>
-/// Registers all Persistence layer services with the dependency injection container.
-/// Called once from the Composition Root (UniversitySystem.Api).
-///
-/// Responsibilities:
-///   - EF Core DbContext registration with SQL Server provider
-///   - IApplicationDbContext binding to ApplicationDbContext implementation
+/// سرویس‌های Persistence را در DI ثبت می‌کند؛ نقطه اتصال قراردادها و پیاده‌سازی‌های این لایه است.
 /// </summary>
 public static class DependencyInjection
 {
@@ -36,12 +35,13 @@ public static class DependencyInjection
                         typeof(ApplicationDbContext).Assembly.FullName);
                 }));
 
-        // Bind the Application contract to the concrete implementation.
-        // Handlers use IApplicationDbContext, never ApplicationDbContext directly.
+        // قرارداد داخلی دیتابیس؛ Handlerها از سرویس‌های Application و ریپازیتوری‌ها استفاده می‌کنند.
         services.AddScoped<IApplicationDbContext>(
             provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<IUnitOfWork, Repositories.UnitOfWork>();
+        services.AddScoped<IStudentEligibilityRepository, Repositories.StudentEligibilityRepository>();
+        services.AddScoped<Application.Features.CourseOfferings.Repositories.IProfessorScheduleRepository, Repositories.ProfessorScheduleRepository>();
         services.AddScoped<Application.Features.AdminPlanning.Repositories.IAdminPlanningRepository, Repositories.AdminPlanningRepository>();
         services.AddScoped<Application.Features.AdminPreRegistration.Repositories.IAdminPreRegistrationRepository, Repositories.AdminPreRegistrationRepository>();
         services.AddScoped<Application.Features.Auth.Repositories.IAuthRepository, Repositories.AuthRepository>();
@@ -49,6 +49,9 @@ public static class DependencyInjection
         services.AddScoped<Application.Features.CourseOfferings.Repositories.ICourseOfferingRepository, Repositories.CourseOfferingRepository>();
         services.AddScoped<Application.Features.TeachingAssignments.Repositories.ITeachingAssignmentRepository, Repositories.TeachingAssignmentRepository>();
 
+        services.AddScoped<Application.Features.Enrollments.Repositories.IEnrollmentRepository, Repositories.EnrollmentRepository>();
+        services.AddScoped<UniversitySystem.Application.Features.AdminReports.Repositories.IAdminReportRepository, Repositories.AdminReportRepository>();
+        services.AddScoped<UniversitySystem.Application.Features.ProfessorTeachingRequests.Repositories.IProfessorTeachingRequestRepository, Repositories.ProfessorTeachingRequestRepository>();
         return services;
     }
 }

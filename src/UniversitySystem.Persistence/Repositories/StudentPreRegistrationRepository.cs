@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using StudentPreRegistrationEntity = UniversitySystem.Domain.Entities.StudentPreRegistration;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
-using StudentPreRegistrationEntity = UniversitySystem.Domain.Entities.StudentPreRegistration;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به پروفایل دانشجو، ترم و درخواست پیش‌انتخاب با درس‌های آن؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class StudentPreRegistrationRepository(ApplicationDbContext context) : IStudentPreRegistrationRepository
 {
     public async Task<Student?> GetStudentByUserIdAsync(long userId, CancellationToken cancellationToken = default)

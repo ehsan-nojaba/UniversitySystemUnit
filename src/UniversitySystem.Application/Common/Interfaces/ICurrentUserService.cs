@@ -1,12 +1,7 @@
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Provides identity information for the currently authenticated user.
-///
-/// Used across Application and Persistence layers (e.g. audit fields).
-/// Must be null-safe: for anonymous requests or background workers,
-/// <see cref="UserId"/> returns <c>null</c>, <see cref="IsAuthenticated"/> returns <c>false</c>,
-/// and <see cref="Roles"/> returns an empty list.
+/// قرارداد دریافت شناسه و نقش کاربر جاری؛ مانع نیاز سرویس آموزشی به HttpContext می‌شود.
 /// </summary>
 public interface ICurrentUserService
 {

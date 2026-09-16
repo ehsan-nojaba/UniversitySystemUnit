@@ -4,8 +4,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetStudentPreRegistration;
 
 /// <summary>
-/// Retrieves the pre-registration record for the current authenticated student in the specified academic term.
-/// Returns null if no pre-registration exists yet.
+/// درخواست خواندن اطلاعات برای «مشاهده پیش‌انتخاب دانشجو»؛ هدف آن دریافت پاسخ بدون تغییر داده است.
 /// </summary>
 public class GetStudentPreRegistrationQuery : IRequest<StudentPreRegistrationDto?>
 {

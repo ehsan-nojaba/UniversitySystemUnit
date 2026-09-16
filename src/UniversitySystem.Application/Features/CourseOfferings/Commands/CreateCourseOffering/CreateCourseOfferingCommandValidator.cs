@@ -2,6 +2,9 @@ using FluentValidation;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Commands.CreateCourseOffering;
 
+/// <summary>
+/// اعتبارسنجی ورودی عملیات «ایجاد ارائه درس با ظرفیت مشخص» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
+/// </summary>
 public sealed class CreateCourseOfferingCommandValidator : AbstractValidator<CreateCourseOfferingCommand>
 {
     public CreateCourseOfferingCommandValidator()

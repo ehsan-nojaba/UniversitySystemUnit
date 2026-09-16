@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت درس: نمایانگر یک درس دانشگاهی شامل کد، عنوان، تعداد واحد و پیش‌نیازهای آن.
+/// تعریف پایه درس شامل کد، عنوان و تعداد واحد؛ مستقل از ترم، استاد و ظرفیت کلاس است.
 /// </summary>
 public class Course : BaseAuditableEntity
 {

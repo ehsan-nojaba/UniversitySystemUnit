@@ -1,7 +1,7 @@
 namespace UniversitySystem.Application.Features.CourseOfferings.DTOs;
 
 /// <summary>
-/// مدل انتقال داده برای بازخوانی زمان‌بندی ارائه درس.
+/// پاسخ یک بازه ثبت‌شده کلاس شامل شناسه بازه و ارائه، روز هفته و زمان شروع و پایان.
 /// </summary>
 public class CourseOfferingScheduleDto
 {

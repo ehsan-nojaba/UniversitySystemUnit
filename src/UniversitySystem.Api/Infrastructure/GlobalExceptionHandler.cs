@@ -5,7 +5,7 @@ using UniversitySystem.Application.Common.Exceptions;
 namespace UniversitySystem.Api.Infrastructure;
 
 /// <summary>
-/// Centralized global exception handler for translating application exceptions into standard RFC 7807 ProblemDetails.
+/// خطاهای اعتبارسنجی، دسترسی و قواعد کسب‌وکار را به پاسخ HTTP استاندارد ProblemDetails تبدیل می‌کند.
 /// </summary>
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {

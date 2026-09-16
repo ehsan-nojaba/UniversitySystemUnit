@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت زمان‌بندی برگزاری درس: مشخص‌کننده روز هفته و ساعت شروع و پایان یک ارائه درس.
+/// روز و بازه زمانی برگزاری یک ارائه درس؛ برای نمایش برنامه و بررسی تداخل استفاده می‌شود.
 /// </summary>
 public class CourseOfferingSchedule : BaseAuditableEntity
 {

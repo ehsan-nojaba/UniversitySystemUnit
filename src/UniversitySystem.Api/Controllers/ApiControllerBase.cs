@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>
-/// Base API controller defining global route conventions and API behaviors.
-/// Route format: /api/v1/[controller]
+/// کلاس پایه مشترک کنترلرهای API؛ محل ویژگی‌های مشترک HTTP است.
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]

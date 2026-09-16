@@ -1,3 +1,5 @@
+using UniversitySystem.Api.Contracts;
+using UniversitySystem.Persistence.Data;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -14,13 +16,13 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
-public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<UniversityApiFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly UniversityApiFactory _factory;
     private readonly HttpClient _client;
     private readonly ITokenService _tokenService;
 
-    public PreRegistrationSubmitAndDemandIntegrationTests(WebApplicationFactory<Program> factory)
+    public PreRegistrationSubmitAndDemandIntegrationTests(UniversityApiFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();

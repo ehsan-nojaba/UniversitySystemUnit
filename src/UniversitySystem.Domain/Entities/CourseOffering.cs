@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت ارائه درس: مشخص‌کننده ارائه یک درس در یک ترم تحصیلی با ظرفیت کلاسی معین.
+/// ارائه واقعی یک درس در یک ترم، همراه ظرفیت و وضعیت فعالیت؛ تخصیص استاد و زمان کلاس به آن متصل می‌شوند.
 /// </summary>
 public class CourseOffering : BaseAuditableEntity
 {

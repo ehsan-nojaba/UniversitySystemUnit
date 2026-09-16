@@ -4,7 +4,10 @@ using ValidationException = UniversitySystem.Application.Common.Exceptions.Valid
 
 namespace UniversitySystem.Application.Common.Behaviors;
 
-public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>  where TRequest : notnull
+/// <summary>
+/// قبل از اجرای Handler، اعتبارسنج‌های درخواست را اجرا می‌کند و ورودی نامعتبر را متوقف می‌کند.
+/// </summary>
+public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 

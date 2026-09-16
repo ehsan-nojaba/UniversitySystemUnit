@@ -3,7 +3,7 @@ using MediatR;
 namespace UniversitySystem.Application.Features.Auth.Commands.Login;
 
 /// <summary>
-/// Command to authenticate an existing active user and issue a JWT token.
+/// درخواست انجام عملیات «ورود کاربر و دریافت توکن»؛ داده ورودی عملیات را نگه می‌دارد و به Handler ارسال می‌شود.
 /// </summary>
 public class LoginCommand : IRequest<LoginResponse>
 {

@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت رشته تحصیلی: رشته تخصصی دانشگاهی متعلق به یک گروه آموزشی که دانشجویان در آن تحصیل می‌کنند.
+/// رشته تحصیلی دانشجو؛ برای پیدا کردن چارت درسی مناسب استفاده می‌شود.
 /// </summary>
 public class Major : BaseAuditableEntity
 {

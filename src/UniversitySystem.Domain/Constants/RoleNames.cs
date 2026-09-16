@@ -1,8 +1,7 @@
 namespace UniversitySystem.Domain.Constants;
 
 /// <summary>
-/// Defines the central constant role names used for Role-Based Authorization across the system.
-/// Corresponds to records in the Role entity table.
+/// نام ثابت نقش‌های دسترسی؛ برای یکسان بودن نام نقش در مجوز API و توکن استفاده می‌شود.
 /// </summary>
 public static class RoleNames
 {

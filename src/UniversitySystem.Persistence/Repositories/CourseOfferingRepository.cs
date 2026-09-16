@@ -6,6 +6,9 @@ using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به مشخصات ارائه، درس، ترم و بازه‌های کلاس؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class CourseOfferingRepository(ApplicationDbContext context) : ICourseOfferingRepository
 {
     public async Task<AcademicTerm?> GetAcademicTermAsync(long termId, CancellationToken cancellationToken = default)

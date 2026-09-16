@@ -3,7 +3,7 @@ using UniversitySystem.Application.Common.Interfaces;
 namespace UniversitySystem.Infrastructure.Services;
 
 /// <summary>
-/// Provides current system date and time using <see cref="DateTime.Now"/>.
+/// زمان محلی و UTC سیستم را ارائه می‌دهد؛ ذخیره زمان‌های آموزشی و حسابرسی از UTC استفاده می‌کند.
 /// </summary>
 public class SystemDateTimeProvider : IDateTimeProvider
 {

@@ -1,5 +1,8 @@
 namespace UniversitySystem.Application.Features.CourseOfferings.DTOs;
 
+/// <summary>
+/// پاسخ مشخصات ارائه: شناسه ارائه، ترم، مشخصات درس، ظرفیت و وضعیت فعالیت.
+/// </summary>
 public class CourseOfferingDto
 {
     public long CourseOfferingId { get; set; }

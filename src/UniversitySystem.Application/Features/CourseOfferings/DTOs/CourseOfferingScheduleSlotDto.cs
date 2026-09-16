@@ -1,7 +1,7 @@
 namespace UniversitySystem.Application.Features.CourseOfferings.DTOs;
 
 /// <summary>
-/// اسلات زمانی برای ثبت یا به‌روزرسانی زمان‌بندی ارائه درس.
+/// ورودی روز و زمان کلاس برای ذخیره برنامه؛ با زمان آزاد پیشنهادی استاد متفاوت است.
 /// </summary>
 public class CourseOfferingScheduleSlotDto
 {

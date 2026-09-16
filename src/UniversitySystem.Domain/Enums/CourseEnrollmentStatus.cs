@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UniversitySystem.Domain.Enums;
 
+/// <summary>
+/// وضعیت سابقه درسی: در جریان، قبول، مردود یا حذف‌شده.
+/// </summary>
 public enum CourseEnrollmentStatus : byte
 {
     [Display(Name = "در جریان")]

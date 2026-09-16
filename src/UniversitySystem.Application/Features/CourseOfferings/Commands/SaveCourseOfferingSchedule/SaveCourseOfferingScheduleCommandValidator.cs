@@ -3,6 +3,9 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Commands.SaveCourseOfferingSchedule;
 
+/// <summary>
+/// اعتبارسنجی ورودی عملیات «ذخیره زمان‌بندی ارائه با کنترل تداخل» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
+/// </summary>
 public sealed class SaveCourseOfferingScheduleCommandValidator : AbstractValidator<SaveCourseOfferingScheduleCommand>
 {
     public SaveCourseOfferingScheduleCommandValidator()
@@ -23,6 +26,7 @@ public sealed class SaveCourseOfferingScheduleCommandValidator : AbstractValidat
         });
 
         RuleFor(x => x.Slots)
+            .NotNull()
             .Must(NotHaveDuplicateSlots)
             .WithMessage("اسلات تکراری مجاز نیست.")
             .Must(NotHaveOverlappingSlots)

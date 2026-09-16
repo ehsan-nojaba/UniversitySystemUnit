@@ -1,9 +1,12 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Persistence.Configurations;
 
+/// <summary>
+/// تنظیم نگاشت مدل Student به جدول دیتابیس، شامل ستون‌ها، رابطه‌ها و محدودیت‌ها؛ منطق فرایند در این فایل قرار ندارد.
+/// </summary>
 public sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
 {
     public void Configure(EntityTypeBuilder<Student> builder)

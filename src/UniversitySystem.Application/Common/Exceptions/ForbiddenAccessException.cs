@@ -1,8 +1,7 @@
 namespace UniversitySystem.Application.Common.Exceptions;
 
 /// <summary>
-/// Thrown when the current user does not have permission to perform an action.
-/// Maps to HTTP 403 Forbidden in the API layer.
+/// خطای نداشتن اجازه انجام عملیات؛ در API به پاسخ ۴۰۳ تبدیل می‌شود.
 /// </summary>
 public sealed class ForbiddenAccessException : Exception
 {

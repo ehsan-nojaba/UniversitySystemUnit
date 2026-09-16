@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت چارت درسی: سرفصل و برنامه آموزشی مصوب یک رشته تحصیلی در یک نسخه مشخص.
+/// چارت یک رشته با نسخه مشخص؛ درس‌های پیشنهادی و الزامی رشته را در خود جمع می‌کند.
 /// </summary>
 public class Curriculum : BaseAuditableEntity
 {

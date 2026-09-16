@@ -9,8 +9,7 @@ using UniversitySystem.Domain.Entities;
 namespace UniversitySystem.Infrastructure.Authentication;
 
 /// <summary>
-/// Generates JSON Web Tokens (JWT) using HMAC-SHA256 according to application settings.
-/// Embeds standard claims: sub (UserId), unique_name/name (Username), given_name (FullName), roles, and jti.
+/// توکن JWT را با شناسه و نقش‌های کاربر و زمان انقضا تولید می‌کند.
 /// </summary>
 public sealed class TokenService : ITokenService
 {

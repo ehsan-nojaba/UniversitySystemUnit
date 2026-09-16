@@ -1,10 +1,7 @@
 namespace UniversitySystem.Application.Common.Interfaces;
 
 /// <summary>
-/// Provides the current date and time.
-///
-/// Abstracting <see cref="DateTime.Now"/> behind an interface makes
-/// time-dependent code deterministic and testable.
+/// قرارداد دریافت زمان؛ امکان استفاده از زمان کنترل‌شده در تست را فراهم می‌کند.
 /// </summary>
 public interface IDateTimeProvider
 {

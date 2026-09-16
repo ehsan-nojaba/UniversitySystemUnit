@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت زمان‌بندی حضور استاد: بازه‌های زمانی اعلام آمادگی استاد در روزهای هفته جهت تدریس.
+/// بازه زمانی آزاد استاد در یک روز هفته، متعلق به درخواست تدریس؛ با زمان‌بندی نهایی کلاس تفاوت دارد.
 /// </summary>
 public class ProfessorAvailability : BaseAuditableEntity
 {

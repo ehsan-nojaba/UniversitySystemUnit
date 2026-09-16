@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace UniversitySystem.Application.Common.Behaviors;
 
+/// <summary>
+/// مدت اجرای درخواست Application را اندازه می‌گیرد و درخواست کند را در لاگ مشخص می‌کند.
+/// </summary>
 public sealed class PerformanceBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

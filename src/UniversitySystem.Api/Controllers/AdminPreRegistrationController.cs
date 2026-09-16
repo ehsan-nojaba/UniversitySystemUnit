@@ -8,8 +8,7 @@ using UniversitySystem.Domain.Constants;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>
-/// Admin pre-registration management and reporting endpoints.
-/// Restricted strictly to EducationAdmin role.
+/// ورودی HTTP بخش «تقاضای دانشجوها برای درس‌های یک ترم»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
 [ApiController]
 [Route("api/v1/admin/pre-registration")]

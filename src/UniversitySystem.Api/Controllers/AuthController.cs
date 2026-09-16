@@ -6,7 +6,7 @@ using UniversitySystem.Application.Features.Auth.Commands.Login;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>
-/// Authentication endpoints for issuing JWT access tokens.
+/// ورودی HTTP بخش «ورود و دریافت توکن»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
 public sealed class AuthController : ApiControllerBase
 {
@@ -22,7 +22,7 @@ public sealed class AuthController : ApiControllerBase
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<LoginResponse>> Login( [FromBody] LoginCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
     {
         var response = await _sender.Send(command, cancellationToken);
         return Ok(response);

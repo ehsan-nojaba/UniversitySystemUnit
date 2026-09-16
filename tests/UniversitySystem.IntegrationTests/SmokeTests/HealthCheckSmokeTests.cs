@@ -4,11 +4,11 @@ using Xunit;
 
 namespace UniversitySystem.IntegrationTests.SmokeTests;
 
-public class HealthCheckSmokeTests : IClassFixture<WebApplicationFactory<Program>>
+public class HealthCheckSmokeTests : IClassFixture<UniversityApiFactory>
 {
     private readonly HttpClient _client;
 
-    public HealthCheckSmokeTests(WebApplicationFactory<Program> factory)
+    public HealthCheckSmokeTests(UniversityApiFactory factory)
     {
         _client = factory.CreateClient();
     }

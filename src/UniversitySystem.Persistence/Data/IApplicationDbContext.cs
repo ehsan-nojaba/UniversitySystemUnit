@@ -1,14 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Domain.Entities;
 
-namespace UniversitySystem.Application.Common.Interfaces;
+namespace UniversitySystem.Persistence.Data;
 
 /// <summary>
-/// Defines the minimal contract that Application layer Use Cases require from the database context.
-///
-/// Keeping this interface in the Application layer ensures that handlers never import
-/// a concrete EF Core type, maintaining Clean Architecture dependency direction:
-///     Application → (abstraction) ← Persistence
+/// قرارداد داخلی Persistence برای مجموعه‌های دیتابیس و آماده‌سازی داده تست؛ Application از ریپازیتوری‌های اختصاصی استفاده می‌کند.
 /// </summary>
 public interface IApplicationDbContext
 {

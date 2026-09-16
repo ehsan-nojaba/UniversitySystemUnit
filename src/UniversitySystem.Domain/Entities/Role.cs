@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Common;
 namespace UniversitySystem.Domain.Entities;
 
 /// <summary>
-/// موجودیت نقش کاربری: مشخص‌کننده نقش‌ها و سطوح دسترسی کاربران در سامانه دانشگاهی (مانند دانشجو، استاد، آموزش).
+/// نقش دسترسی مانند دانشجو، استاد یا آموزش؛ تعیین می‌کند کاربر اجازه استفاده از کدام API را دارد.
 /// </summary>
 public class Role : BaseAuditableEntity
 {

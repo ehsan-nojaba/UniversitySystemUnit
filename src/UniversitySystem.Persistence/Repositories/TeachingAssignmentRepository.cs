@@ -7,6 +7,9 @@ using UniversitySystem.Persistence.Data;
 
 namespace UniversitySystem.Persistence.Repositories;
 
+/// <summary>
+/// دسترسی EF به تخصیص استاد، پروفایل استاد و اطلاعات علاقه قبلی او به درس؛ تصمیم آموزشی در سرویس Application انجام می‌شود.
+/// </summary>
 public sealed class TeachingAssignmentRepository(ApplicationDbContext context) : ITeachingAssignmentRepository
 {
     public async Task<CourseOffering?> GetCourseOfferingAsync(long offeringId, CancellationToken cancellationToken = default)

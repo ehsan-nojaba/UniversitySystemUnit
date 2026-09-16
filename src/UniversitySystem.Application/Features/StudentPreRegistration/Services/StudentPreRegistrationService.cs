@@ -1,14 +1,16 @@
+using StudentPreRegistrationEntity = UniversitySystem.Domain.Entities.StudentPreRegistration;
 using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
-using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEligibleCourses;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
-using StudentPreRegistrationEntity = UniversitySystem.Domain.Entities.StudentPreRegistration;
 
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Services;
 
+/// <summary>
+/// اجرای قواعد و هماهنگی عملیات بخش «پیش‌انتخاب واحد دانشجو»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
+/// </summary>
 public sealed class StudentPreRegistrationService(
     IStudentPreRegistrationRepository repository,
     IUnitOfWork unitOfWork,

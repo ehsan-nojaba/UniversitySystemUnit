@@ -3,6 +3,9 @@ using UniversitySystem.Domain.Entities;
 
 namespace UniversitySystem.Application.Features.TeachingAssignments.Repositories;
 
+/// <summary>
+/// قرارداد دسترسی به داده بخش «تخصیص استاد به ارائه درس»؛ خواندن و ثبت داده را از تصمیم‌های آموزشی سرویس جدا می‌کند.
+/// </summary>
 public interface ITeachingAssignmentRepository
 {
     Task<CourseOffering?> GetCourseOfferingAsync(long offeringId, CancellationToken cancellationToken = default);

@@ -5,9 +5,7 @@ using UniversitySystem.Application.Common.Interfaces;
 namespace UniversitySystem.Infrastructure.Services;
 
 /// <summary>
-/// Implements <see cref="ICurrentUserService"/> using <see cref="IHttpContextAccessor"/>.
-/// Extracts user identity, authentication state, and assigned roles from the current HTTP request.
-/// Designed to be completely null-safe for unauthenticated/anonymous requests and background executions.
+/// شناسه و نقش کاربر احراز هویت‌شده را از درخواست HTTP دریافت می‌کند؛ در حالت ناشناس خروجی امن و خالی دارد.
 /// </summary>
 public class CurrentUserService : ICurrentUserService
 {

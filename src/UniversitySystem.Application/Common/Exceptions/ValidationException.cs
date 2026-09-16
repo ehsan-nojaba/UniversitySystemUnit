@@ -3,9 +3,7 @@ using FluentValidation.Results;
 namespace UniversitySystem.Application.Common.Exceptions;
 
 /// <summary>
-/// Thrown when one or more FluentValidation rules fail for a request.
-/// Carries a structured collection of field-level errors so that
-/// the API layer can translate them into a RFC 7807 ProblemDetails response.
+/// خطای ورودی نامعتبر همراه خطاهای هر فیلد؛ در API به پاسخ ۴۰۰ تبدیل می‌شود.
 /// </summary>
 public sealed class ValidationException : Exception
 {

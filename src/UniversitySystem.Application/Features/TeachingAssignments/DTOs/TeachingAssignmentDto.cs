@@ -1,5 +1,8 @@
 namespace UniversitySystem.Application.Features.TeachingAssignments.DTOs;
 
+/// <summary>
+/// پاسخ تخصیص استاد: شناسه تخصیص، نام استاد، زمان تخصیص و اینکه استاد قبلاً این درس را درخواست کرده است یا خیر.
+/// </summary>
 public class TeachingAssignmentDto
 {
     public long TeachingAssignmentId { get; set; }

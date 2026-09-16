@@ -3,8 +3,7 @@ using FluentValidation;
 namespace UniversitySystem.Application.Features.Auth.Commands.Login;
 
 /// <summary>
-/// Validator for <see cref="LoginCommand"/>.
-/// Ensures required fields meet length and format constraints before handler execution.
+/// اعتبارسنجی ورودی عملیات «ورود کاربر و دریافت توکن» پیش از اجرای منطق؛ قواعد وابسته به داده در سرویس بررسی می‌شوند.
 /// </summary>
 public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
