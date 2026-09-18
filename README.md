@@ -22,7 +22,23 @@
 ```powershell
 dotnet restore
 dotnet build
+dotnet test
 dotnet run --project src/UniversitySystem.Api
+```
+
+Database configuration is read from:
+
+```text
+ConnectionStrings:DefaultConnection
+```
+
+JWT configuration uses:
+
+```text
+Jwt:Issuer
+Jwt:Audience
+Jwt:SecretKey
+Jwt:ExpirationMinutes
 ```
 
 Scalar در محیط Development در مسیر `/scalar/v1` و سلامت API در `/health` قرار دارد. تنظیم اتصال موجود پروژه در این مرحله تغییر نکرده است. برنامه در زمان شروع میگریشن خودکار اجرا نمی‌کند.
