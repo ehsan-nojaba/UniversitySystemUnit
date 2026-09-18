@@ -23,12 +23,12 @@ public sealed class ProfessorScheduleConflictChecker(IProfessorScheduleRepositor
             {
                 if (professor.OtherSchedules.Any(s => s.DayOfWeek == slot.DayOfWeek && s.StartTime < slot.EndTime && slot.StartTime < s.EndTime))
                 {
-                    throw new BusinessException($"Schedule conflict for professor {professor.FullName}.");
+                    throw new BusinessException($"زمان کلاس با برنامه دیگر استاد {professor.FullName} تداخل دارد.");
                 }
 
-                if (professor.Availability.Count > 0 && !professor.Availability.Any(a => a.DayOfWeek == slot.DayOfWeek && a.StartTime <= slot.StartTime && slot.EndTime <= a.EndTime))
+                if (!professor.Availability.Any(a => a.DayOfWeek == slot.DayOfWeek && a.StartTime <= slot.StartTime && slot.EndTime <= a.EndTime))
                 {
-                    throw new BusinessException($"Schedule is outside availability for professor {professor.FullName}.");
+                    throw new BusinessException($"زمان کلاس باید داخل پیشنهاد زمانی استاد {professor.FullName} برای همین درس باشد.");
                 }
             }
     }

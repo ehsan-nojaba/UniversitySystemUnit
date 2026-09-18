@@ -74,6 +74,27 @@ public class ProfessorTeachingRequest : BaseAuditableEntity
         if (course is not null)
         {
             _courses.Remove(course);
+            _availabilities.RemoveAll(a => a.CourseId == courseId);
+        }
+    }
+
+    /// <summary>جایگزینی پیشنهادهای زمانی به تفکیک درس؛ هم‌پوشانی پیشنهاد دو درس متفاوت مجاز است و تصمیم نهایی با آموزش است.</summary>
+    public void ReplaceCourseAvailability(IEnumerable<(long CourseId, DayOfWeek Day, TimeOnly Start, TimeOnly End)> intervals)
+    {
+        EnsureEditable();
+        var values = intervals.ToList();
+        if (values.Any(v => !_courses.Any(c => c.CourseId == v.CourseId) || !Enum.IsDefined(v.Day) || v.Start >= v.End))
+        {
+            throw new InvalidOperationException("درس و بازه زمانی پیشنهادی معتبر نیست.");
+        }
+        if (values.Select((v, i) => values.Skip(i + 1).Any(n => n.CourseId == v.CourseId && n.Day == v.Day && n.Start < v.End && v.Start < n.End)).Any(x => x))
+        {
+            throw new InvalidOperationException("بازه‌های پیشنهادی یک درس نباید هم‌پوشانی داشته باشند.");
+        }
+        _availabilities.Clear();
+        foreach (var value in values)
+        {
+            _availabilities.Add(new ProfessorAvailability(Id, value.Day, value.Start, value.End, value.CourseId));
         }
     }
 

@@ -13,7 +13,6 @@ namespace UniversitySystem.Infrastructure.Authentication;
 /// </summary>
 public sealed class TokenService : ITokenService
 {
-    private const string DevelopmentFallbackSecret = "DEVELOPMENT_SECRET_KEY_NOT_FOR_PRODUCTION_USE_AT_LEAST_32_BYTES_LONG_12345";
     private readonly JwtSettings _jwtSettings;
 
     public TokenService(IOptions<JwtSettings> jwtOptions)
@@ -24,15 +23,12 @@ public sealed class TokenService : ITokenService
     /// <inheritdoc />
     public (string AccessToken, DateTime ExpiresAt) GenerateToken(User user, IEnumerable<string> roles)
     {
-        var secretKey = !string.IsNullOrWhiteSpace(_jwtSettings.SecretKey) && _jwtSettings.SecretKey.Length >= 32
-            ? _jwtSettings.SecretKey
-            : DevelopmentFallbackSecret;
-
-        var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+        var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
         var signingKey = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-        var expiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes > 0 ? _jwtSettings.ExpirationMinutes : 60);
+        var issuedAt = DateTime.UtcNow;
+        var expiresAt = issuedAt.AddMinutes(_jwtSettings.ExpirationMinutes);
 
         var claims = new List<Claim>
         {
@@ -44,7 +40,7 @@ public sealed class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        foreach (var role in roles)
+        foreach (var role in roles.Distinct(StringComparer.Ordinal))
         {
             if (!string.IsNullOrWhiteSpace(role))
             {
@@ -53,15 +49,14 @@ public sealed class TokenService : ITokenService
             }
         }
 
-        var issuer = !string.IsNullOrWhiteSpace(_jwtSettings.Issuer) ? _jwtSettings.Issuer : "UniversitySystem";
-        var audience = !string.IsNullOrWhiteSpace(_jwtSettings.Audience) ? _jwtSettings.Audience : "UniversitySystem";
-
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = expiresAt,
-            Issuer = issuer,
-            Audience = audience,
+            IssuedAt = issuedAt,
+            NotBefore = issuedAt,
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
             SigningCredentials = credentials
         };
 

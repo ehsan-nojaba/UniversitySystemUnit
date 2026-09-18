@@ -33,7 +33,7 @@ public sealed class StudentResultService(IStudentPreRegistrationRepository stude
         foreach (var item in registration.Items.OrderBy(i => i.Priority))
         {
             var offerings = new List<OfferingResultDto>();
-            foreach (var candidate in allOfferings.Where(o => o.CourseId == item.CourseId))
+            foreach (var candidate in allOfferings.Where(o => o.CourseId == item.CourseId && o.IsActive && o.IsFinalized))
             {
                 var offering = (await enrollmentRepository.GetOfferingAsync(candidate.CourseOfferingId, cancellationToken))!;
                 var count = await enrollmentRepository.GetEnrollmentCountAsync(offering.Id, cancellationToken);

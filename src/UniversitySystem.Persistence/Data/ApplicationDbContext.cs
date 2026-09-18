@@ -38,6 +38,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
     // ── People ────────────────────────────────────────────────────────────────────
     public DbSet<Student> Students => Set<Student>();
     public DbSet<Professor> Professors => Set<Professor>();
+    public DbSet<ProfessorCourse> ProfessorCourses => Set<ProfessorCourse>();
 
     // ── Courses ───────────────────────────────────────────────────────────────────
     public DbSet<Course> Courses => Set<Course>();

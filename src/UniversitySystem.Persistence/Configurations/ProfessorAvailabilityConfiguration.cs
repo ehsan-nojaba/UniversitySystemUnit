@@ -14,6 +14,7 @@ public sealed class ProfessorAvailabilityConfiguration : IEntityTypeConfiguratio
         builder.ToTable("ProfessorAvailabilities");
 
         builder.HasKey(pa => pa.Id);
+        builder.HasOne<Course>().WithMany().HasForeignKey(pa => pa.CourseId).OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(pa => pa.ProfessorTeachingRequestId)
             .IsRequired();

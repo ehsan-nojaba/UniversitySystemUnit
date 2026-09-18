@@ -11,11 +11,12 @@ public sealed class SaveAvailabilityValidator : AbstractValidator<SaveAvailabili
     {
         RuleFor(x => x.AcademicTermId).GreaterThan(0);
         RuleFor(x => x.Availability).NotNull().Must(a => a is null || !a.Select((x, i) => a.Skip(i + 1)
-            .Any(y => x.DayOfWeek == y.DayOfWeek && x.StartTime < y.EndTime && y.StartTime < x.EndTime)).Any(v => v))
+            .Any(y => x.CourseId == y.CourseId && x.DayOfWeek == y.DayOfWeek && x.StartTime < y.EndTime && y.StartTime < x.EndTime)).Any(v => v))
             .WithMessage("Availability intervals cannot overlap or repeat.");
         RuleForEach(x => x.Availability).ChildRules(a =>
         {
             a.RuleFor(x => x.DayOfWeek).IsInEnum(); a.RuleFor(x => x.EndTime).GreaterThan(x => x.StartTime);
+            a.RuleFor(x => x.CourseId).NotNull().GreaterThan(0);
         });
     }
 }

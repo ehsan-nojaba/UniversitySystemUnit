@@ -32,7 +32,7 @@ public sealed class CourseOfferingRepository(ApplicationDbContext _context) : IC
 
     public async Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long termId, CancellationToken cancellationToken = default)
     {
-        return await (from co in _context.CourseOfferings.AsNoTracking() join c in _context.Courses.AsNoTracking() on co.CourseId equals c.Id where co.AcademicTermId == termId orderby c.Code select new CourseOfferingDto { CourseOfferingId = co.Id, AcademicTermId = co.AcademicTermId, CourseId = co.CourseId, CourseCode = c.Code, CourseTitle = c.Title, Capacity = co.Capacity, IsActive = co.IsActive } ).ToListAsync(cancellationToken);
+        return await (from co in _context.CourseOfferings.AsNoTracking() join c in _context.Courses.AsNoTracking() on co.CourseId equals c.Id where co.AcademicTermId == termId orderby c.Code select new CourseOfferingDto { CourseOfferingId = co.Id, AcademicTermId = co.AcademicTermId, CourseId = co.CourseId, CourseCode = c.Code, CourseTitle = c.Title, Capacity = co.Capacity, IsActive = co.IsActive, IsFinalized = co.IsFinalized } ).ToListAsync(cancellationToken);
     }
 
     public async Task<CourseOffering?> GetByIdAsync(long id, CancellationToken cancellationToken = default)

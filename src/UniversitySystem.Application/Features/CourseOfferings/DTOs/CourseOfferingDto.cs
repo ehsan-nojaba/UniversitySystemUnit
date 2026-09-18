@@ -11,5 +11,6 @@ public class CourseOfferingDto
     public string CourseCode { get; set; } = string.Empty;
     public string CourseTitle { get; set; } = string.Empty;
     public int Capacity { get; set; }
+    public bool IsFinalized { get; set; }
     public bool IsActive { get; set; }
 }

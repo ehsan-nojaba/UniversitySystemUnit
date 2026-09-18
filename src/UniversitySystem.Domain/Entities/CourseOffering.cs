@@ -10,6 +10,8 @@ public class CourseOffering : BaseAuditableEntity
     public long AcademicTermId { get; private set; }
     public int Capacity { get; private set; }
     public bool IsActive { get; private set; }
+    /// <summary>فقط ارائه نهایی‌شده توسط آموزش به دانشجو برای ثبت‌نام نمایش داده می‌شود.</summary>
+    public bool IsFinalized { get; private set; }
     public Course Course { get; private set; } = default!;
     public AcademicTerm AcademicTerm { get; private set; } = default!;
 
@@ -61,4 +63,6 @@ public class CourseOffering : BaseAuditableEntity
 
     public void Activate() => IsActive = true;
     public void Deactivate() => IsActive = false;
+    public void FinalizePlanning() => IsFinalized = true;
+    public void ReopenPlanning() => IsFinalized = false;
 }

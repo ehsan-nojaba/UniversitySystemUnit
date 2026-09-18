@@ -63,7 +63,8 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             CourseCode = course.Code,
             CourseTitle = course.Title,
             Capacity = offering.Capacity,
-            IsActive = offering.IsActive
+            IsActive = offering.IsActive,
+            IsFinalized = offering.IsFinalized
         };
     }
 
@@ -75,6 +76,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             throw new NotFoundException(nameof(CourseOffering), id);
         }
 
+        if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }
         if (await enrollmentRepository.GetEnrollmentCountAsync(id, cancellationToken) > capacity)
         {
             throw new BusinessException("Capacity cannot be less than the number of enrolled students.");
@@ -102,7 +104,8 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             CourseCode = offering.Course.Code,
             CourseTitle = offering.Course.Title,
             Capacity = offering.Capacity,
-            IsActive = offering.IsActive
+            IsActive = offering.IsActive,
+            IsFinalized = offering.IsFinalized
         };
     }
 
@@ -131,6 +134,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             throw new BusinessException("Offering and academic term must be active.");
         }
 
+        if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }
         await conflictChecker.CheckConflictsAsync(courseOfferingId, slots, cancellationToken);
         await repository.SaveSchedulesAsync(courseOfferingId, slots, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

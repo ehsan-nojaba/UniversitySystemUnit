@@ -15,8 +15,6 @@ namespace UniversitySystem.Infrastructure;
 /// </summary>
 public static class DependencyInjection
 {
-    private const string DevelopmentFallbackSecret = "DEVELOPMENT_SECRET_KEY_NOT_FOR_PRODUCTION_USE_AT_LEAST_32_BYTES_LONG_12345";
-
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // ── 1. HTTP Context Accessor ───────────────────────────────────────────
@@ -30,16 +28,17 @@ public static class DependencyInjection
 
         // ── 3. JWT Configuration (Options Pattern) ─────────────────────────────
         var jwtSection = configuration.GetSection(JwtSettings.SectionName);
-        services.Configure<JwtSettings>(jwtSection);
+        // تولید و اعتبارسنجی توکن از یک تنظیم معتبر استفاده می‌کنند؛ کلید پیش‌فرض مخفی وجود ندارد.
+        services.AddOptions<JwtSettings>().Bind(jwtSection)
+            .Validate(settings => !string.IsNullOrWhiteSpace(settings.SecretKey) && Encoding.UTF8.GetByteCount(settings.SecretKey) >= 32, "کلید JWT باید حداقل ۳۲ بایت باشد.")
+            .Validate(settings => !string.IsNullOrWhiteSpace(settings.Issuer) && !string.IsNullOrWhiteSpace(settings.Audience), "صادرکننده و مخاطب JWT باید مشخص باشند.")
+            .Validate(settings => settings.ExpirationMinutes > 0, "مدت اعتبار JWT باید مثبت باشد.")
+            .ValidateOnStart();
 
         var jwtSettings = jwtSection.Get<JwtSettings>() ?? new JwtSettings();
 
         // ── 4. JWT Bearer Authentication ───────────────────────────────────────
-        var secretKey = !string.IsNullOrWhiteSpace(jwtSettings.SecretKey) && jwtSettings.SecretKey.Length >= 32
-            ? jwtSettings.SecretKey
-            : DevelopmentFallbackSecret;
-
-        var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
 
         services.AddAuthentication(options =>
         {
@@ -57,8 +56,8 @@ public static class DependencyInjection
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = !string.IsNullOrWhiteSpace(jwtSettings.Issuer) ? jwtSettings.Issuer : "UniversitySystem",
-                ValidAudience = !string.IsNullOrWhiteSpace(jwtSettings.Audience) ? jwtSettings.Audience : "UniversitySystem",
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                 RoleClaimType = ClaimTypes.Role,
                 NameClaimType = ClaimTypes.Name,

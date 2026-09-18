@@ -1,3 +1,4 @@
+using UniversitySystem.Application.Features.AcademicWorkflow;
 using Mapster;
 using Swashbuckle.AspNetCore.Annotations;
 using UniversitySystem.Api.Infrastructure;
@@ -22,6 +23,23 @@ namespace UniversitySystem.Api.Controllers;
 [Authorize(Roles = RoleNames.Professor)]
 public sealed class ProfessorTeachingRequestsController(ISender _mediator) : ControllerBase
 {
+    [HttpGet("final-schedule")]
+    [SwaggerOperation(Summary = "برنامه نهایی کلاس‌های استاد", Description = "کلاس‌هایی که آموزش برای استاد جاری نهایی و منتشر کرده است.")]
+    [SwaggerResponse(200, "برنامه نهایی", typeof(IReadOnlyCollection<FinalTeachingOffering>))]
+    public async Task<IActionResult> GetFinalSchedule([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new MyFinalScheduleQuery(academicTermId), cancellationToken);
+        return response.ToApiResponse();
+    }
+    [HttpGet("eligible-courses")]
+    [SwaggerOperation(Summary = "درس‌های مجاز استاد و تقاضای دانشجو", Description = "فقط درس‌های مرتبط با استاد جاری همراه تعداد درخواست‌های ارسال‌شده در ترم انتخابی.")]
+    [SwaggerResponse(200, "درس‌ها", typeof(IReadOnlyCollection<ProfessorCourseOption>))]
+    public async Task<IActionResult> GetEligibleCourses([FromQuery] long academicTermId, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new MyTeachingCoursesQuery(academicTermId), cancellationToken);
+        return response.ToApiResponse();
+    }
+
     [HttpGet("{academicTermId:long}")]
     [SwaggerOperation(Summary = "مشاهده درخواست تدریس و زمان‌های آزاد استاد", Description = "عملیات مشاهده درخواست تدریس و زمان‌های آزاد استاد؛ دسترسی مطابق نقش مجاز این مسیر است.")]
     [SwaggerResponse(200, "عملیات موفق", typeof(TeachingRequestDto))]

@@ -1,3 +1,4 @@
+using UniversitySystem.Application.Features.AcademicWorkflow;
 using Mapster;
 using Swashbuckle.AspNetCore.Annotations;
 using UniversitySystem.Api.Infrastructure;
@@ -26,6 +27,24 @@ namespace UniversitySystem.Api.Controllers;
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminCourseOfferingsController(ISender _mediator) : ControllerBase
 {
+    [HttpPost("{id:long}/finalize")]
+    [SwaggerOperation(Summary = "نهایی‌کردن برنامه کلاس", Description = "پس از کنترل استاد، پیشنهاد زمان، ظرفیت و تداخل، ارائه را برای دانشجو منتشر می‌کند.")]
+    [SwaggerResponse(200, "برنامه نهایی شد", typeof(bool))]
+    public async Task<IActionResult> FinalizeOffering(long id, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new FinalizeOfferingCommand(id, true), cancellationToken);
+        return response.ToApiResponse();
+    }
+
+    [HttpPost("{id:long}/reopen")]
+    [SwaggerOperation(Summary = "بازگشت ارائه به برنامه‌ریزی", Description = "تا پیش از ثبت‌نام دانشجو، انتشار را متوقف و ویرایش برنامه را باز می‌کند.")]
+    [SwaggerResponse(200, "برنامه قابل ویرایش است", typeof(bool))]
+    public async Task<IActionResult> ReopenOffering(long id, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new FinalizeOfferingCommand(id, false), cancellationToken);
+        return response.ToApiResponse();
+    }
+
     [HttpGet]
     [SwaggerOperation(Summary = "مشاهده ارائه‌های ترم", Description = "عملیات مشاهده ارائه‌های ترم؛ دسترسی مطابق نقش مجاز این مسیر است.")]
     [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOfferingDto>))]

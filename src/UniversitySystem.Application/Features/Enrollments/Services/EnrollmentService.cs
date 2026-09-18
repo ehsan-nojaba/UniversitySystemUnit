@@ -40,6 +40,8 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
                 throw new BusinessException("Course, offering and academic term must be active.");
             }
 
+            if (!offering.IsFinalized) { throw new BusinessException("برنامه این کلاس هنوز توسط آموزش نهایی نشده است."); }
+
             var registration = await studentRepository.GetPreRegistrationWithItemsAsync(student.Id, offering.AcademicTermId, cancellationToken);
             if (registration is null || registration.Status != RequestStatus.Submitted || !registration.Items.Any(i => i.CourseId == offering.CourseId))
             {

@@ -13,7 +13,7 @@ public sealed class AdminReportService(IAdminReportRepository repository, IAdmin
     {
         var overview = await planning.GetPlanningOverviewAsync(termId, cancellationToken);
         var offerings = await repository.GetOfferingsAsync(termId, cancellationToken);
-        var offeredIds = offerings.Where(o => o.IsActive).Select(o => o.CourseId).ToHashSet();
-        return new(termId, offerings.Where(o => o.IsActive).Sum(o => o.Capacity), offerings.Sum(o => o.EnrolledCount), offerings, overview.Courses.Where(c => c.StudentDemandCount > 0 && !offeredIds.Contains(c.CourseId)).ToList());
+        var offeredIds = offerings.Where(o => o.IsActive && o.IsFinalized).Select(o => o.CourseId).ToHashSet();
+        return new(termId, offerings.Where(o => o.IsActive && o.IsFinalized).Sum(o => o.Capacity), offerings.Sum(o => o.EnrolledCount), offerings, overview.Courses.Where(c => c.StudentDemandCount > 0 && !offeredIds.Contains(c.CourseId)).ToList());
     }
 }

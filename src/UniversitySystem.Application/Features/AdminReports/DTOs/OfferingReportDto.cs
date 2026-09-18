@@ -7,4 +7,4 @@ namespace UniversitySystem.Application.Features.AdminReports.DTOs;
 /// یک ردیف گزارش آموزش: درس و ارائه، ظرفیت، تعداد ثبت‌نام فعال، ظرفیت باقی‌مانده، تعداد استاد و بازه‌های کلاس.
 /// </summary>
 public sealed record OfferingReportDto(long CourseOfferingId, long CourseId, string Code, string Title,
-    int Capacity, int EnrolledCount, int RemainingCapacity, bool IsActive, int ProfessorCount, int ScheduleCount);
+    int Capacity, int EnrolledCount, int RemainingCapacity, bool IsActive, int ProfessorCount, int ScheduleCount, bool IsFinalized = false);

@@ -11,7 +11,7 @@ namespace UniversitySystem.Application.Features.TeachingAssignments.Services;
 /// <summary>
 /// اجرای قواعد و هماهنگی عملیات بخش «تخصیص استاد به ارائه درس»؛ داده را از ریپازیتوری می‌گیرد و تغییرات را از طریق مدل‌های دامنه انجام می‌دهد.
 /// </summary>
-public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider, ICourseOfferingRepository offeringRepository, IProfessorScheduleConflictChecker conflictChecker) : ITeachingAssignmentService
+public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repository, IUnitOfWork unitOfWork, IDateTimeProvider dateTimeProvider, ICourseOfferingRepository offeringRepository, IProfessorScheduleConflictChecker conflictChecker, UniversitySystem.Application.Features.AcademicWorkflow.IAcademicWorkflowRepository workflow) : ITeachingAssignmentService
 {
     public async Task<ICollection<TeachingAssignmentDto>> GetAssignmentsAsync(long courseOfferingId, CancellationToken cancellationToken = default)
     {
@@ -32,6 +32,9 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
             throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
         }
 
+        if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }
+        var allowed = await workflow.GetAllowedCourseIdsAsync(professorId, cancellationToken);
+        if (!allowed.Contains(offering.CourseId) || !await workflow.HasSubmittedProposalAsync(professorId, offering.CourseId, offering.AcademicTermId, cancellationToken)) { throw new BusinessException("استاد باید برای این درس مجاز باشد و پیشنهاد زمانی همین درس را ارسال کرده باشد."); }
         var professor = await repository.GetProfessorAsync(professorId, cancellationToken);
         if (professor is null)
         {
@@ -77,6 +80,7 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
             throw new NotFoundException(nameof(CourseOffering), courseOfferingId);
         }
 
+        if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }
         var assignment = await repository.GetAssignmentAsync(courseOfferingId, professorId, cancellationToken);
         if (assignment is null)
         {

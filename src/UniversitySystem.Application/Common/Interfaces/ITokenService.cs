@@ -8,10 +8,10 @@ namespace UniversitySystem.Application.Common.Interfaces;
 public interface ITokenService
 {
     /// <summary>
-    /// Generates a signed JWT access token for the given user and assigned role names.
+    /// برای کاربر احرازشده، توکن امضاشده شامل هویت و نقش‌ها و زمان انقضای UTC تولید می‌کند.
     /// </summary>
-    /// <param name="user">The authenticated user entity.</param>
-    /// <param name="roles">The list of assigned role names.</param>
-    /// <returns>A tuple containing the serialized token string and UTC expiration timestamp.</returns>
+    /// <param name="user">کاربری که رمز و وضعیت فعال بودن او بررسی شده است.</param>
+    /// <param name="roles">نقش‌های خوانده‌شده از حساب کاربر.</param>
+    /// <returns>رشته توکن و زمان پایان اعتبار آن در UTC.</returns>
     (string AccessToken, DateTime ExpiresAt) GenerateToken(User user, IEnumerable<string> roles);
 }

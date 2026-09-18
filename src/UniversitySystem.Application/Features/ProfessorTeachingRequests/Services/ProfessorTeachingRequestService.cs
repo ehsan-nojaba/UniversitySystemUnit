@@ -9,7 +9,7 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Servic
 /// <summary>
 /// درخواست استاد جاری را مدیریت می‌کند: ذخیره درس‌ها، ویرایش زمان آزاد، ارسال نهایی و تهیه خلاصه درخواست‌های ارسال‌شده برای آموزش.
 /// </summary>
-public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRepository repository, ICurrentUserService currentUser, IUnitOfWork unitOfWork, IDateTimeProvider clock)
+public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRepository repository, ICurrentUserService currentUser, IUnitOfWork unitOfWork, IDateTimeProvider clock, UniversitySystem.Application.Features.AcademicWorkflow.IAcademicWorkflowRepository workflow)
 {
     private async Task<long> GetProfessorIdAsync(CancellationToken cancellationToken)
     {
@@ -55,6 +55,8 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
     {
         var id = await GetProfessorIdAsync(cancellationToken);
         await EnsureTermAsync(termId, true, cancellationToken);
+        var allowed = await workflow.GetAllowedCourseIdsAsync(id, cancellationToken);
+        if (courses.Any(c => !allowed.Contains(c.CourseId))) { throw new BusinessException("فقط درس‌های مجاز تعیین‌شده توسط آموزش قابل انتخاب‌اند."); }
         var ids = courses.Select(c => c.CourseId).ToHashSet();
         var available = await repository.GetCoursesAsync(ids, cancellationToken);
         if (available.Count != ids.Count || available.Any(c => !c.IsActive))
@@ -93,7 +95,8 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
     public async Task<TeachingRequestDto> SaveAvailabilityAsync(long termId, IReadOnlyCollection<AvailabilityInput> availability, CancellationToken cancellationToken)
     {
         var request = await GetDraftAsync(termId, cancellationToken);
-        request.ReplaceAvailability(availability.Select(a => (a.DayOfWeek, a.StartTime, a.EndTime)));
+        if (availability.Any(a => !a.CourseId.HasValue || !request.Courses.Any(c => c.CourseId == a.CourseId))) { throw new BusinessException("برای هر زمان پیشنهادی، یکی از درس‌های انتخاب‌شده را مشخص کنید."); }
+        request.ReplaceCourseAvailability(availability.Select(a => (a.CourseId!.Value, a.DayOfWeek, a.StartTime, a.EndTime)));
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request);
     }
@@ -112,6 +115,8 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
             throw new BusinessException("Selected courses must be active.");
         }
 
+        var allowed = await workflow.GetAllowedCourseIdsAsync(request.ProfessorId, cancellationToken);
+        if (request.Courses.Any(c => !allowed.Contains(c.CourseId) || !request.Availabilities.Any(a => a.CourseId == c.CourseId))) { throw new BusinessException("برای هر درس مجاز حداقل یک زمان پیشنهادی ثبت کنید."); }
         request.Submit(clock.UtcNow);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request);
@@ -127,5 +132,5 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
     {
         var course = courses?.Single(x => x.Id == c.CourseId) ?? c.Course;
         return new TeachingCourseDto(c.CourseId, course.Code, course.Title, course.Credits, c.Priority);
-    }).ToList(), request.Availabilities.OrderBy(a => a.DayOfWeek).ThenBy(a => a.StartTime).Select(a => new AvailabilityInput(a.DayOfWeek, a.StartTime, a.EndTime)).ToList());
+    }).ToList(), request.Availabilities.Where(a => a.CourseId.HasValue).OrderBy(a => a.CourseId).ThenBy(a => a.DayOfWeek).ThenBy(a => a.StartTime).Select(a => new AvailabilityInput(a.DayOfWeek, a.StartTime, a.EndTime, a.CourseId)).ToList());
 }

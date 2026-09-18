@@ -37,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<Features.StudentResults.Services.StudentResultService>();
         services.AddScoped<Features.AdminReports.Services.AdminReportService>();
         services.AddScoped<Features.ProfessorTeachingRequests.Services.ProfessorTeachingRequestService>();
+        services.AddScoped<Features.AcademicWorkflow.AcademicWorkflowService>();
         services.AddScoped<Features.UiSupport.Services.UiSupportService>();
         return services;
     }
