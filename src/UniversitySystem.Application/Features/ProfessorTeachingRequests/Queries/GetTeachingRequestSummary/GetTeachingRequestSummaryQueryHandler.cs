@@ -6,7 +6,7 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Querie
 /// <summary>
 /// درخواست «جمع‌بندی درخواست‌های ارسال‌شده استادها» را از MediatR دریافت می‌کند و به سرویس مربوط می‌سپارد؛ کوئری دیتابیس اجرا نمی‌کند.
 /// </summary>
-public sealed class GetTeachingRequestSummaryQueryHandler(ProfessorTeachingRequestService service) : IRequestHandler<GetTeachingRequestSummaryQuery, IReadOnlyCollection<TeachingRequestSummaryDto>>
+public sealed class GetTeachingRequestSummaryQueryHandler(ProfessorTeachingRequestService service) : IRequestHandler<GetTeachingRequestSummaryQuery, ICollection<TeachingRequestSummaryDto>>
 {
-    public Task<IReadOnlyCollection<TeachingRequestSummaryDto>> Handle(GetTeachingRequestSummaryQuery r, CancellationToken ct) => service.GetSummaryAsync(r.AcademicTermId, ct);
+    public Task<ICollection<TeachingRequestSummaryDto>> Handle(GetTeachingRequestSummaryQuery r, CancellationToken ct) => service.GetSummaryAsync(r.AcademicTermId, ct);
 }

@@ -8,7 +8,7 @@ public interface IEnrollmentRepository
 {
     Task<T> ExecuteSerializableAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken);
     Task<CourseOffering?> GetOfferingAsync(long id, CancellationToken cancellationToken);
-    Task<IReadOnlyCollection<Enrollment>> GetStudentEnrollmentsAsync(long studentId, long termId, CancellationToken cancellationToken);
+    Task<ICollection<Enrollment>> GetStudentEnrollmentsAsync(long studentId, long termId, CancellationToken cancellationToken);
     Task<int> GetEnrollmentCountAsync(long offeringId, CancellationToken cancellationToken);
     void Add(Enrollment enrollment);
 }

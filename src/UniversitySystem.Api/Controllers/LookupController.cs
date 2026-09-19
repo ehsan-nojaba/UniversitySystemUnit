@@ -18,7 +18,7 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
 {
     [HttpGet("academic-terms")]
     [SwaggerOperation(Summary = "فهرست ترم‌ها", Description = "عملیات فهرست ترم‌ها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
-    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<AcademicTermOptionDto>))]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<AcademicTermOptionDto>))]
     public async Task<IActionResult> GetTerms(CancellationToken cancellationToken)
     {
         var param = new GetAcademicTermsQuery();
@@ -29,7 +29,7 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     [HttpGet("courses")]
     [Authorize(Roles = RoleNames.Professor + "," + RoleNames.EducationAdmin)]
     [SwaggerOperation(Summary = "فهرست درس‌های فعال", Description = "عملیات فهرست درس‌های فعال؛ دسترسی مطابق نقش مجاز این مسیر است.")]
-    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<CourseOptionDto>))]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOptionDto>))]
     public async Task<IActionResult> GetCourses(CancellationToken cancellationToken)
     {
         var param = new GetActiveCoursesQuery();
@@ -40,7 +40,7 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     [HttpGet("professors")]
     [Authorize(Roles = RoleNames.EducationAdmin)]
     [SwaggerOperation(Summary = "فهرست استادهای فعال", Description = "عملیات فهرست استادهای فعال؛ دسترسی مطابق نقش مجاز این مسیر است.")]
-    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<ProfessorOptionDto>))]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<ProfessorOptionDto>))]
     public async Task<IActionResult> GetProfessors(CancellationToken cancellationToken)
     {
         var param = new GetActiveProfessorsQuery();

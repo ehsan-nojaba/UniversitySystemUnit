@@ -13,6 +13,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<UniversityApiFactory>
@@ -39,36 +40,36 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
         // 1. Term
-        var term = new AcademicTerm($"T_{suffix}", $"Term {suffix}", DateTime.UtcNow, DateTime.UtcNow.AddMonths(4));
+        var term = AcademicTermLogic.Create($"T_{suffix}",$"Term {suffix}",DateTime.UtcNow,DateTime.UtcNow.AddMonths(4));
         context.AcademicTerms.Add(term);
         // 2. Academic structure
-        var faculty = new Faculty($"F_{suffix}", $"Faculty {suffix}");
+        var faculty = FacultyLogic.Create($"F_{suffix}",$"Faculty {suffix}");
         context.Faculties.Add(faculty);
         await context.SaveChangesAsync();
-        var department = new Department(faculty.Id, $"D_{suffix}", $"Department {suffix}");
+        var department = DepartmentLogic.Create(faculty.Id,$"D_{suffix}",$"Department {suffix}");
         context.Departments.Add(department);
         await context.SaveChangesAsync();
-        var major = new Major(department.Id, $"M_{suffix}", $"Major {suffix}");
+        var major = MajorLogic.Create(department.Id,$"M_{suffix}",$"Major {suffix}");
         context.Majors.Add(major);
         // 3. User & Student
-        var user = new User($"std_{suffix}", "hash123", "Ali", "Rezai");
+        var user = UserLogic.Create($"std_{suffix}","hash123","Ali","Rezai");
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        var student = new Student(user.Id, $"ST_{suffix}", major.Id, 1403);
+        var student = StudentLogic.Create(user.Id,$"ST_{suffix}",major.Id,1403);
         context.Students.Add(student);
         // 4. Courses (no prerequisites so all are eligible)
-        var c1 = new Course($"C1_{suffix}", "Mathematics", 3);
-        var c2 = new Course($"C2_{suffix}", "Physics", 2);
-        var c3 = new Course($"C3_{suffix}", "Programming", 4);
+        var c1 = CourseLogic.Create($"C1_{suffix}","Mathematics",3);
+        var c2 = CourseLogic.Create($"C2_{suffix}","Physics",2);
+        var c3 = CourseLogic.Create($"C3_{suffix}","Programming",4);
         context.Courses.AddRange(c1, c2, c3);
         await context.SaveChangesAsync();
         // 5. Curriculum
-        var curriculum = new Curriculum(major.Id, $"Curriculum {suffix}", "1.0");
+        var curriculum = CurriculumLogic.Create(major.Id,$"Curriculum {suffix}","1.0");
         context.Curriculums.Add(curriculum);
         await context.SaveChangesAsync();
-        curriculum.AddCourse(c1.Id, 1, true);
-        curriculum.AddCourse(c2.Id, 1, true);
-        curriculum.AddCourse(c3.Id, 1, true);
+        CurriculumLogic.AddCourse(        curriculum,c1.Id,1,true);
+        CurriculumLogic.AddCourse(        curriculum,c2.Id,1,true);
+        CurriculumLogic.AddCourse(        curriculum,c3.Id,1,true);
         await context.SaveChangesAsync();
         return (user, student, term, c1, c2, c3);
     }
@@ -77,10 +78,10 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
     {
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-        var user = new User($"std2_{suffix}", "hash123", "Sara", "Ahmadi");
+        var user = UserLogic.Create($"std2_{suffix}","hash123","Sara","Ahmadi");
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        var student = new Student(user.Id, $"ST2_{suffix}", major.Id, 1403);
+        var student = StudentLogic.Create(user.Id,$"ST2_{suffix}",major.Id,1403);
         context.Students.Add(student);
         await context.SaveChangesAsync();
         return (user, student);
@@ -142,7 +143,7 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var draft = new StudentPreRegistration(student.Id, term.Id);
+            var draft = StudentPreRegistrationLogic.Create(student.Id,term.Id);
             context.StudentPreRegistrations.Add(draft);
             await context.SaveChangesAsync();
         }
@@ -244,7 +245,7 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         var suffix = Guid.NewGuid().ToString("N")[..8];
         var(user, _, term, c1, _, _) = await SeedScenarioAsync(suffix);
         var studentToken = GenerateToken(user, RoleNames.Student);
-        var adminUser = new User($"adm_{suffix}", "hash123", "Admin", "User");
+        var adminUser = UserLogic.Create($"adm_{suffix}","hash123","Admin","User");
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
@@ -313,7 +314,7 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         var token1 = GenerateToken(user1, RoleNames.Student);
         var token2 = GenerateToken(user2, RoleNames.Student);
         var token3 = GenerateToken(user3, RoleNames.Student);
-        var adminUser = new User($"adm2_{suffix}", "hash123", "Admin", "Super");
+        var adminUser = UserLogic.Create($"adm2_{suffix}","hash123","Admin","Super");
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
@@ -414,7 +415,7 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         // Arrange
         var suffix = Guid.NewGuid().ToString("N")[..8];
         var(_, _, term, _, _, _) = await SeedScenarioAsync(suffix);
-        var adminUser = new User($"adm3_{suffix}", "hash123", "Admin", "Boss");
+        var adminUser = UserLogic.Create($"adm3_{suffix}","hash123","Admin","Boss");
         using (var scope = _factory.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();

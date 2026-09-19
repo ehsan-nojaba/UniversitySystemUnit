@@ -37,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<UniversitySystem.Application.Features.AdminReports.Repositories.IAdminReportRepository, Repositories.AdminReportRepository>();
         services.AddScoped<UniversitySystem.Application.Features.ProfessorTeachingRequests.Repositories.IProfessorTeachingRequestRepository, Repositories.ProfessorTeachingRequestRepository>();
         services.AddScoped<Application.Features.AcademicWorkflow.IAcademicWorkflowRepository, Repositories.AcademicWorkflowRepository>();
+        services.AddScoped<Application.Features.MajorCurricula.IMajorCurriculumRepository, Repositories.MajorCurriculumRepository>();
         services.AddScoped<Application.Features.UiSupport.Repositories.IUiSupportRepository, Repositories.UiSupportRepository>();
         return services;
     }

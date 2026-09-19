@@ -5,6 +5,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Services;
 /// <summary>
@@ -59,10 +60,10 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
         var preRegistration = await repository.GetPreRegistrationWithItemsAsync(student.Id, academicTermId, cancellationToken);
         if (preRegistration is null)
         {
-            preRegistration = new StudentPreRegistrationEntity(student.Id, academicTermId);
+            preRegistration = StudentPreRegistrationLogic.Create(student.Id,academicTermId);
             repository.AddPreRegistration(preRegistration);
             foreach (var item in courses)
-                preRegistration.AddCourse(item.CourseId, item.Priority);
+                StudentPreRegistrationLogic.AddCourse(                preRegistration,item.CourseId,item.Priority);
         }
         else
         {
@@ -74,7 +75,7 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
             var requestedCourseIds = courses.Select(c => c.CourseId).ToHashSet();
             var itemsToRemove = ( from i in preRegistration.Items where !requestedCourseIds.Contains(i.CourseId)select i).ToList();
             foreach (var toRemove in itemsToRemove)
-                preRegistration.RemoveCourse(toRemove.CourseId);
+                StudentPreRegistrationLogic.RemoveCourse(                preRegistration,toRemove.CourseId);
             var existingItems = preRegistration.Items.ToDictionary(i => i.CourseId);
             foreach (var item in courses)
             {
@@ -82,12 +83,12 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
                 {
                     if (existingItem.Priority != item.Priority)
                     {
-                        preRegistration.UpdateCoursePriority(item.CourseId, item.Priority);
+                        StudentPreRegistrationLogic.UpdateCoursePriority(                        preRegistration,item.CourseId,item.Priority);
                     }
                 }
                 else
                 {
-                    preRegistration.AddCourse(item.CourseId, item.Priority);
+                    StudentPreRegistrationLogic.AddCourse(                    preRegistration,item.CourseId,item.Priority);
                 }
             }
         }
@@ -132,7 +133,8 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
                 throw new BusinessException($"درس '{item.Course.Title}' دیگر برای این ترم قابل انتخاب نیست.");
             }
 
-        preRegistration.Submit(dateTimeProvider.UtcNow);
+        StudentPreRegistrationLogic.Submit(
+        preRegistration,dateTimeProvider.UtcNow);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         var courseItems = ( from i in preRegistration.Items orderby i.Priority select new PreRegistrationCourseItemDto { CourseId = i.CourseId, Code = i.Course.Code, Title = i.Course.Title, Credits = i.Course.Credits, Priority = i.Priority }  ).ToList();
         return new StudentPreRegistrationDto

@@ -5,6 +5,7 @@ using UniversitySystem.Application.Features.Enrollments.Repositories;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.Enrollments.Services;
 /// <summary>
@@ -22,7 +23,7 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
         return await studentRepository.GetStudentByUserIdAsync(id, cancellationToken) ?? throw new NotFoundException("Student profile was not found.");
     }
 
-    public async Task<IReadOnlyCollection<EnrollmentDto>> GetAsync(long termId, CancellationToken cancellationToken)
+    public async Task<ICollection<EnrollmentDto>> GetAsync(long termId, CancellationToken cancellationToken)
     {
         var student = await GetStudentAsync(cancellationToken);
         _ = await studentRepository.GetAcademicTermAsync(termId, cancellationToken) ?? throw new NotFoundException(nameof(AcademicTerm), termId);
@@ -70,7 +71,7 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
                 throw new BusinessException("Offering conflicts with the student's schedule.");
             }
 
-            var enrollment = new Enrollment(student.Id, offeringId, clock.UtcNow);
+            var enrollment = EnrollmentLogic.Create(student.Id,offeringId,clock.UtcNow);
             repository.Add(enrollment);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return new EnrollmentDto(enrollment.Id, offeringId, offering.AcademicTermId, offering.CourseId, offering.Course.Code, offering.Course.Title, enrollment.Status.ToString(), enrollment.EnrolledAt);

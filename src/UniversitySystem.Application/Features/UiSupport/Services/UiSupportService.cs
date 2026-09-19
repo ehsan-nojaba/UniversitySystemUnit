@@ -6,9 +6,9 @@ namespace UniversitySystem.Application.Features.UiSupport.Services;
 /// <summary>فهرست‌های فرم و پروفایل حساب جاری را فراهم می‌کند؛ مالک حساب از هویت احراز‌شده تعیین می‌شود.</summary>
 public sealed class UiSupportService(IUiSupportRepository repository, ICurrentUserService currentUser)
 {
-    public Task<IReadOnlyCollection<AcademicTermOptionDto>> GetTermsAsync(CancellationToken cancellationToken) => repository.GetTermsAsync(cancellationToken);
-    public Task<IReadOnlyCollection<CourseOptionDto>> GetCoursesAsync(CancellationToken cancellationToken) => repository.GetCoursesAsync(cancellationToken);
-    public Task<IReadOnlyCollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken) => repository.GetProfessorsAsync(cancellationToken);
+    public Task<ICollection<AcademicTermOptionDto>> GetTermsAsync(CancellationToken cancellationToken) => repository.GetTermsAsync(cancellationToken);
+    public Task<ICollection<CourseOptionDto>> GetCoursesAsync(CancellationToken cancellationToken) => repository.GetCoursesAsync(cancellationToken);
+    public Task<ICollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken) => repository.GetProfessorsAsync(cancellationToken);
     public async Task<CurrentUserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
         if (!long.TryParse(currentUser.UserId, out var userId))

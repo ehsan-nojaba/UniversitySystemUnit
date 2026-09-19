@@ -18,14 +18,14 @@ public sealed class StudentEligibilityRepository : IStudentEligibilityRepository
 
     public async Task<EligibilityData> GetDataAsync(long studentId, CancellationToken cancellationToken = default)
     {
-        var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == studentId, cancellationToken);
+        var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == studentId && s.Major.IsActive, cancellationToken);
         if (student is null)
         {
             return new EligibilityData([], new HashSet<long>());
         }
 
         // 1. Resolve active curriculum for student's major
-        var curriculum = await _context.Curriculums.AsNoTracking().FirstOrDefaultAsync(c => c.MajorId == student.MajorId && c.IsActive, cancellationToken);
+        var curriculum = await _context.Curriculums.AsNoTracking().Where(c => c.MajorId == student.MajorId && c.IsActive).OrderByDescending(c => c.Id).FirstOrDefaultAsync(cancellationToken);
         if (curriculum is null)
         {
             return new EligibilityData([], new HashSet<long>());

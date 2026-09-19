@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Infrastructure.Authentication;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.UnitTests.Authentication;
 
@@ -29,7 +30,7 @@ public class TokenServiceTests
     public void GenerateToken_ReturnsValidJwtAndFutureExpiration()
     {
         // Arrange
-        var user = new User("johndoe", "hashedpass", "John", "Doe");
+        var user = UserLogic.Create("johndoe","hashedpass","John","Doe");
         var roles = new List<string> { "Student", "TeachingAssistant" };
 
         // Act

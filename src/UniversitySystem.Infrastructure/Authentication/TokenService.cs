@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Entities;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Infrastructure.Authentication;
 
@@ -36,7 +37,7 @@ public sealed class TokenService : ITokenService
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(JwtRegisteredClaimNames.UniqueName, user.Username),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.GivenName, user.FullName),
+            new(ClaimTypes.GivenName, UserLogic.GetFullName(user)),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

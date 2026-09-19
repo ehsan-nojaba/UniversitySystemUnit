@@ -12,4 +12,4 @@ namespace UniversitySystem.Application.Features.StudentResults.DTOs;
 /// نتیجه یک درس درخواستی دانشجو: مشخصات درس، اولویت، داشتن ارائه فعال و جزئیات ارائه‌ها.
 /// </summary>
 public sealed record CourseResultDto(long CourseId, string Code, string Title, int Priority, bool IsOffered,
-    IReadOnlyCollection<OfferingResultDto> Offerings);
+    ICollection<OfferingResultDto> Offerings);

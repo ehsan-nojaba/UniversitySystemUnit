@@ -6,4 +6,4 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Querie
 /// <summary>
 /// درخواست خواندن اطلاعات برای «جمع‌بندی درخواست‌های ارسال‌شده استادها»؛ هدف آن دریافت پاسخ بدون تغییر داده است.
 /// </summary>
-public sealed record GetTeachingRequestSummaryQuery(long AcademicTermId) : IRequest<IReadOnlyCollection<TeachingRequestSummaryDto>>;
+public sealed record GetTeachingRequestSummaryQuery(long AcademicTermId) : IRequest<ICollection<TeachingRequestSummaryDto>>;

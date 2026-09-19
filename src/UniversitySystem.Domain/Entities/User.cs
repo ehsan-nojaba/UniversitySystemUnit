@@ -6,40 +6,12 @@ namespace UniversitySystem.Domain.Entities;
 /// </summary>
 public class User : BaseAuditableEntity
 {
-    public string Username { get; private set; } = default!;
-    public string PasswordHash { get; private set; } = default!;
-    public string FirstName { get; private set; } = default!;
-    public string LastName { get; private set; } = default!;
-    public bool IsActive { get; private set; }
-    public Student? Student { get; private set; }
-    public Professor? Professor { get; private set; }
-
-    private readonly List<UserRole> _userRoles = new();
-    public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
-
-    private User()
-    {
-    }
-
-    public User(string username, string passwordHash, string firstName, string lastName)
-    {
-        Username = username.Trim();
-        PasswordHash = passwordHash;
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
-        IsActive = true;
-    }
-
-    public string FullName => $"{FirstName} {LastName}";
-
-    public void Activate() => IsActive = true;
-    public void Deactivate() => IsActive = false;
-    public void AssignRole(Role role)
-    {
-        bool alreadyAssigned = _userRoles.Any(ur => ur.RoleId == role.Id);
-        if (!alreadyAssigned)
-        {
-            _userRoles.Add(new UserRole(Id, role.Id));
-        }
-    }
+    public string Username { get; set; } = default!;
+    public string PasswordHash { get; set; } = default!;
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
+    public bool IsActive { get; set; }
+    public Student? Student { get; set; }
+    public Professor? Professor { get; set; }
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

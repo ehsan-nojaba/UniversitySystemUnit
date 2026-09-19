@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using UniversitySystem.Domain.Entities;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Persistence.Configurations;
 
@@ -37,8 +38,6 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.IsActive)
             .IsRequired();
-
-        builder.Ignore(u => u.FullName);
 
         builder.HasMany(u => u.UserRoles)
             .WithOne()

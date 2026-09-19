@@ -3,4 +3,4 @@ using UniversitySystem.Application.Features.UiSupport.DTOs;
 
 namespace UniversitySystem.Application.Features.UiSupport.Queries.GetActiveCourses;
 /// <summary>درخواست خواندن GetActiveCourses برای راه‌اندازی UI.</summary>
-public sealed record GetActiveCoursesQuery : IRequest<IReadOnlyCollection<CourseOptionDto>>;
+public sealed record GetActiveCoursesQuery : IRequest<ICollection<CourseOptionDto>>;

@@ -6,30 +6,9 @@ namespace UniversitySystem.Domain.Entities;
 /// </summary>
 public class ProfessorTeachingRequestCourse : BaseAuditableEntity
 {
-    public long ProfessorTeachingRequestId { get; private set; }
-    public long CourseId { get; private set; }
-    public int Priority { get; private set; }
-    public ProfessorTeachingRequest ProfessorTeachingRequest { get; private set; } = default!;
-    public Course Course { get; private set; } = default!;
-
-    internal void UpdatePriority(int priority)
-    {
-        if (priority <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(priority));
-        }
-
-        Priority = priority;
-    }
-
-    private ProfessorTeachingRequestCourse()
-    {
-    }
-
-    internal ProfessorTeachingRequestCourse(long professorTeachingRequestId, long courseId, int priority)
-    {
-        ProfessorTeachingRequestId = professorTeachingRequestId;
-        CourseId = courseId;
-        Priority = priority;
-    }
+    public long ProfessorTeachingRequestId { get; set; }
+    public long CourseId { get; set; }
+    public int Priority { get; set; }
+    public ProfessorTeachingRequest ProfessorTeachingRequest { get; set; } = default!;
+    public Course Course { get; set; } = default!;
 }

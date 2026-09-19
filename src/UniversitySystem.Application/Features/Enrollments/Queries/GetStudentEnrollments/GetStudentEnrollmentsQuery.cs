@@ -7,4 +7,4 @@ namespace UniversitySystem.Application.Features.Enrollments.Queries.GetStudentEn
 /// <summary>
 /// درخواست خواندن اطلاعات برای «مشاهده ثبت‌نام‌های دانشجو در ترم»؛ هدف آن دریافت پاسخ بدون تغییر داده است.
 /// </summary>
-public sealed record GetStudentEnrollmentsQuery(long AcademicTermId) : IRequest<IReadOnlyCollection<EnrollmentDto>>;
+public sealed record GetStudentEnrollmentsQuery(long AcademicTermId) : IRequest<ICollection<EnrollmentDto>>;

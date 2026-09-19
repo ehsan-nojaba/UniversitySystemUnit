@@ -11,6 +11,7 @@ using UniversitySystem.Application.Features.UiSupport.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityApiFactory>
@@ -28,26 +29,26 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         var suffix = Guid.NewGuid().ToString("N")[..8];
-        var term = new AcademicTerm("T" + suffix, "ترم نمونه", DateTime.UtcNow, DateTime.UtcNow.AddMonths(4));
-        var faculty = new Faculty("F" + suffix, "دانشکده");
+        var term = AcademicTermLogic.Create("T" + suffix,"ترم نمونه",DateTime.UtcNow,DateTime.UtcNow.AddMonths(4));
+        var faculty = FacultyLogic.Create("F" + suffix,"دانشکده");
         db.AddRange(term, faculty);
         await db.SaveChangesAsync();
-        var department = new Department(faculty.Id, "D" + suffix, "گروه");
+        var department = DepartmentLogic.Create(faculty.Id,"D" + suffix,"گروه");
         db.Add(department);
         await db.SaveChangesAsync();
-        var major = new Major(department.Id, "M" + suffix, "مهندسی کامپیوتر");
-        var course = new Course("C" + suffix, "پایگاه داده", 3);
-        var inactive = new Course("I" + suffix, "غیرفعال", 3);
-        inactive.Deactivate();
-        var studentUser = new User("s" + suffix, hasher.Hash("TestPassword123!"), "دانشجو", "نمونه");
-        var professorUser = new User("p" + suffix, hasher.Hash("TestPassword123!"), "استاد", "نمونه");
-        var adminUser = new User("a" + suffix, hasher.Hash("TestPassword123!"), "آموزش", "نمونه");
+        var major = MajorLogic.Create(department.Id,"M" + suffix,"مهندسی کامپیوتر");
+        var course = CourseLogic.Create("C" + suffix,"پایگاه داده",3);
+        var inactive = CourseLogic.Create("I" + suffix,"غیرفعال",3);
+        CourseLogic.Deactivate(        inactive);
+        var studentUser = UserLogic.Create("s" + suffix,hasher.Hash("TestPassword123!"),"دانشجو","نمونه");
+        var professorUser = UserLogic.Create("p" + suffix,hasher.Hash("TestPassword123!"),"استاد","نمونه");
+        var adminUser = UserLogic.Create("a" + suffix,hasher.Hash("TestPassword123!"),"آموزش","نمونه");
         db.AddRange(major, course, inactive, studentUser, professorUser, adminUser);
         await db.SaveChangesAsync();
-        var student = new Student(studentUser.Id, "S" + suffix, major.Id, 1403);
-        var professor = new Professor(professorUser.Id, "P" + suffix);
-        var curriculum = new Curriculum(major.Id, "چارت", suffix);
-        curriculum.AddCourse(course.Id, 1, true);
+        var student = StudentLogic.Create(studentUser.Id,"S" + suffix,major.Id,1403);
+        var professor = ProfessorLogic.Create(professorUser.Id,"P" + suffix);
+        var curriculum = CurriculumLogic.Create(major.Id,"چارت",suffix);
+        CurriculumLogic.AddCourse(        curriculum,course.Id,1,true);
         db.AddRange(student, professor, curriculum);
         await db.SaveChangesAsync();
         foreach (var pair in new[]
@@ -62,7 +63,7 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
             var role = db.Roles.FirstOrDefault(r => r.Name == pair.Item2);
             if (role is null)
             {
-                role = new Role(pair.Item2);
+                role = RoleLogic.Create(pair.Item2);
                 db.Add(role);
                 await db.SaveChangesAsync();
             }
@@ -172,8 +173,8 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/v1/auth/me")).StatusCode);
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var user = new User("inactive" + Guid.NewGuid().ToString("N"), "unused", "Inactive", "User");
-        user.Deactivate();
+        var user = UserLogic.Create("inactive" + Guid.NewGuid().ToString("N"),"unused","Inactive","User");
+        UserLogic.Deactivate(        user);
         db.Add(user);
         await db.SaveChangesAsync();
         var token = scope.ServiceProvider.GetRequiredService<ITokenService>().GenerateToken(user, [RoleNames.Student]).Item1;

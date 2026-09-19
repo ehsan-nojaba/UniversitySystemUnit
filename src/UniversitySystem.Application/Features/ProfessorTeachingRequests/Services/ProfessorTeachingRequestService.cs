@@ -4,6 +4,7 @@ using UniversitySystem.Application.Features.ProfessorTeachingRequests.DTOs;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Services;
 /// <summary>
@@ -51,7 +52,7 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         return request is null ? null : Map(request);
     }
 
-    public async Task<TeachingRequestDto> SaveAsync(long termId, IReadOnlyCollection<TeachingCourseInput> courses, CancellationToken cancellationToken)
+    public async Task<TeachingRequestDto> SaveAsync(long termId, ICollection<TeachingCourseInput> courses, CancellationToken cancellationToken)
     {
         var id = await GetProfessorIdAsync(cancellationToken);
         await EnsureTermAsync(termId, true, cancellationToken);
@@ -67,7 +68,7 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         var request = await repository.GetAsync(id, termId, cancellationToken);
         if (request is null)
         {
-            request = new(id, termId);
+            request = ProfessorTeachingRequestLogic.Create(id,termId);
             repository.Add(request);
         }
 
@@ -77,26 +78,26 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         }
 
         foreach (var c in request.Courses.Where(c => !ids.Contains(c.CourseId)).ToList())
-            request.RemoveCourse(c.CourseId);
+            ProfessorTeachingRequestLogic.RemoveCourse(            request,c.CourseId);
         foreach (var c in courses)
             if (request.Courses.Any(e => e.CourseId == c.CourseId))
             {
-                request.UpdateCoursePriority(c.CourseId, c.Priority);
+                ProfessorTeachingRequestLogic.UpdateCoursePriority(                request,c.CourseId,c.Priority);
             }
             else
             {
-                request.AddCourse(c.CourseId, c.Priority);
+                ProfessorTeachingRequestLogic.AddCourse(                request,c.CourseId,c.Priority);
             }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request, available);
     }
 
-    public async Task<TeachingRequestDto> SaveAvailabilityAsync(long termId, IReadOnlyCollection<AvailabilityInput> availability, CancellationToken cancellationToken)
+    public async Task<TeachingRequestDto> SaveAvailabilityAsync(long termId, ICollection<AvailabilityInput> availability, CancellationToken cancellationToken)
     {
         var request = await GetDraftAsync(termId, cancellationToken);
         if (availability.Any(a => !a.CourseId.HasValue || !request.Courses.Any(c => c.CourseId == a.CourseId))) { throw new BusinessException("برای هر زمان پیشنهادی، یکی از درس‌های انتخاب‌شده را مشخص کنید."); }
-        request.ReplaceCourseAvailability(availability.Select(a => (a.CourseId!.Value, a.DayOfWeek, a.StartTime, a.EndTime)));
+        ProfessorTeachingRequestLogic.ReplaceCourseAvailability(        request,availability.Select(a => (a.CourseId!.Value, a.DayOfWeek, a.StartTime, a.EndTime)));
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request);
     }
@@ -117,18 +118,18 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
         var allowed = await workflow.GetAllowedCourseIdsAsync(request.ProfessorId, cancellationToken);
         if (request.Courses.Any(c => !allowed.Contains(c.CourseId) || !request.Availabilities.Any(a => a.CourseId == c.CourseId))) { throw new BusinessException("برای هر درس مجاز حداقل یک زمان پیشنهادی ثبت کنید."); }
-        request.Submit(clock.UtcNow);
+        ProfessorTeachingRequestLogic.Submit(        request,clock.UtcNow);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request);
     }
 
-    public async Task<IReadOnlyCollection<TeachingRequestSummaryDto>> GetSummaryAsync(long termId, CancellationToken cancellationToken)
+    public async Task<ICollection<TeachingRequestSummaryDto>> GetSummaryAsync(long termId, CancellationToken cancellationToken)
     {
         await EnsureTermAsync(termId, false, cancellationToken);
         return (await repository.GetSubmittedAsync(termId, cancellationToken)).OrderBy(r => r.ProfessorId).Select(r => new TeachingRequestSummaryDto(r.ProfessorId, r.Professor.User.FirstName + " " + r.Professor.User.LastName, Map(r))).ToList();
     }
 
-    private static TeachingRequestDto Map(ProfessorTeachingRequest request, IReadOnlyCollection<Course>? courses = null) => new(request.Id, request.AcademicTermId, request.Status.ToString(), request.SubmittedAt, request.Courses.OrderBy(c => c.Priority).Select(c =>
+    private static TeachingRequestDto Map(ProfessorTeachingRequest request, ICollection<Course>? courses = null) => new(request.Id, request.AcademicTermId, request.Status.ToString(), request.SubmittedAt, request.Courses.OrderBy(c => c.Priority).Select(c =>
     {
         var course = courses?.Single(x => x.Id == c.CourseId) ?? c.Course;
         return new TeachingCourseDto(c.CourseId, course.Code, course.Title, course.Credits, c.Priority);

@@ -5,4 +5,4 @@ namespace UniversitySystem.Application.Features.StudentPreRegistration.Repositor
 /// <summary>
 /// داده موردنیاز بررسی مجاز بودن درس: درس‌های چارت با پیش‌نیازها و مجموعه شناسه درس‌های پاس‌شده.
 /// </summary>
-public sealed record EligibilityData(IReadOnlyCollection<EligibleCourseDto> Courses, IReadOnlySet<long> PassedCourseIds);
+public sealed record EligibilityData(ICollection<EligibleCourseDto> Courses, IReadOnlySet<long> PassedCourseIds);

@@ -20,7 +20,7 @@ public sealed class EnrollmentRepository(ApplicationDbContext _context) : IEnrol
     }
 
     public Task<CourseOffering?> GetOfferingAsync(long id, CancellationToken cancellationToken) => _context.CourseOfferings.Include(o => o.Course).Include(o => o.AcademicTerm).Include(o => o.TeachingAssignments).ThenInclude(a => a.Professor).ThenInclude(p => p.User).Include(o => o.Schedules).AsSplitQuery().FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
-    public async Task<IReadOnlyCollection<Enrollment>> GetStudentEnrollmentsAsync(long studentId, long termId, CancellationToken cancellationToken) => await _context.Enrollments.AsNoTracking().Include(e => e.CourseOffering).ThenInclude(o => o.Course).Include(e => e.CourseOffering).ThenInclude(o => o.Schedules).Where(e => e.StudentId == studentId && e.CourseOffering.AcademicTermId == termId).ToListAsync(cancellationToken);
+    public async Task<ICollection<Enrollment>> GetStudentEnrollmentsAsync(long studentId, long termId, CancellationToken cancellationToken) => await _context.Enrollments.AsNoTracking().Include(e => e.CourseOffering).ThenInclude(o => o.Course).Include(e => e.CourseOffering).ThenInclude(o => o.Schedules).Where(e => e.StudentId == studentId && e.CourseOffering.AcademicTermId == termId).ToListAsync(cancellationToken);
     public Task<int> GetEnrollmentCountAsync(long offeringId, CancellationToken cancellationToken) => _context.Enrollments.CountAsync(e => e.CourseOfferingId == offeringId && e.Status == EnrollmentStatus.Enrolled, cancellationToken);
     public void Add(Enrollment enrollment) => _context.Enrollments.Add(enrollment);
 }

@@ -10,6 +10,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEl
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
@@ -48,7 +49,7 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
     public async Task GetEligibleCourses_WithProfessorRole_ReturnsForbidden()
     {
         // Arrange
-        var user = new User("prof_test_user", "passhash", "Prof", "Tester");
+        var user = UserLogic.Create("prof_test_user","passhash","Prof","Tester");
         var token = GenerateToken(user, RoleNames.Professor);
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/student/pre-registration/eligible-courses?academicTermId=1");
@@ -65,7 +66,7 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
     public async Task GetEligibleCourses_WithInvalidTermId_ReturnsBadRequest()
     {
         // Arrange
-        var user = new User("student_invalid_term", "passhash", "Student", "Tester");
+        var user = UserLogic.Create("student_invalid_term","passhash","Student","Tester");
         var token = GenerateToken(user, RoleNames.Student);
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/student/pre-registration/eligible-courses?academicTermId=0");
@@ -88,27 +89,27 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
         // 1. Academic Term
-        var term = new AcademicTerm($"T_{suffix}", $"Term {suffix}", DateTime.UtcNow, DateTime.UtcNow.AddMonths(4));
+        var term = AcademicTermLogic.Create($"T_{suffix}",$"Term {suffix}",DateTime.UtcNow,DateTime.UtcNow.AddMonths(4));
         context.AcademicTerms.Add(term);
 
         // 2. Academic Structure
-        var faculty = new Faculty($"F_{suffix}", $"Faculty {suffix}");
+        var faculty = FacultyLogic.Create($"F_{suffix}",$"Faculty {suffix}");
         context.Faculties.Add(faculty);
         await context.SaveChangesAsync();
 
-        var department = new Department(faculty.Id, $"D_{suffix}", $"Department {suffix}");
+        var department = DepartmentLogic.Create(faculty.Id,$"D_{suffix}",$"Department {suffix}");
         context.Departments.Add(department);
         await context.SaveChangesAsync();
 
-        var major = new Major(department.Id, $"M_{suffix}", $"Major {suffix}");
+        var major = MajorLogic.Create(department.Id,$"M_{suffix}",$"Major {suffix}");
         context.Majors.Add(major);
 
         // 3. User & Student
-        var user = new User($"std_{suffix}", "hash123", "Ali", "Rezaei");
+        var user = UserLogic.Create($"std_{suffix}","hash123","Ali","Rezaei");
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        var student = new Student(user.Id, $"ST_{suffix}", major.Id, 1403);
+        var student = StudentLogic.Create(user.Id,$"ST_{suffix}",major.Id,1403);
         context.Students.Add(student);
 
         // 4. Courses:
@@ -116,31 +117,34 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         // C2: Prerequisite = C1 (unmet)
         // C3: Passed course
         // C4: Prerequisite = C3 (met)
-        var c1 = new Course($"C1_{suffix}", "Math 1", 3);
-        var c2 = new Course($"C2_{suffix}", "Math 2", 3);
-        var c3 = new Course($"C3_{suffix}", "Physics 1", 3);
-        var c4 = new Course($"C4_{suffix}", "Physics 2", 3);
+        var c1 = CourseLogic.Create($"C1_{suffix}","Math 1",3);
+        var c2 = CourseLogic.Create($"C2_{suffix}","Math 2",3);
+        var c3 = CourseLogic.Create($"C3_{suffix}","Physics 1",3);
+        var c4 = CourseLogic.Create($"C4_{suffix}","Physics 2",3);
 
         context.Courses.AddRange(c1, c2, c3, c4);
         await context.SaveChangesAsync();
 
         // Add prerequisites: C2 requires C1, C4 requires C3
-        c2.AddPrerequisite(c1.Id);
-        c4.AddPrerequisite(c3.Id);
+        CourseLogic.AddPrerequisite(
+        // Add prerequisites: C2 requires C1, C4 requires C3
+        c2,c1.Id);
+        CourseLogic.AddPrerequisite(        c4,c3.Id);
 
         // 5. Active Curriculum
-        var curriculum = new Curriculum(major.Id, $"Curriculum {suffix}", "1.0");
+        var curriculum = CurriculumLogic.Create(major.Id,$"Curriculum {suffix}","1.0");
         context.Curriculums.Add(curriculum);
         await context.SaveChangesAsync();
 
-        curriculum.AddCourse(c1.Id, 1, true);
-        curriculum.AddCourse(c2.Id, 2, true);
-        curriculum.AddCourse(c3.Id, 1, true);
-        curriculum.AddCourse(c4.Id, 2, true);
+        CurriculumLogic.AddCourse(
+        curriculum,c1.Id,1,true);
+        CurriculumLogic.AddCourse(        curriculum,c2.Id,2,true);
+        CurriculumLogic.AddCourse(        curriculum,c3.Id,1,true);
+        CurriculumLogic.AddCourse(        curriculum,c4.Id,2,true);
 
         // 6. Record Course History: C3 is PASSED by the student
-        var c3History = new StudentCourseHistory(student.Id, c3.Id, term.Id);
-        c3History.RecordGrade(17.5m); // Status => Passed
+        var c3History = StudentCourseHistoryLogic.Create(student.Id,c3.Id,term.Id);
+        StudentCourseHistoryLogic.RecordGrade(        c3History,17.5m); // Status => Passed
         context.StudentCourseHistories.Add(c3History);
 
         await context.SaveChangesAsync();

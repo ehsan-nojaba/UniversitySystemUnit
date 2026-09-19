@@ -19,7 +19,7 @@ public sealed class AdminTeachingRequestsController(ISender _mediator) : Control
 {
     [HttpGet]
     [SwaggerOperation(Summary = "مشاهده درخواست‌های تدریس استادها", Description = "عملیات مشاهده درخواست‌های تدریس استادها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
-    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<TeachingRequestSummaryDto>))]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<TeachingRequestSummaryDto>))]
     public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetTeachingRequestSummaryQuery(academicTermId);

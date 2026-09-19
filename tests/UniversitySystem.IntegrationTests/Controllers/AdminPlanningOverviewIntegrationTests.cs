@@ -9,6 +9,7 @@ using UniversitySystem.Application.Features.AdminPlanning.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
@@ -38,26 +39,26 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         using var scope = _services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
-        var term = new AcademicTerm($"T_{suffix}", $"Term {suffix}", DateTime.UtcNow, DateTime.UtcNow.AddMonths(4));
+        var term = AcademicTermLogic.Create($"T_{suffix}",$"Term {suffix}",DateTime.UtcNow,DateTime.UtcNow.AddMonths(4));
         context.AcademicTerms.Add(term);
 
-        var faculty = new Faculty($"F_{suffix}", $"Faculty {suffix}");
+        var faculty = FacultyLogic.Create($"F_{suffix}",$"Faculty {suffix}");
         context.Faculties.Add(faculty);
         await context.SaveChangesAsync();
 
-        var department = new Department(faculty.Id, $"D_{suffix}", $"Department {suffix}");
+        var department = DepartmentLogic.Create(faculty.Id,$"D_{suffix}",$"Department {suffix}");
         context.Departments.Add(department);
         await context.SaveChangesAsync();
 
-        var major = new Major(department.Id, $"M_{suffix}", $"Major {suffix}");
+        var major = MajorLogic.Create(department.Id,$"M_{suffix}",$"Major {suffix}");
         context.Majors.Add(major);
 
-        var c1 = new Course($"C1_{suffix}", "Algorithms", 3);
-        var c2 = new Course($"C2_{suffix}", "Databases", 3);
-        var c3 = new Course($"C3_{suffix}", "Networks", 3);
+        var c1 = CourseLogic.Create($"C1_{suffix}","Algorithms",3);
+        var c2 = CourseLogic.Create($"C2_{suffix}","Databases",3);
+        var c3 = CourseLogic.Create($"C3_{suffix}","Networks",3);
         context.Courses.AddRange(c1, c2, c3);
 
-        var adminUser = new User($"adm_{suffix}", "hash", "Admin", "Chief");
+        var adminUser = UserLogic.Create($"adm_{suffix}","hash","Admin","Chief");
         context.Users.Add(adminUser);
         await context.SaveChangesAsync();
 
@@ -68,11 +69,11 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
     {
         using var scope = _services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-        var user = new User($"std_{suffix}", "hash", $"First_{suffix}", $"Last_{suffix}");
+        var user = UserLogic.Create($"std_{suffix}","hash",$"First_{suffix}",$"Last_{suffix}");
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        var student = new Student(user.Id, $"ST_{suffix}", major.Id, 1403);
+        var student = StudentLogic.Create(user.Id,$"ST_{suffix}",major.Id,1403);
         context.Students.Add(student);
         await context.SaveChangesAsync();
         return student;
@@ -82,11 +83,11 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
     {
         using var scope = _services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-        var user = new User($"prof_{suffix}", "hash", firstName, lastName);
+        var user = UserLogic.Create($"prof_{suffix}","hash",firstName,lastName);
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        var professor = new Professor(user.Id, $"P_{suffix}");
+        var professor = ProfessorLogic.Create(user.Id,$"P_{suffix}");
         context.Professors.Add(professor);
         await context.SaveChangesAsync();
         return (professor, user);
@@ -103,14 +104,14 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         using (var scope = _services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var reg1 = new StudentPreRegistration(student1.Id, term.Id);
-            reg1.AddCourse(c1.Id, priority: 1);
-            reg1.Submit(DateTime.UtcNow);
+            var reg1 = StudentPreRegistrationLogic.Create(student1.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            reg1,c1.Id,priority: 1);
+            StudentPreRegistrationLogic.Submit(            reg1,DateTime.UtcNow);
 
-            var reg2 = new StudentPreRegistration(student2.Id, term.Id);
-            reg2.AddCourse(c1.Id, priority: 2);
-            reg2.AddCourse(c2.Id, priority: 1);
-            reg2.Submit(DateTime.UtcNow);
+            var reg2 = StudentPreRegistrationLogic.Create(student2.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            reg2,c1.Id,priority: 2);
+            StudentPreRegistrationLogic.AddCourse(            reg2,c2.Id,priority: 1);
+            StudentPreRegistrationLogic.Submit(            reg2,DateTime.UtcNow);
 
             context.StudentPreRegistrations.AddRange(reg1, reg2);
             await context.SaveChangesAsync();
@@ -146,12 +147,12 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         using (var scope = _services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var submittedReg = new StudentPreRegistration(student1.Id, term.Id);
-            submittedReg.AddCourse(c1.Id, priority: 1);
-            submittedReg.Submit(DateTime.UtcNow);
+            var submittedReg = StudentPreRegistrationLogic.Create(student1.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            submittedReg,c1.Id,priority: 1);
+            StudentPreRegistrationLogic.Submit(            submittedReg,DateTime.UtcNow);
 
-            var draftReg = new StudentPreRegistration(student2.Id, term.Id);
-            draftReg.AddCourse(c2.Id, priority: 1);
+            var draftReg = StudentPreRegistrationLogic.Create(student2.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            draftReg,c2.Id,priority: 1);
 
             context.StudentPreRegistrations.AddRange(submittedReg, draftReg);
             await context.SaveChangesAsync();
@@ -181,13 +182,13 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         using (var scope = _services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var req1 = new ProfessorTeachingRequest(prof1.Id, term.Id);
-            req1.AddCourse(c1.Id, priority: 1);
-            req1.Submit(DateTime.UtcNow);
+            var req1 = ProfessorTeachingRequestLogic.Create(prof1.Id,term.Id);
+            ProfessorTeachingRequestLogic.AddCourse(            req1,c1.Id,priority: 1);
+            ProfessorTeachingRequestLogic.Submit(            req1,DateTime.UtcNow);
 
-            var req2 = new ProfessorTeachingRequest(prof2.Id, term.Id);
-            req2.AddCourse(c1.Id, priority: 2);
-            req2.Submit(DateTime.UtcNow);
+            var req2 = ProfessorTeachingRequestLogic.Create(prof2.Id,term.Id);
+            ProfessorTeachingRequestLogic.AddCourse(            req2,c1.Id,priority: 2);
+            ProfessorTeachingRequestLogic.Submit(            req2,DateTime.UtcNow);
 
             context.ProfessorTeachingRequests.AddRange(req1, req2);
             await context.SaveChangesAsync();
@@ -230,12 +231,12 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         using (var scope = _services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-            var submittedReq = new ProfessorTeachingRequest(prof1.Id, term.Id);
-            submittedReq.AddCourse(c1.Id, priority: 1);
-            submittedReq.Submit(DateTime.UtcNow);
+            var submittedReq = ProfessorTeachingRequestLogic.Create(prof1.Id,term.Id);
+            ProfessorTeachingRequestLogic.AddCourse(            submittedReq,c1.Id,priority: 1);
+            ProfessorTeachingRequestLogic.Submit(            submittedReq,DateTime.UtcNow);
 
-            var draftReq = new ProfessorTeachingRequest(prof2.Id, term.Id);
-            draftReq.AddCourse(c2.Id, priority: 1);
+            var draftReq = ProfessorTeachingRequestLogic.Create(prof2.Id,term.Id);
+            ProfessorTeachingRequestLogic.AddCourse(            draftReq,c2.Id,priority: 1);
 
             context.ProfessorTeachingRequests.AddRange(submittedReq, draftReq);
             await context.SaveChangesAsync();
@@ -280,7 +281,7 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         var suffix = Guid.NewGuid().ToString("N")[..8];
         var (term, _, _, _, _, _) = await SeedBaseScenarioAsync(suffix);
 
-        var user = new User($"user_{forbiddenRole}_{suffix}", "hash", "Other", "Role");
+        var user = UserLogic.Create($"user_{forbiddenRole}_{suffix}","hash","Other","Role");
         using (var scope = _services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
@@ -320,19 +321,19 @@ public class AdminPlanningOverviewIntegrationTests : IClassFixture<UniversityApi
         {
             var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
             // C2 gets 3 demands
-            var reg1 = new StudentPreRegistration(s1.Id, term.Id);
-            reg1.AddCourse(c2.Id, 1);
-            reg1.AddCourse(c1.Id, 2);
-            reg1.Submit(DateTime.UtcNow);
+            var reg1 = StudentPreRegistrationLogic.Create(s1.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            reg1,c2.Id,1);
+            StudentPreRegistrationLogic.AddCourse(            reg1,c1.Id,2);
+            StudentPreRegistrationLogic.Submit(            reg1,DateTime.UtcNow);
 
-            var reg2 = new StudentPreRegistration(s2.Id, term.Id);
-            reg2.AddCourse(c2.Id, 1);
-            reg2.Submit(DateTime.UtcNow);
+            var reg2 = StudentPreRegistrationLogic.Create(s2.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            reg2,c2.Id,1);
+            StudentPreRegistrationLogic.Submit(            reg2,DateTime.UtcNow);
 
-            var reg3 = new StudentPreRegistration(s3.Id, term.Id);
-            reg3.AddCourse(c2.Id, 1);
-            reg3.AddCourse(c3.Id, 2);
-            reg3.Submit(DateTime.UtcNow);
+            var reg3 = StudentPreRegistrationLogic.Create(s3.Id,term.Id);
+            StudentPreRegistrationLogic.AddCourse(            reg3,c2.Id,1);
+            StudentPreRegistrationLogic.AddCourse(            reg3,c3.Id,2);
+            StudentPreRegistrationLogic.Submit(            reg3,DateTime.UtcNow);
 
             context.StudentPreRegistrations.AddRange(reg1, reg2, reg3);
             await context.SaveChangesAsync();

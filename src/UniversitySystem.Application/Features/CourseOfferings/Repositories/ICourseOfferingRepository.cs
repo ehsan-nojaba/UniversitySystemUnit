@@ -15,6 +15,6 @@ public interface ICourseOfferingRepository
     Task<bool> OfferingExistsAsync(long termId, long courseId, CancellationToken cancellationToken = default);
     Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long termId, CancellationToken cancellationToken = default);
     Task<ICollection<CourseOfferingScheduleDto>> GetSchedulesByOfferingIdAsync(long offeringId, CancellationToken cancellationToken = default);
-    Task SaveSchedulesAsync(long offeringId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default);
+    Task SaveSchedulesAsync(long offeringId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default);
     void Add(CourseOffering offering);
 }

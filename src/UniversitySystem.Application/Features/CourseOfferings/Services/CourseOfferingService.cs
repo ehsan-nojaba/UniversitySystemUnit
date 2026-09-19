@@ -4,6 +4,7 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 using UniversitySystem.Application.Features.CourseOfferings.Repositories;
 using UniversitySystem.Application.Features.Enrollments.Repositories;
 using UniversitySystem.Domain.Entities;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 /// <summary>
@@ -52,7 +53,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             throw new BusinessException("برای این درس در این ترم تحصیلی قبلاً ارائه ثبت شده است.");
         }
 
-        var offering = new CourseOffering(courseId, academicTermId, capacity);
+        var offering = CourseOfferingLogic.Create(courseId,academicTermId,capacity);
         repository.Add(offering);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return new CourseOfferingDto
@@ -82,16 +83,17 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
             throw new BusinessException("Capacity cannot be less than the number of enrolled students.");
         }
 
-        offering.UpdateCapacity(capacity);
+        CourseOfferingLogic.UpdateCapacity(
+        offering,capacity);
         if (isActive.HasValue)
         {
             if (isActive.Value)
             {
-                offering.Activate();
+                CourseOfferingLogic.Activate(                offering);
             }
             else
             {
-                offering.Deactivate();
+                CourseOfferingLogic.Deactivate(                offering);
             }
         }
 
@@ -120,7 +122,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
         return await repository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
     }
 
-    public async Task<ICollection<CourseOfferingScheduleDto>> SaveScheduleAsync(long courseOfferingId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
+    public async Task<ICollection<CourseOfferingScheduleDto>> SaveScheduleAsync(long courseOfferingId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
     {
         var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
         if (offering is null)

@@ -65,17 +65,11 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Discovers and applies all IEntityTypeConfiguration<T> classes in this assembly.
-        // Entity configurations must never be written inline here.
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(modelBuilder);
     }
 
-    /// <summary>
-    /// Saves all pending changes and automatically populates audit fields
-    /// for any <see cref="BaseAuditableEntity"/> that was added or modified.
-    /// </summary>
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         PopulateAuditFields();

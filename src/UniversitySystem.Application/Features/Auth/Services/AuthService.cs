@@ -1,6 +1,7 @@
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Application.Features.Auth.Commands.Login;
 using UniversitySystem.Application.Features.Auth.Repositories;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.Auth.Services;
 /// <summary>
@@ -29,7 +30,7 @@ public sealed class AuthService(IAuthRepository repository, IPasswordHasher pass
             AccessToken = accessToken,
             ExpiresAt = expiresAt,
             UserId = user.Id,
-            FullName = user.FullName,
+            FullName = UserLogic.GetFullName(user),
             Roles = roleNames
         };
     }

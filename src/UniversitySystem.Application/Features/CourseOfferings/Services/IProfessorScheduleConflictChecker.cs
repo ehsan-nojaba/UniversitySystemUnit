@@ -7,7 +7,7 @@ namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 /// </summary>
 public interface IProfessorScheduleConflictChecker
 {
-    Task CheckProfessorAssignmentAsync(long courseOfferingId, long professorId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default);
+    Task CheckProfessorAssignmentAsync(long courseOfferingId, long professorId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default);
     /// <summary>
     /// بررسی تداخل زمانی اساتید تخصیص‌یافته به یک ارائه درس با سایر ارائه‌های همان ترم
     /// و اعتبارسنجی انطباق با بازه‌های زمانی اعلام‌شده حضور استاد در آن ترم.
@@ -17,6 +17,6 @@ public interface IProfessorScheduleConflictChecker
     /// <param name="cancellationToken">توکن لغو عملیات</param>
     Task CheckConflictsAsync(
         long courseOfferingId,
-        IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots,
+        ICollection<CourseOfferingScheduleSlotDto> slots,
         CancellationToken cancellationToken = default);
 }

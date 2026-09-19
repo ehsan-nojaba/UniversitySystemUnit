@@ -7,8 +7,8 @@ namespace UniversitySystem.Application.Features.MajorCourses.Services;
 /// </summary>
 public interface IMajorCourseService
 {
-    Task<IReadOnlyCollection<MajorOptionDto>> GetMajorsAsync(CancellationToken cancellationToken = default);
-    Task<IReadOnlyCollection<MajorCourseDto>> GetCoursesForMajorAsync(long majorId, CancellationToken cancellationToken = default);
+    Task<ICollection<MajorOptionDto>> GetMajorsAsync(CancellationToken cancellationToken = default);
+    Task<ICollection<MajorCourseDto>> GetCoursesForMajorAsync(long majorId, CancellationToken cancellationToken = default);
     Task<MajorCourseDto> CreateCourseForMajorAsync(long majorId, string code, string title, int credits, int recommendedTerm, bool isRequired, CancellationToken cancellationToken = default);
     Task<MajorCourseDto> AddExistingCourseToMajorAsync(long majorId, long courseId, int recommendedTerm, bool isRequired, CancellationToken cancellationToken = default);
     Task RemoveCourseFromMajorAsync(long majorId, long courseId, CancellationToken cancellationToken = default);

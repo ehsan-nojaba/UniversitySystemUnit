@@ -6,4 +6,4 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Comman
 /// <summary>
 /// درخواست انجام عملیات «ثبت زمان‌های آزاد استاد»؛ داده ورودی عملیات را نگه می‌دارد و به Handler ارسال می‌شود.
 /// </summary>
-public sealed record SaveAvailabilityCommand(long AcademicTermId, IReadOnlyCollection<AvailabilityInput> Availability) : IRequest<TeachingRequestDto>;
+public sealed record SaveAvailabilityCommand(long AcademicTermId, ICollection<AvailabilityInput> Availability) : IRequest<TeachingRequestDto>;

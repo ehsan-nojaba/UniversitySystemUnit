@@ -22,7 +22,7 @@ public sealed class StudentEnrollmentsController(ISender _mediator) : Controller
 {
     [HttpGet]
     [SwaggerOperation(Summary = "مشاهده ثبت‌نام‌های قطعی دانشجو", Description = "عملیات مشاهده ثبت‌نام‌های قطعی دانشجو؛ دسترسی مطابق نقش مجاز این مسیر است.")]
-    [SwaggerResponse(200, "عملیات موفق", typeof(IReadOnlyCollection<EnrollmentDto>))]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<EnrollmentDto>))]
     public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetStudentEnrollmentsQuery(academicTermId);

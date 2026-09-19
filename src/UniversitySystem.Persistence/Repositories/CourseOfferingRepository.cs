@@ -3,6 +3,7 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 using UniversitySystem.Application.Features.CourseOfferings.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Persistence.Repositories;
 /// <summary>
@@ -45,13 +46,13 @@ public sealed class CourseOfferingRepository(ApplicationDbContext _context) : IC
         return await _context.CourseOfferingSchedules.AsNoTracking().Where(s => s.CourseOfferingId == offeringId).OrderBy(s => s.DayOfWeek).ThenBy(s => s.StartTime).Select(s => new CourseOfferingScheduleDto { Id = s.Id, CourseOfferingId = s.CourseOfferingId, DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToListAsync(cancellationToken);
     }
 
-    public async Task SaveSchedulesAsync(long offeringId, IReadOnlyCollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
+    public async Task SaveSchedulesAsync(long offeringId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
     {
         var existing = await _context.CourseOfferingSchedules.Where(s => s.CourseOfferingId == offeringId).ToListAsync(cancellationToken);
         _context.CourseOfferingSchedules.RemoveRange(existing);
         foreach (var slot in slots)
         {
-            _context.CourseOfferingSchedules.Add(new CourseOfferingSchedule(offeringId, slot.DayOfWeek, slot.StartTime, slot.EndTime));
+            _context.CourseOfferingSchedules.Add(CourseOfferingScheduleLogic.Create(offeringId,slot.DayOfWeek,slot.StartTime,slot.EndTime));
         }
     }
 

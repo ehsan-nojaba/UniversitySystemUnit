@@ -5,4 +5,4 @@ namespace UniversitySystem.Api.Contracts;
 /// <summary>
 /// بدنه HTTP انتخاب درس‌های پیشنهادی استاد؛ شامل شناسه درس و اولویت تدریس است.
 /// </summary>
-public sealed record SaveProfessorTeachingRequestRequest(IReadOnlyCollection<TeachingCourseInput> Courses);
+public sealed record SaveProfessorTeachingRequestRequest(ICollection<TeachingCourseInput> Courses);

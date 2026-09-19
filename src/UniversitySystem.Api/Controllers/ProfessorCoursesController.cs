@@ -17,7 +17,7 @@ public sealed class ProfessorCoursesController(ISender _mediator) : ControllerBa
 {
     [HttpGet("{professorId:long}/courses")]
     [SwaggerOperation(Summary = "درس‌های مجاز استاد", Description = "شناسه درس‌هایی که این استاد اجازه پیشنهاد تدریس آن‌ها را دارد.")]
-    [SwaggerResponse(200, "درس‌های استاد", typeof(IReadOnlyCollection<long>))]
+    [SwaggerResponse(200, "درس‌های استاد", typeof(ICollection<long>))]
     public async Task<IActionResult> Get(long professorId, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new ProfessorCoursesQuery(professorId), cancellationToken);
@@ -25,7 +25,7 @@ public sealed class ProfessorCoursesController(ISender _mediator) : ControllerBa
     }
     [HttpPut("{professorId:long}/courses")]
     [SwaggerOperation(Summary = "تعیین درس‌های مجاز استاد", Description = "ارتباط پایه استاد و درس را ثبت می‌کند؛ استاد کلاس و ساعت نهایی در برنامه‌ریزی ترم تعیین می‌شوند.")]
-    [SwaggerResponse(200, "درس‌ها ذخیره شدند", typeof(IReadOnlyCollection<long>))]
+    [SwaggerResponse(200, "درس‌ها ذخیره شدند", typeof(ICollection<long>))]
     public async Task<IActionResult> Save(long professorId, [FromBody] SaveProfessorCoursesRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<SaveProfessorCoursesCommand>() with { ProfessorId = professorId };
@@ -35,4 +35,4 @@ public sealed class ProfessorCoursesController(ISender _mediator) : ControllerBa
 }
 
 /// <summary>درس‌های مجاز منتخب آموزش برای یک استاد.</summary>
-public sealed record SaveProfessorCoursesRequest(IReadOnlyCollection<long> CourseIds);
+public sealed record SaveProfessorCoursesRequest(ICollection<long> CourseIds);

@@ -10,7 +10,7 @@ namespace UniversitySystem.Persistence.Repositories;
 /// </summary>
 public sealed class ProfessorScheduleRepository(ApplicationDbContext _context) : IProfessorScheduleRepository
 {
-    public async Task<IReadOnlyCollection<ProfessorScheduleData>> GetDataAsync(long offeringId, long? additionalProfessorId, CancellationToken cancellationToken)
+    public async Task<ICollection<ProfessorScheduleData>> GetDataAsync(long offeringId, long? additionalProfessorId, CancellationToken cancellationToken)
     {
         var offering = await _context.CourseOfferings.Where(o => o.Id == offeringId).Select(o => new { o.AcademicTermId, o.CourseId }).SingleAsync(cancellationToken);
         var termId = offering.AcademicTermId;

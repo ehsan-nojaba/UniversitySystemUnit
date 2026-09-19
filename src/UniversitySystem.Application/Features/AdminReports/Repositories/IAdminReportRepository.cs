@@ -9,5 +9,5 @@ namespace UniversitySystem.Application.Features.AdminReports.Repositories;
 /// </summary>
 public interface IAdminReportRepository
 {
-    Task<IReadOnlyCollection<OfferingReportDto>> GetOfferingsAsync(long termId, CancellationToken cancellationToken);
+    Task<ICollection<OfferingReportDto>> GetOfferingsAsync(long termId, CancellationToken cancellationToken);
 }

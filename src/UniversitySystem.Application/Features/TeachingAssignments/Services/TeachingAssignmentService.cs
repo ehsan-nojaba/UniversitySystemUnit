@@ -6,6 +6,7 @@ using UniversitySystem.Application.Features.CourseOfferings.Services;
 using UniversitySystem.Application.Features.TeachingAssignments.DTOs;
 using UniversitySystem.Application.Features.TeachingAssignments.Repositories;
 using UniversitySystem.Domain.Entities;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.TeachingAssignments.Services;
 /// <summary>
@@ -56,7 +57,7 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
         var schedules = await offeringRepository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
         await conflictChecker.CheckProfessorAssignmentAsync(courseOfferingId, professorId, schedules.Select(s => new CourseOfferingScheduleSlotDto { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), cancellationToken);
         var assignedAt = dateTimeProvider.UtcNow;
-        var assignment = new TeachingAssignment(courseOfferingId, professorId, assignedAt);
+        var assignment = TeachingAssignmentLogic.Create(courseOfferingId,professorId,assignedAt);
         repository.Add(assignment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         var(requested, priority) = await repository.GetProfessorCourseRequestInfoAsync(professorId, offering.AcademicTermId, offering.CourseId, cancellationToken);

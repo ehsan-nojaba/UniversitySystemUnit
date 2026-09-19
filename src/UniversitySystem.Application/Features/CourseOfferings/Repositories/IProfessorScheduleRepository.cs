@@ -7,5 +7,5 @@ namespace UniversitySystem.Application.Features.CourseOfferings.Repositories;
 /// </summary>
 public interface IProfessorScheduleRepository
 {
-    Task<IReadOnlyCollection<ProfessorScheduleData>> GetDataAsync(long offeringId, long? additionalProfessorId, CancellationToken cancellationToken);
+    Task<ICollection<ProfessorScheduleData>> GetDataAsync(long offeringId, long? additionalProfessorId, CancellationToken cancellationToken);
 }

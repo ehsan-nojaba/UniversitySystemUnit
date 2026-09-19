@@ -7,6 +7,7 @@ using UniversitySystem.Domain.Common;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
+usingUniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
@@ -27,7 +28,7 @@ public class RoleBasedAuthorizationIntegrationTests : IClassFixture<UniversityAp
 
     private string CreateTokenForUser(long userId, string username, params string[] roles)
     {
-        var user = new User(username, "DummyPasswordHash", "Test", username);
+        var user = UserLogic.Create(username,"DummyPasswordHash","Test",username);
         // Set Id using reflection since Id has a protected setter on BaseEntity
         typeof(BaseEntity)
             .GetProperty(nameof(BaseEntity.Id))?

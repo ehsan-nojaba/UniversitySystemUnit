@@ -11,4 +11,4 @@ namespace UniversitySystem.Application.Features.StudentResults.DTOs;
 /// <summary>
 /// پاسخ نتیجه پیش‌انتخاب؛ ترم، وضعیت درخواست و نتیجه ارائه هر درس درخواستی را جمع می‌کند.
 /// </summary>
-public sealed record StudentResultDto(long AcademicTermId, string Status, IReadOnlyCollection<CourseResultDto> Courses);
+public sealed record StudentResultDto(long AcademicTermId, string Status, ICollection<CourseResultDto> Courses);

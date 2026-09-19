@@ -9,4 +9,4 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.DTOs;
 /// پاسخ درخواست تدریس: شناسه درخواست، ترم، وضعیت، زمان ارسال، درس‌ها و بازه‌های آزاد استاد.
 /// </summary>
 public sealed record TeachingRequestDto(long ProfessorTeachingRequestId, long AcademicTermId, string Status,
-    DateTime? SubmittedAt, IReadOnlyCollection<TeachingCourseDto> Courses, IReadOnlyCollection<AvailabilityInput> Availability);
+    DateTime? SubmittedAt, ICollection<TeachingCourseDto> Courses, ICollection<AvailabilityInput> Availability);

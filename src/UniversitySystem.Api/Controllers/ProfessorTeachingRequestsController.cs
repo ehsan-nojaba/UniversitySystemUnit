@@ -25,7 +25,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
 {
     [HttpGet("final-schedule")]
     [SwaggerOperation(Summary = "برنامه نهایی کلاس‌های استاد", Description = "کلاس‌هایی که آموزش برای استاد جاری نهایی و منتشر کرده است.")]
-    [SwaggerResponse(200, "برنامه نهایی", typeof(IReadOnlyCollection<FinalTeachingOffering>))]
+    [SwaggerResponse(200, "برنامه نهایی", typeof(ICollection<FinalTeachingOffering>))]
     public async Task<IActionResult> GetFinalSchedule([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new MyFinalScheduleQuery(academicTermId), cancellationToken);
@@ -33,7 +33,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     }
     [HttpGet("eligible-courses")]
     [SwaggerOperation(Summary = "درس‌های مجاز استاد و تقاضای دانشجو", Description = "فقط درس‌های مرتبط با استاد جاری همراه تعداد درخواست‌های ارسال‌شده در ترم انتخابی.")]
-    [SwaggerResponse(200, "درس‌ها", typeof(IReadOnlyCollection<ProfessorCourseOption>))]
+    [SwaggerResponse(200, "درس‌ها", typeof(ICollection<ProfessorCourseOption>))]
     public async Task<IActionResult> GetEligibleCourses([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new MyTeachingCoursesQuery(academicTermId), cancellationToken);

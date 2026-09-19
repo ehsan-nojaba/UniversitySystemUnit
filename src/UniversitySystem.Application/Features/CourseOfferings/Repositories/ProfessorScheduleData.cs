@@ -6,5 +6,5 @@ namespace UniversitySystem.Application.Features.CourseOfferings.Repositories;
 /// داده موردنیاز تداخل‌سنجی یک استاد: نام، برنامه ارائه‌های دیگر همان ترم و زمان‌های آزاد اعلام‌شده.
 /// </summary>
 public sealed record ProfessorScheduleData(long ProfessorId, string FullName,
-    IReadOnlyCollection<CourseOfferingScheduleSlotDto> OtherSchedules,
-    IReadOnlyCollection<CourseOfferingScheduleSlotDto> Availability);
+    ICollection<CourseOfferingScheduleSlotDto> OtherSchedules,
+    ICollection<CourseOfferingScheduleSlotDto> Availability);
