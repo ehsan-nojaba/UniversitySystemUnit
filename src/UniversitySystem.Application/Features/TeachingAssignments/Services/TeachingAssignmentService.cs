@@ -6,7 +6,7 @@ using UniversitySystem.Application.Features.CourseOfferings.Services;
 using UniversitySystem.Application.Features.TeachingAssignments.DTOs;
 using UniversitySystem.Application.Features.TeachingAssignments.Repositories;
 using UniversitySystem.Domain.Entities;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.TeachingAssignments.Services;
 /// <summary>
@@ -92,3 +92,4 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
+

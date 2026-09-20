@@ -1,7 +1,7 @@
 using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Entities;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.MajorCurricula;
 
@@ -73,3 +73,4 @@ public sealed class MajorCurriculumService(IMajorCurriculumRepository repository
         return new MajorCourseDto(course.Id, course.Code, course.Title, course.Credits, c.RecommendedTerm, c.IsRequired, course.IsActive);
     }).ToList() ?? []);
 }
+

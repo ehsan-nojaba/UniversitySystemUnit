@@ -11,7 +11,7 @@ using UniversitySystem.Application.Features.UiSupport.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityApiFactory>
@@ -68,7 +68,7 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
                 await db.SaveChangesAsync();
             }
 
-            pair.Item1.AssignRole(role);
+            UserLogic.AssignRole(pair.Item1, role);
         }
 
         await db.SaveChangesAsync();
@@ -192,3 +192,4 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         return client;
     }
 }
+

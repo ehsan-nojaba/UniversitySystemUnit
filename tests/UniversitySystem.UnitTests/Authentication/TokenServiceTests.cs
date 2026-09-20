@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Infrastructure.Authentication;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.UnitTests.Authentication;
 
@@ -56,3 +56,4 @@ public class TokenServiceTests
         Assert.Contains(claims, c => (c.Type == ClaimTypes.Role || c.Type == "role") && c.Value == "TeachingAssistant");
     }
 }
+

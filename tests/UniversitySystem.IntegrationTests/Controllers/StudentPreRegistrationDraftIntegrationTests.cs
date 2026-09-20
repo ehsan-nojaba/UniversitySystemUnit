@@ -12,7 +12,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<UniversityApiFactory>
@@ -327,3 +327,4 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<Univers
         Assert.Equal(c1A.Id, draftA.Items.First().CourseId);
     }
 }
+

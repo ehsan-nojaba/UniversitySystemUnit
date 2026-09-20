@@ -5,7 +5,7 @@ using UniversitySystem.Application.Features.Enrollments.Repositories;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.Enrollments.Services;
 /// <summary>
@@ -80,3 +80,4 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
 
     private static EnrollmentDto Map(Enrollment e) => new(e.Id, e.CourseOfferingId, e.CourseOffering.AcademicTermId, e.CourseOffering.CourseId, e.CourseOffering.Course.Code, e.CourseOffering.Course.Title, e.Status.ToString(), e.EnrolledAt);
 }
+

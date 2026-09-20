@@ -5,7 +5,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Application.Features.StudentPreRegistration.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.StudentPreRegistration.Services;
 /// <summary>
@@ -181,3 +181,4 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
         return await eligibilityService.GetEligibleCoursesAsync(student.Id, academicTermId, cancellationToken);
     }
 }
+

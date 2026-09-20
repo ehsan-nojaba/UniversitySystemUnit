@@ -4,7 +4,7 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 using UniversitySystem.Application.Features.CourseOfferings.Repositories;
 using UniversitySystem.Application.Features.Enrollments.Repositories;
 using UniversitySystem.Domain.Entities;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 /// <summary>
@@ -143,3 +143,4 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
         return await repository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
     }
 }
+

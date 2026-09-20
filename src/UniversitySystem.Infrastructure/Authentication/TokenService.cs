@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Entities;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Infrastructure.Authentication;
 
@@ -68,3 +68,4 @@ public sealed class TokenService : ITokenService
         return (tokenString, expiresAt);
     }
 }
+

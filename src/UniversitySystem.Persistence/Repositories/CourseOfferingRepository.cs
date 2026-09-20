@@ -3,7 +3,7 @@ using UniversitySystem.Application.Features.CourseOfferings.DTOs;
 using UniversitySystem.Application.Features.CourseOfferings.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Persistence.Data;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Persistence.Repositories;
 /// <summary>
@@ -58,3 +58,4 @@ public sealed class CourseOfferingRepository(ApplicationDbContext _context) : IC
 
     public void Add(CourseOffering offering) => _context.CourseOfferings.Add(offering);
 }
+

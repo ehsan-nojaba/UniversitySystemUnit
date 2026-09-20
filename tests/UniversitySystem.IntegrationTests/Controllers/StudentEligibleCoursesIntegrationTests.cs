@@ -10,7 +10,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEl
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
@@ -181,3 +181,4 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         Assert.Contains(c4.Id, returnedCourseIds);
     }
 }
+

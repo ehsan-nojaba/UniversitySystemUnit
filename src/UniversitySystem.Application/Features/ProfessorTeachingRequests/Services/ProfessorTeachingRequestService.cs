@@ -4,7 +4,7 @@ using UniversitySystem.Application.Features.ProfessorTeachingRequests.DTOs;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Repositories;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Services;
 /// <summary>
@@ -135,3 +135,4 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         return new TeachingCourseDto(c.CourseId, course.Code, course.Title, course.Credits, c.Priority);
     }).ToList(), request.Availabilities.Where(a => a.CourseId.HasValue).OrderBy(a => a.CourseId).ThenBy(a => a.DayOfWeek).ThenBy(a => a.StartTime).Select(a => new AvailabilityInput(a.DayOfWeek, a.StartTime, a.EndTime, a.CourseId)).ToList());
 }
+

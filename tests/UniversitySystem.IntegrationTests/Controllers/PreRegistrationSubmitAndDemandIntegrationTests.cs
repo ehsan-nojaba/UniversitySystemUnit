@@ -13,7 +13,7 @@ using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<UniversityApiFactory>
@@ -447,3 +447,4 @@ public class PreRegistrationSubmitAndDemandIntegrationTests : IClassFixture<Univ
         Assert.Equal(HttpStatusCode.OK, submitRes.StatusCode);
     }
 }
+

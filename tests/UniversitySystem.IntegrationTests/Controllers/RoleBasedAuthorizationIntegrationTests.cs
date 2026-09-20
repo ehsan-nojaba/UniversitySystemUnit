@@ -7,7 +7,7 @@ using UniversitySystem.Domain.Common;
 using UniversitySystem.Domain.Constants;
 using UniversitySystem.Domain.Entities;
 using Xunit;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.IntegrationTests.Controllers;
 
@@ -123,3 +123,4 @@ public class RoleBasedAuthorizationIntegrationTests : IClassFixture<UniversityAp
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
+

@@ -3,7 +3,7 @@ using UniversitySystem.Application.Features.AcademicWorkflow;
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
 using UniversitySystem.Persistence.Data;
-usingUniversitySystem.Application.Common.Logic;
+using UniversitySystem.Application.Common.Logic;
 
 namespace UniversitySystem.Persistence.Repositories;
 
@@ -42,3 +42,4 @@ public sealed class AcademicWorkflowRepository(ApplicationDbContext _context) : 
     }
     public Task<bool> HasSubmittedProposalAsync(long professorId, long courseId, long termId, CancellationToken ct) => _context.ProfessorTeachingRequests.AnyAsync(r => r.ProfessorId == professorId && r.AcademicTermId == termId && r.Status == RequestStatus.Submitted && r.Courses.Any(c => c.CourseId == courseId) && r.Availabilities.Any(a => a.CourseId == courseId), ct);
 }
+
