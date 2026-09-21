@@ -15,6 +15,11 @@ public sealed class StudentResultService(IStudentPreRegistrationRepository stude
 {
     public async Task<StudentResultDto> GetAsync(long termId, CancellationToken cancellationToken)
     {
+        if (termId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         if (!long.TryParse(currentUser.UserId, out var id))
         {
             throw new UnauthorizedAccessException();

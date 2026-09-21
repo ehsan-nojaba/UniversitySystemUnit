@@ -47,6 +47,31 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
 
     public async Task<StudentPreRegistrationDto> SaveDraftAsync(long academicTermId, ICollection<SelectedCourseItemDto> courses, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
+        if (courses is null || courses.Count == 0)
+        {
+            throw new BusinessException("حداقل یک درس باید برای پیش‌ثبت‌نام انتخاب شود.");
+        }
+
+        if (courses.Any(course => course.CourseId <= 0))
+        {
+            throw new BusinessException("شناسه درس نامعتبر است.");
+        }
+
+        if (courses.Any(course => course.Priority <= 0))
+        {
+            throw new BusinessException("اولویت درس باید بزرگتر از صفر باشد.");
+        }
+
+        if (courses.Select(course => course.CourseId).Distinct().Count() != courses.Count)
+        {
+            throw new BusinessException("انتخاب درس‌های تکراری مجاز نیست.");
+        }
+
         var student = await GetCurrentStudentAsync(cancellationToken);
         await GetActiveTermAsync(academicTermId, cancellationToken);
         var eligibleCourses = await eligibilityService.GetEligibleCoursesAsync(student.Id, academicTermId, cancellationToken);
@@ -107,6 +132,11 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
 
     public async Task<StudentPreRegistrationDto> SubmitAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var student = await GetCurrentStudentAsync(cancellationToken);
         await GetActiveTermAsync(academicTermId, cancellationToken);
         var preRegistration = await repository.GetPreRegistrationWithItemsAndCoursesAsync(student.Id, academicTermId, cancellationToken);
@@ -150,6 +180,11 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
 
     public async Task<StudentPreRegistrationDto?> GetByTermAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var student = await GetCurrentStudentAsync(cancellationToken);
         var preRegistration = await repository.GetPreRegistrationWithItemsAndCoursesAsync(student.Id, academicTermId, cancellationToken);
         if (preRegistration is null)
@@ -171,6 +206,11 @@ public sealed class StudentPreRegistrationService(IStudentPreRegistrationReposit
 
     public async Task<ICollection<EligibleCourseDto>> GetEligibleCoursesAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی معتبر نیست.");
+        }
+
         var student = await GetCurrentStudentAsync(cancellationToken);
         var term = await repository.GetAcademicTermAsync(academicTermId, cancellationToken);
         if (term is null)

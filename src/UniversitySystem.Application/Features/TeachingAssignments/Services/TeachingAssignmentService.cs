@@ -16,6 +16,11 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
 {
     public async Task<ICollection<TeachingAssignmentDto>> GetAssignmentsAsync(long courseOfferingId, CancellationToken cancellationToken = default)
     {
+        if (courseOfferingId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
         if (offering is null)
         {
@@ -27,6 +32,16 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
 
     public async Task<TeachingAssignmentDto> AssignProfessorAsync(long courseOfferingId, long professorId, CancellationToken cancellationToken = default)
     {
+        if (courseOfferingId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
+        if (professorId <= 0)
+        {
+            throw new BusinessException("شناسه استاد نامعتبر است.");
+        }
+
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
         if (offering is null)
         {
@@ -75,6 +90,16 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
 
     public async Task RemoveAssignmentAsync(long courseOfferingId, long professorId, CancellationToken cancellationToken = default)
     {
+        if (courseOfferingId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
+        if (professorId <= 0)
+        {
+            throw new BusinessException("شناسه استاد نامعتبر است.");
+        }
+
         var offering = await repository.GetCourseOfferingAsync(courseOfferingId, cancellationToken);
         if (offering is null)
         {

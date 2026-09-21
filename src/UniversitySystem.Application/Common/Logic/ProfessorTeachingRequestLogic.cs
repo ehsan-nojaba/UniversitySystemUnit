@@ -1,5 +1,6 @@
 using UniversitySystem.Domain.Entities;
 using UniversitySystem.Domain.Enums;
+using UniversitySystem.Application.Common.Exceptions;
 
 namespace UniversitySystem.Application.Common.Logic;
 /// <summary>قواعد ساخت و تغییر ProfessorTeachingRequest؛ منطق از مدل داده جدا نگه داشته می‌شود.</summary>
@@ -20,7 +21,7 @@ public static class ProfessorTeachingRequestLogic
         ProfessorTeachingRequestLogic.EnsureEditable(entity);
         if (courseId <= 0 || priority <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(courseId));
+            throw new BusinessException("شناسه درس و اولویت باید معتبر باشند.");
         }
 
         bool alreadyAdded = entity.Courses.Any(c => c.CourseId == courseId);
@@ -43,7 +44,7 @@ public static class ProfessorTeachingRequestLogic
         var values = intervals.ToList();
         if (values.Any(v => !Enum.IsDefined(v.Day) || v.Start >= v.End) || values.Select((v, i) => values.Skip(i + 1).Any(n => v.Day == n.Day && v.Start < n.End && n.Start < v.End)).Any(x => x))
         {
-            throw new InvalidOperationException("Availability intervals must be valid and cannot overlap.");
+            throw new BusinessException("بازه‌های زمانی باید معتبر باشند و نباید هم‌پوشانی داشته باشند.");
         }
 
         entity.Availabilities.Clear();
@@ -71,12 +72,12 @@ public static class ProfessorTeachingRequestLogic
         var values = intervals.ToList();
         if (values.Any(v => !entity.Courses.Any(c => c.CourseId == v.CourseId) || !Enum.IsDefined(v.Day) || v.Start >= v.End))
         {
-            throw new InvalidOperationException("درس و بازه زمانی پیشنهادی معتبر نیست.");
+            throw new BusinessException("درس و بازه زمانی پیشنهادی معتبر نیست.");
         }
 
         if (values.Select((v, i) => values.Skip(i + 1).Any(n => n.CourseId == v.CourseId && n.Day == v.Day && n.Start < v.End && v.Start < n.End)).Any(x => x))
         {
-            throw new InvalidOperationException("بازه‌های پیشنهادی یک درس نباید هم‌پوشانی داشته باشند.");
+            throw new BusinessException("بازه‌های پیشنهادی یک درس نباید هم‌پوشانی داشته باشند.");
         }
 
         entity.Availabilities.Clear();
@@ -91,17 +92,17 @@ public static class ProfessorTeachingRequestLogic
         ProfessorTeachingRequestLogic.EnsureEditable(entity);
         if (!Enum.IsDefined(dayOfWeek))
         {
-            throw new ArgumentOutOfRangeException(nameof(dayOfWeek));
+            throw new BusinessException("روز هفته نامعتبر است.");
         }
 
         if (endTime <= startTime)
         {
-            throw new InvalidOperationException("EndTime must be after StartTime.");
+            throw new BusinessException("زمان پایان باید بعد از زمان شروع باشد.");
         }
 
         if (entity.Availabilities.Any(a => a.DayOfWeek == dayOfWeek && a.StartTime < endTime && startTime < a.EndTime))
         {
-            throw new InvalidOperationException("Availability intervals cannot overlap.");
+            throw new BusinessException("بازه‌های زمانی نمی‌توانند هم‌پوشانی داشته باشند.");
         }
 
         bool alreadyExists = entity.Availabilities.Any(a => a.DayOfWeek == dayOfWeek && a.StartTime == startTime && a.EndTime == endTime);
@@ -126,7 +127,7 @@ public static class ProfessorTeachingRequestLogic
         ProfessorTeachingRequestLogic.EnsureEditable(entity);
         if (entity.Courses.Count == 0)
         {
-            throw new InvalidOperationException("Cannot submit a teaching request with no courses selected.");
+            throw new BusinessException("حداقل یک درس باید انتخاب شود.");
         }
 
         entity.Status = RequestStatus.Submitted;
@@ -147,7 +148,7 @@ public static class ProfessorTeachingRequestLogic
     {
         if (entity.Status != RequestStatus.Draft)
         {
-            throw new InvalidOperationException("Teaching request can only be modified while in Draft status.");
+            throw new BusinessException("درخواست تدریس فقط در وضعیت پیش‌نویس قابل ویرایش است.");
         }
     }
 }

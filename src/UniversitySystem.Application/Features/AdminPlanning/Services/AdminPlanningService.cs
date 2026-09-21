@@ -11,6 +11,11 @@ public sealed class AdminPlanningService(IAdminPlanningRepository repository) : 
 {
     public async Task<AcademicPlanningOverviewDto> GetPlanningOverviewAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var term = await repository.GetAcademicTermInfoAsync(academicTermId, cancellationToken);
         if (term is null)
         {

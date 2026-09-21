@@ -25,6 +25,11 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
 
     public async Task<ICollection<EnrollmentDto>> GetAsync(long termId, CancellationToken cancellationToken)
     {
+        if (termId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var student = await GetStudentAsync(cancellationToken);
         _ = await studentRepository.GetAcademicTermAsync(termId, cancellationToken) ?? throw new NotFoundException(nameof(AcademicTerm), termId);
         return (await repository.GetStudentEnrollmentsAsync(student.Id, termId, cancellationToken)).Select(Map).ToList();
@@ -32,6 +37,11 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
 
     public async Task<EnrollmentDto> CreateAsync(long offeringId, CancellationToken cancellationToken)
     {
+        if (offeringId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
         var student = await GetStudentAsync(cancellationToken);
         return await repository.ExecuteSerializableAsync(async () =>
         {

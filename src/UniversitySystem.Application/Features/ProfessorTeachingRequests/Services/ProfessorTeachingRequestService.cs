@@ -24,6 +24,11 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
     private async Task EnsureTermAsync(long termId, bool active, CancellationToken cancellationToken)
     {
+        if (termId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var term = await repository.GetTermAsync(termId, cancellationToken) ?? throw new NotFoundException(nameof(AcademicTerm), termId);
         if (active && !term.IsActive)
         {
@@ -54,6 +59,26 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
     public async Task<TeachingRequestDto> SaveAsync(long termId, ICollection<TeachingCourseInput> courses, CancellationToken cancellationToken)
     {
+        if (courses is null)
+        {
+            throw new BusinessException("فهرست درس‌ها نمی‌تواند خالی باشد.");
+        }
+
+        if (courses.Any(course => course.CourseId <= 0))
+        {
+            throw new BusinessException("شناسه درس نامعتبر است.");
+        }
+
+        if (courses.Any(course => course.Priority <= 0))
+        {
+            throw new BusinessException("اولویت درس باید بزرگتر از صفر باشد.");
+        }
+
+        if (courses.Select(course => course.CourseId).Distinct().Count() != courses.Count)
+        {
+            throw new BusinessException("انتخاب درس‌های تکراری مجاز نیست.");
+        }
+
         var id = await GetProfessorIdAsync(cancellationToken);
         await EnsureTermAsync(termId, true, cancellationToken);
         var allowed = await workflow.GetAllowedCourseIdsAsync(id, cancellationToken);
@@ -95,6 +120,11 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
     public async Task<TeachingRequestDto> SaveAvailabilityAsync(long termId, ICollection<AvailabilityInput> availability, CancellationToken cancellationToken)
     {
+        if (availability is null)
+        {
+            throw new BusinessException("فهرست زمان‌های آزاد نمی‌تواند خالی باشد.");
+        }
+
         var request = await GetDraftAsync(termId, cancellationToken);
         if (availability.Any(a => !a.CourseId.HasValue || !request.Courses.Any(c => c.CourseId == a.CourseId))) { throw new BusinessException("برای هر زمان پیشنهادی، یکی از درس‌های انتخاب‌شده را مشخص کنید."); }
         ProfessorTeachingRequestLogic.ReplaceCourseAvailability(        request,availability.Select(a => (a.CourseId!.Value, a.DayOfWeek, a.StartTime, a.EndTime)));

@@ -1,4 +1,5 @@
 using UniversitySystem.Application.Common.Interfaces;
+using UniversitySystem.Application.Common.Exceptions;
 using UniversitySystem.Application.Features.Auth.Commands.Login;
 using UniversitySystem.Application.Features.Auth.Repositories;
 using UniversitySystem.Application.Common.Logic;
@@ -11,6 +12,26 @@ public sealed class AuthService(IAuthRepository repository, IPasswordHasher pass
 {
     public async Task<LoginResponse> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new BusinessException("نام کاربری الزامی است.");
+        }
+
+        if (username.Length > 100)
+        {
+            throw new BusinessException("نام کاربری نمی‌تواند بیشتر از ۱۰۰ کاراکتر باشد.");
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new BusinessException("کلمه عبور الزامی است.");
+        }
+
+        if (password.Length > 200)
+        {
+            throw new BusinessException("کلمه عبور نمی‌تواند بیشتر از ۲۰۰ کاراکتر باشد.");
+        }
+
         var normalizedUsername = username.Trim();
         var user = await repository.GetUserByUsernameAsync(normalizedUsername, cancellationToken);
         if (user is null || !user.IsActive)

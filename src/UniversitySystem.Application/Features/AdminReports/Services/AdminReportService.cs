@@ -2,6 +2,7 @@ using UniversitySystem.Application.Features.AdminPlanning.DTOs;
 using UniversitySystem.Application.Features.AdminPlanning.Services;
 using UniversitySystem.Application.Features.AdminReports.DTOs;
 using UniversitySystem.Application.Features.AdminReports.Repositories;
+using UniversitySystem.Application.Common.Exceptions;
 
 namespace UniversitySystem.Application.Features.AdminReports.Services;
 /// <summary>
@@ -11,6 +12,11 @@ public sealed class AdminReportService(IAdminReportRepository repository, IAdmin
 {
     public async Task<AdminReportDto> GetAsync(long termId, CancellationToken cancellationToken)
     {
+        if (termId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var overview = await planning.GetPlanningOverviewAsync(termId, cancellationToken);
         var offerings = await repository.GetOfferingsAsync(termId, cancellationToken);
         var offeredIds = offerings.Where(o => o.IsActive && o.IsFinalized).Select(o => o.CourseId).ToHashSet();

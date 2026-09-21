@@ -11,6 +11,11 @@ public sealed class AdminPreRegistrationService(IAdminPreRegistrationRepository 
 {
     public async Task<ICollection<CourseDemandDto>> GetCourseDemandSummaryAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var termExists = await repository.AcademicTermExistsAsync(academicTermId, cancellationToken);
         if (!termExists)
         {

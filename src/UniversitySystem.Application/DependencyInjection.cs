@@ -1,4 +1,3 @@
-using FluentValidation;
 using System.Reflection;
 using UniversitySystem.Application.Features.AdminReports.Services;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Services;
@@ -18,13 +17,10 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(assembly);
-            // Behaviors execute in registration order (outermost → innermost):
-            //   LoggingBehavior → PerformanceBehavior → ValidationBehavior → Handler
+            // Behaviors execute in registration order (outermost → innermost).
             cfg.AddOpenBehavior(typeof(LoggingBehavior<, >));
             cfg.AddOpenBehavior(typeof(PerformanceBehavior<, >));
-            cfg.AddOpenBehavior(typeof(ValidationBehavior<, >));
         });
-        services.AddValidatorsFromAssembly(assembly);
         services.AddScoped<Common.Interfaces.IStudentCourseEligibilityService, Common.Services.StudentCourseEligibilityService>();
         services.AddScoped<Features.AdminPlanning.Services.IAdminPlanningService, Features.AdminPlanning.Services.AdminPlanningService>();
         services.AddScoped<Features.AdminPreRegistration.Services.IAdminPreRegistrationService, Features.AdminPreRegistration.Services.AdminPreRegistrationService>();

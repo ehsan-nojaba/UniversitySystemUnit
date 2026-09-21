@@ -14,6 +14,11 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
 {
     public async Task<ICollection<CourseOfferingDto>> GetOfferingsByTermAsync(long academicTermId, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
         var term = await repository.GetAcademicTermAsync(academicTermId, cancellationToken);
         if (term is null)
         {
@@ -25,6 +30,21 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
 
     public async Task<CourseOfferingDto> CreateOfferingAsync(long academicTermId, long courseId, int capacity, CancellationToken cancellationToken = default)
     {
+        if (academicTermId <= 0)
+        {
+            throw new BusinessException("شناسه ترم تحصیلی نامعتبر است.");
+        }
+
+        if (courseId <= 0)
+        {
+            throw new BusinessException("شناسه درس نامعتبر است.");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new BusinessException("ظرفیت کلاس باید یک عدد مثبت باشد.");
+        }
+
         var term = await repository.GetAcademicTermAsync(academicTermId, cancellationToken);
         if (term is null)
         {
@@ -71,6 +91,16 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
 
     public async Task<CourseOfferingDto> UpdateOfferingAsync(long id, int capacity, bool? isActive, CancellationToken cancellationToken = default)
     {
+        if (id <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new BusinessException("ظرفیت کلاس باید یک عدد مثبت باشد.");
+        }
+
         var offering = await repository.GetByIdWithCourseAsync(id, cancellationToken);
         if (offering is null)
         {
@@ -113,6 +143,11 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
 
     public async Task<ICollection<CourseOfferingScheduleDto>> GetScheduleAsync(long courseOfferingId, CancellationToken cancellationToken = default)
     {
+        if (courseOfferingId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
         var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
         if (offering is null)
         {
@@ -124,6 +159,13 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
 
     public async Task<ICollection<CourseOfferingScheduleDto>> SaveScheduleAsync(long courseOfferingId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
     {
+        if (courseOfferingId <= 0)
+        {
+            throw new BusinessException("شناسه ارائه درس نامعتبر است.");
+        }
+
+        ValidateScheduleSlots(slots);
+
         var offering = await repository.GetByIdAsync(courseOfferingId, cancellationToken);
         if (offering is null)
         {
@@ -141,6 +183,37 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
         await repository.SaveSchedulesAsync(courseOfferingId, slots, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return await repository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);
+    }
+
+    private static void ValidateScheduleSlots(ICollection<CourseOfferingScheduleSlotDto>? slots)
+    {
+        if (slots is null)
+        {
+            throw new BusinessException("برنامه زمانی نمی‌تواند خالی باشد.");
+        }
+
+        if (slots.Any(slot => !Enum.IsDefined(slot.DayOfWeek) || slot.StartTime >= slot.EndTime))
+        {
+            throw new BusinessException("روز هفته و بازه زمانی کلاس معتبر نیست.");
+        }
+
+        var values = slots.ToList();
+
+        if (values.GroupBy(slot => new { slot.DayOfWeek, slot.StartTime, slot.EndTime }).Any(group => group.Count() > 1))
+        {
+            throw new BusinessException("اسلات تکراری مجاز نیست.");
+        }
+
+        for (var i = 0; i < values.Count; i++)
+        {
+            for (var j = i + 1; j < values.Count; j++)
+            {
+                if (values[i].DayOfWeek == values[j].DayOfWeek && values[i].StartTime < values[j].EndTime && values[j].StartTime < values[i].EndTime)
+                {
+                    throw new BusinessException("در یک ارائه دو اسلات متداخل در یک روز مجاز نیست.");
+                }
+            }
+        }
     }
 }
 

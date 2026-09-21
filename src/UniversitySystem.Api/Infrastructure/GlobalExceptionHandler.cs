@@ -5,7 +5,7 @@ using UniversitySystem.Application.Common.Exceptions;
 namespace UniversitySystem.Api.Infrastructure;
 
 /// <summary>
-/// خطاهای اعتبارسنجی، دسترسی و قواعد کسب‌وکار را به پاسخ HTTP استاندارد ProblemDetails تبدیل می‌کند.
+/// خطاهای ورودی، دسترسی و قواعد کسب‌وکار را به پاسخ HTTP استاندارد ProblemDetails تبدیل می‌کند.
 /// </summary>
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
@@ -53,13 +53,6 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
-            ValidationException validationException => (
-                StatusCodes.Status400BadRequest,
-                "Validation Error",
-                "One or more validation errors occurred.",
-                new Dictionary<string, object?> { ["errors"] = validationException.Errors }
-            ),
-
             NotFoundException notFoundException => (
                 StatusCodes.Status404NotFound,
                 "Not Found",
