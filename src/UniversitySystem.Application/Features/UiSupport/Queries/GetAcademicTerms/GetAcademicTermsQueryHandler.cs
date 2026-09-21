@@ -6,5 +6,8 @@ namespace UniversitySystem.Application.Features.UiSupport.Queries.GetAcademicTer
 /// <summary>تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF.</summary>
 public sealed class GetAcademicTermsQueryHandler(UiSupportService service) : IRequestHandler<GetAcademicTermsQuery, ICollection<AcademicTermOptionDto>>
 {
-    public Task<ICollection<AcademicTermOptionDto>> Handle(GetAcademicTermsQuery request, CancellationToken cancellationToken) => service.GetTermsAsync(cancellationToken);
+    public Task<ICollection<AcademicTermOptionDto>> Handle(GetAcademicTermsQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetTermsAsync(cancellationToken);
+    }
 }

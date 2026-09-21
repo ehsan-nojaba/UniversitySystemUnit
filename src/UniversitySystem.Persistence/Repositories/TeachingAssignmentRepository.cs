@@ -57,6 +57,12 @@ public sealed class TeachingAssignmentRepository(ApplicationDbContext _context) 
         return assignments.Select(a => new TeachingAssignmentDto { TeachingAssignmentId = a.Id, ProfessorId = a.ProfessorId, ProfessorFullName = a.ProfessorFullName, AssignedAt = a.AssignedAt, RequestedThisCourse = requestMap.ContainsKey(a.ProfessorId), RequestedPriority = requestMap.TryGetValue(a.ProfessorId, out var priority) ? priority : null }).ToList();
     }
 
-    public void Add(TeachingAssignment assignment) => _context.TeachingAssignments.Add(assignment);
-    public void Remove(TeachingAssignment assignment) => _context.TeachingAssignments.Remove(assignment);
+    public void Add(TeachingAssignment assignment)
+    {
+        _context.TeachingAssignments.Add(assignment);
+    }
+    public void Remove(TeachingAssignment assignment)
+    {
+        _context.TeachingAssignments.Remove(assignment);
+    }
 }

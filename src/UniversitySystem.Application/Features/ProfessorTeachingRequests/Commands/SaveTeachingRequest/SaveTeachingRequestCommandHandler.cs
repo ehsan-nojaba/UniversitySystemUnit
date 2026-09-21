@@ -8,5 +8,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Comman
 /// </summary>
 public sealed class SaveTeachingRequestCommandHandler(ProfessorTeachingRequestService service) : IRequestHandler<SaveTeachingRequestCommand, TeachingRequestDto>
 {
-    public Task<TeachingRequestDto> Handle(SaveTeachingRequestCommand r, CancellationToken ct) => service.SaveAsync(r.AcademicTermId, r.Courses, ct);
+    public Task<TeachingRequestDto> Handle(SaveTeachingRequestCommand r, CancellationToken ct)
+    {
+        return service.SaveAsync(r.AcademicTermId, r.Courses, ct);
+    }
 }

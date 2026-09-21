@@ -12,9 +12,24 @@ public sealed record CreateMajorCourseCommand(long MajorId, string Title, int Cr
 /// <summary>عملیات چارت را بدون دسترسی مستقیم به دیتابیس به سرویس مربوط می‌سپارد.</summary>
 public sealed class CurriculumRequestHandler(MajorCurriculumService service) : IRequestHandler<GetMajorsQuery, ICollection<MajorOptionDto>>, IRequestHandler<GetMajorCurriculumQuery, MajorCurriculumDto>, IRequestHandler<GetNextCourseCodeQuery, NextCourseCodeDto>, IRequestHandler<SaveMajorCurriculumCommand, MajorCurriculumDto>, IRequestHandler<CreateMajorCourseCommand, MajorCurriculumDto>
 {
-    public Task<ICollection<MajorOptionDto>> Handle(GetMajorsQuery r, CancellationToken ct) => service.GetMajorsAsync(ct);
-    public Task<MajorCurriculumDto> Handle(GetMajorCurriculumQuery r, CancellationToken ct) => service.GetAsync(r.MajorId, ct);
-    public Task<NextCourseCodeDto> Handle(GetNextCourseCodeQuery r, CancellationToken ct) => service.GetNextCourseCodeAsync(r.MajorId, ct);
-    public Task<MajorCurriculumDto> Handle(SaveMajorCurriculumCommand r, CancellationToken ct) => service.SaveAsync(r.MajorId, r.Courses, ct);
-    public Task<MajorCurriculumDto> Handle(CreateMajorCourseCommand r, CancellationToken ct) => service.CreateCourseAsync(r.MajorId, new(r.Title, r.Credits, r.RecommendedTerm, r.IsRequired), ct);
+    public Task<ICollection<MajorOptionDto>> Handle(GetMajorsQuery r, CancellationToken ct)
+    {
+        return service.GetMajorsAsync(ct);
+    }
+    public Task<MajorCurriculumDto> Handle(GetMajorCurriculumQuery r, CancellationToken ct)
+    {
+        return service.GetAsync(r.MajorId, ct);
+    }
+    public Task<NextCourseCodeDto> Handle(GetNextCourseCodeQuery r, CancellationToken ct)
+    {
+        return service.GetNextCourseCodeAsync(r.MajorId, ct);
+    }
+    public Task<MajorCurriculumDto> Handle(SaveMajorCurriculumCommand r, CancellationToken ct)
+    {
+        return service.SaveAsync(r.MajorId, r.Courses, ct);
+    }
+    public Task<MajorCurriculumDto> Handle(CreateMajorCourseCommand r, CancellationToken ct)
+    {
+        return service.CreateCourseAsync(r.MajorId, new(r.Title, r.Credits, r.RecommendedTerm, r.IsRequired), ct);
+    }
 }

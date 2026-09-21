@@ -129,10 +129,13 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         return (await repository.GetSubmittedAsync(termId, cancellationToken)).OrderBy(r => r.ProfessorId).Select(r => new TeachingRequestSummaryDto(r.ProfessorId, r.Professor.User.FirstName + " " + r.Professor.User.LastName, Map(r))).ToList();
     }
 
-    private static TeachingRequestDto Map(ProfessorTeachingRequest request, ICollection<Course>? courses = null) => new(request.Id, request.AcademicTermId, request.Status.ToString(), request.SubmittedAt, request.Courses.OrderBy(c => c.Priority).Select(c =>
+    private static TeachingRequestDto Map(ProfessorTeachingRequest request, ICollection<Course>? courses = null)
     {
-        var course = courses?.Single(x => x.Id == c.CourseId) ?? c.Course;
-        return new TeachingCourseDto(c.CourseId, course.Code, course.Title, course.Credits, c.Priority);
-    }).ToList(), request.Availabilities.Where(a => a.CourseId.HasValue).OrderBy(a => a.CourseId).ThenBy(a => a.DayOfWeek).ThenBy(a => a.StartTime).Select(a => new AvailabilityInput(a.DayOfWeek, a.StartTime, a.EndTime, a.CourseId)).ToList());
+        return new TeachingRequestDto(request.Id, request.AcademicTermId, request.Status.ToString(), request.SubmittedAt, request.Courses.OrderBy(c => c.Priority).Select(c =>
+        {
+            var course = courses?.Single(x => x.Id == c.CourseId) ?? c.Course;
+            return new TeachingCourseDto(c.CourseId, course.Code, course.Title, course.Credits, c.Priority);
+        }).ToList(), request.Availabilities.Where(a => a.CourseId.HasValue).OrderBy(a => a.CourseId).ThenBy(a => a.DayOfWeek).ThenBy(a => a.StartTime).Select(a => new AvailabilityInput(a.DayOfWeek, a.StartTime, a.EndTime, a.CourseId)).ToList());
+    }
 }
 

@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.Enrollments.Queries.GetStudentEn
 /// </summary>
 public sealed class GetStudentEnrollmentsHandler(EnrollmentService service) : IRequestHandler<GetStudentEnrollmentsQuery, ICollection<EnrollmentDto>>
 {
-    public Task<ICollection<EnrollmentDto>> Handle(GetStudentEnrollmentsQuery request, CancellationToken cancellationToken) => service.GetAsync(request.AcademicTermId, cancellationToken);
+    public Task<ICollection<EnrollmentDto>> Handle(GetStudentEnrollmentsQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetAsync(request.AcademicTermId, cancellationToken);
+    }
 }

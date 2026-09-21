@@ -12,9 +12,24 @@ public sealed record FinalizeOfferingCommand(long CourseOfferingId, bool Finaliz
 /// <summary>درخواست‌های فرایند آموزشی را به سرویس Application می‌سپارد.</summary>
 public sealed class WorkflowRequestHandler(AcademicWorkflowService service) : IRequestHandler<MyFinalScheduleQuery, ICollection<FinalTeachingOffering>>, IRequestHandler<MyTeachingCoursesQuery, ICollection<ProfessorCourseOption>>, IRequestHandler<ProfessorCoursesQuery, ICollection<long>>, IRequestHandler<SaveProfessorCoursesCommand, ICollection<long>>, IRequestHandler<FinalizeOfferingCommand, bool>
 {
-    public Task<ICollection<FinalTeachingOffering>> Handle(MyFinalScheduleQuery r, CancellationToken ct) => service.GetMyFinalScheduleAsync(r.AcademicTermId, ct);
-    public Task<ICollection<ProfessorCourseOption>> Handle(MyTeachingCoursesQuery r, CancellationToken ct) => service.GetMyCoursesAsync(r.AcademicTermId, ct);
-    public Task<ICollection<long>> Handle(ProfessorCoursesQuery r, CancellationToken ct) => service.GetAllowedAsync(r.ProfessorId, ct);
-    public Task<ICollection<long>> Handle(SaveProfessorCoursesCommand r, CancellationToken ct) => service.SaveAllowedAsync(r.ProfessorId, r.CourseIds, ct);
-    public Task<bool> Handle(FinalizeOfferingCommand r, CancellationToken ct) => service.SetFinalizedAsync(r.CourseOfferingId, r.Finalize, ct);
+    public Task<ICollection<FinalTeachingOffering>> Handle(MyFinalScheduleQuery r, CancellationToken ct)
+    {
+        return service.GetMyFinalScheduleAsync(r.AcademicTermId, ct);
+    }
+    public Task<ICollection<ProfessorCourseOption>> Handle(MyTeachingCoursesQuery r, CancellationToken ct)
+    {
+        return service.GetMyCoursesAsync(r.AcademicTermId, ct);
+    }
+    public Task<ICollection<long>> Handle(ProfessorCoursesQuery r, CancellationToken ct)
+    {
+        return service.GetAllowedAsync(r.ProfessorId, ct);
+    }
+    public Task<ICollection<long>> Handle(SaveProfessorCoursesCommand r, CancellationToken ct)
+    {
+        return service.SaveAllowedAsync(r.ProfessorId, r.CourseIds, ct);
+    }
+    public Task<bool> Handle(FinalizeOfferingCommand r, CancellationToken ct)
+    {
+        return service.SetFinalizedAsync(r.CourseOfferingId, r.Finalize, ct);
+    }
 }

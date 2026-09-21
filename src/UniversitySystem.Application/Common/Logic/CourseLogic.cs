@@ -25,6 +25,12 @@ public static class CourseLogic
         }
     }
 
-    public static void Activate(Course entity) => entity.IsActive = true;
-    public static void Deactivate(Course entity) => entity.IsActive = false;
+    public static void Activate(Course entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(Course entity)
+    {
+        entity.IsActive = false;
+    }
 }

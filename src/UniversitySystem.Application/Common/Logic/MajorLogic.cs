@@ -21,6 +21,12 @@ public static class MajorLogic
         return entity;
     }
 
-    public static void Activate(Major entity) => entity.IsActive = true;
-    public static void Deactivate(Major entity) => entity.IsActive = false;
+    public static void Activate(Major entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(Major entity)
+    {
+        entity.IsActive = false;
+    }
 }

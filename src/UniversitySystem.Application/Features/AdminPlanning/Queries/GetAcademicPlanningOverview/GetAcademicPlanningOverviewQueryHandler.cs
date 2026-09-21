@@ -10,5 +10,7 @@ namespace UniversitySystem.Application.Features.AdminPlanning.Queries.GetAcademi
 public sealed class GetAcademicPlanningOverviewQueryHandler(IAdminPlanningService planningService) : IRequestHandler<GetAcademicPlanningOverviewQuery, AcademicPlanningOverviewDto>
 {
     public Task<AcademicPlanningOverviewDto> Handle(GetAcademicPlanningOverviewQuery request, CancellationToken cancellationToken)
-        => planningService.GetPlanningOverviewAsync(request.AcademicTermId, cancellationToken);
+    {
+        return planningService.GetPlanningOverviewAsync(request.AcademicTermId, cancellationToken);
+    }
 }

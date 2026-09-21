@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.StudentResults.Queries.GetStuden
 /// </summary>
 public sealed class GetStudentResultHandler(StudentResultService service) : IRequestHandler<GetStudentResultQuery, StudentResultDto>
 {
-    public Task<StudentResultDto> Handle(GetStudentResultQuery request, CancellationToken cancellationToken) => service.GetAsync(request.AcademicTermId, cancellationToken);
+    public Task<StudentResultDto> Handle(GetStudentResultQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetAsync(request.AcademicTermId, cancellationToken);
+    }
 }

@@ -8,5 +8,8 @@ namespace UniversitySystem.Persistence.Repositories;
 /// </summary>
 public sealed class UnitOfWork(ApplicationDbContext _context) : IUnitOfWork
 {
-    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => _context.SaveChangesAsync(cancellationToken);
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 }

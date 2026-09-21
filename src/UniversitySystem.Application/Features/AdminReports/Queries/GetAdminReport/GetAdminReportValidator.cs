@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.AdminReports.Queries.GetAdminRep
 /// </summary>
 public sealed class GetAdminReportValidator : AbstractValidator<GetAdminReportQuery>
 {
-    public GetAdminReportValidator() => RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    public GetAdminReportValidator()
+    {
+        RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    }
 }

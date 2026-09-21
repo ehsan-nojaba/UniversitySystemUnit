@@ -17,6 +17,12 @@ public static class AcademicTermLogic
         return entity;
     }
 
-    public static void Activate(AcademicTerm entity) => entity.IsActive = true;
-    public static void Deactivate(AcademicTerm entity) => entity.IsActive = false;
+    public static void Activate(AcademicTerm entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(AcademicTerm entity)
+    {
+        entity.IsActive = false;
+    }
 }

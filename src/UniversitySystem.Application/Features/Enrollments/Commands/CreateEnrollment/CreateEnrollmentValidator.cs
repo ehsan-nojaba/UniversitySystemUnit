@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.Enrollments.Commands.CreateEnrol
 /// </summary>
 public sealed class CreateEnrollmentValidator : AbstractValidator<CreateEnrollmentCommand>
 {
-    public CreateEnrollmentValidator() => RuleFor(x => x.CourseOfferingId).GreaterThan(0);
+    public CreateEnrollmentValidator()
+    {
+        RuleFor(x => x.CourseOfferingId).GreaterThan(0);
+    }
 }

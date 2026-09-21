@@ -11,5 +11,7 @@ public sealed class GetCourseOfferingsQueryHandler(ICourseOfferingService servic
     : IRequestHandler<GetCourseOfferingsQuery, ICollection<CourseOfferingDto>>
 {
     public Task<ICollection<CourseOfferingDto>> Handle(GetCourseOfferingsQuery request, CancellationToken cancellationToken)
-        => service.GetOfferingsByTermAsync(request.AcademicTermId, cancellationToken);
+    {
+        return service.GetOfferingsByTermAsync(request.AcademicTermId, cancellationToken);
+    }
 }

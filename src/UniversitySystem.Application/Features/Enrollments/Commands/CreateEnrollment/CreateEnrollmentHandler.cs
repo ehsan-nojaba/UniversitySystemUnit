@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.Enrollments.Commands.CreateEnrol
 /// </summary>
 public sealed class CreateEnrollmentHandler(EnrollmentService service) : IRequestHandler<CreateEnrollmentCommand, EnrollmentDto>
 {
-    public Task<EnrollmentDto> Handle(CreateEnrollmentCommand request, CancellationToken cancellationToken) => service.CreateAsync(request.CourseOfferingId, cancellationToken);
+    public Task<EnrollmentDto> Handle(CreateEnrollmentCommand request, CancellationToken cancellationToken)
+    {
+        return service.CreateAsync(request.CourseOfferingId, cancellationToken);
+    }
 }

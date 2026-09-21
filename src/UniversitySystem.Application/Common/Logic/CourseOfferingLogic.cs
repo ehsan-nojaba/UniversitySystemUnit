@@ -41,8 +41,20 @@ public static class CourseOfferingLogic
         entity.Capacity = capacity;
     }
 
-    public static void Activate(CourseOffering entity) => entity.IsActive = true;
-    public static void Deactivate(CourseOffering entity) => entity.IsActive = false;
-    public static void FinalizePlanning(CourseOffering entity) => entity.IsFinalized = true;
-    public static void ReopenPlanning(CourseOffering entity) => entity.IsFinalized = false;
+    public static void Activate(CourseOffering entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(CourseOffering entity)
+    {
+        entity.IsActive = false;
+    }
+    public static void FinalizePlanning(CourseOffering entity)
+    {
+        entity.IsFinalized = true;
+    }
+    public static void ReopenPlanning(CourseOffering entity)
+    {
+        entity.IsFinalized = false;
+    }
 }

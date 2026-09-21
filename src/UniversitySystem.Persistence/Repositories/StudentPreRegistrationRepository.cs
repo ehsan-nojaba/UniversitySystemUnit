@@ -31,5 +31,8 @@ public sealed class StudentPreRegistrationRepository(ApplicationDbContext _conte
         return await _context.StudentPreRegistrations.Include(pr => pr.Items).ThenInclude(i => i.Course).FirstOrDefaultAsync(pr => pr.StudentId == studentId && pr.AcademicTermId == termId, cancellationToken);
     }
 
-    public void AddPreRegistration(StudentPreRegistrationEntity preRegistration) => _context.StudentPreRegistrations.Add(preRegistration);
+    public void AddPreRegistration(StudentPreRegistrationEntity preRegistration)
+    {
+        _context.StudentPreRegistrations.Add(preRegistration);
+    }
 }

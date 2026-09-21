@@ -8,5 +8,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Querie
 /// </summary>
 public sealed class GetTeachingRequestSummaryQueryHandler(ProfessorTeachingRequestService service) : IRequestHandler<GetTeachingRequestSummaryQuery, ICollection<TeachingRequestSummaryDto>>
 {
-    public Task<ICollection<TeachingRequestSummaryDto>> Handle(GetTeachingRequestSummaryQuery r, CancellationToken ct) => service.GetSummaryAsync(r.AcademicTermId, ct);
+    public Task<ICollection<TeachingRequestSummaryDto>> Handle(GetTeachingRequestSummaryQuery r, CancellationToken ct)
+    {
+        return service.GetSummaryAsync(r.AcademicTermId, ct);
+    }
 }

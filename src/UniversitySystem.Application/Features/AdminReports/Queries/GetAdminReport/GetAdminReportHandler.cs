@@ -11,5 +11,8 @@ namespace UniversitySystem.Application.Features.AdminReports.Queries.GetAdminRep
 /// </summary>
 public sealed class GetAdminReportHandler(AdminReportService service) : IRequestHandler<GetAdminReportQuery, AdminReportDto>
 {
-    public Task<AdminReportDto> Handle(GetAdminReportQuery request, CancellationToken cancellationToken) => service.GetAsync(request.AcademicTermId, cancellationToken);
+    public Task<AdminReportDto> Handle(GetAdminReportQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetAsync(request.AcademicTermId, cancellationToken);
+    }
 }

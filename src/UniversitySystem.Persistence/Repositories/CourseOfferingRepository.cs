@@ -56,6 +56,9 @@ public sealed class CourseOfferingRepository(ApplicationDbContext _context) : IC
         }
     }
 
-    public void Add(CourseOffering offering) => _context.CourseOfferings.Add(offering);
+    public void Add(CourseOffering offering)
+    {
+        _context.CourseOfferings.Add(offering);
+    }
 }
 

@@ -8,5 +8,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Comman
 /// </summary>
 public sealed class SubmitTeachingRequestCommandHandler(ProfessorTeachingRequestService service) : IRequestHandler<SubmitTeachingRequestCommand, TeachingRequestDto>
 {
-    public Task<TeachingRequestDto> Handle(SubmitTeachingRequestCommand r, CancellationToken ct) => service.SubmitAsync(r.AcademicTermId, ct);
+    public Task<TeachingRequestDto> Handle(SubmitTeachingRequestCommand r, CancellationToken ct)
+    {
+        return service.SubmitAsync(r.AcademicTermId, ct);
+    }
 }

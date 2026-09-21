@@ -9,5 +9,8 @@ namespace UniversitySystem.Application.Features.Enrollments.Queries.GetStudentEn
 /// </summary>
 public sealed class GetStudentEnrollmentsValidator : AbstractValidator<GetStudentEnrollmentsQuery>
 {
-    public GetStudentEnrollmentsValidator() => RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    public GetStudentEnrollmentsValidator()
+    {
+        RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    }
 }

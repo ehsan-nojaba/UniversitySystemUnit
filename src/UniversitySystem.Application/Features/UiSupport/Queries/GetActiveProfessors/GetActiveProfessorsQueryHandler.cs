@@ -6,5 +6,8 @@ namespace UniversitySystem.Application.Features.UiSupport.Queries.GetActiveProfe
 /// <summary>تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF.</summary>
 public sealed class GetActiveProfessorsQueryHandler(UiSupportService service) : IRequestHandler<GetActiveProfessorsQuery, ICollection<ProfessorOptionDto>>
 {
-    public Task<ICollection<ProfessorOptionDto>> Handle(GetActiveProfessorsQuery request, CancellationToken cancellationToken) => service.GetProfessorsAsync(cancellationToken);
+    public Task<ICollection<ProfessorOptionDto>> Handle(GetActiveProfessorsQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetProfessorsAsync(cancellationToken);
+    }
 }

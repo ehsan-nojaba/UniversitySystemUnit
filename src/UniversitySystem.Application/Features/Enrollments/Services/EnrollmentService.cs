@@ -78,6 +78,9 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
         }, cancellationToken);
     }
 
-    private static EnrollmentDto Map(Enrollment e) => new(e.Id, e.CourseOfferingId, e.CourseOffering.AcademicTermId, e.CourseOffering.CourseId, e.CourseOffering.Course.Code, e.CourseOffering.Course.Title, e.Status.ToString(), e.EnrolledAt);
+    private static EnrollmentDto Map(Enrollment e)
+    {
+        return new(e.Id, e.CourseOfferingId, e.CourseOffering.AcademicTermId, e.CourseOffering.CourseId, e.CourseOffering.Course.Code, e.CourseOffering.Course.Title, e.Status.ToString(), e.EnrolledAt);
+    }
 }
 

@@ -31,6 +31,12 @@ public static class DepartmentLogic
         return entity;
     }
 
-    public static void Activate(Department entity) => entity.IsActive = true;
-    public static void Deactivate(Department entity) => entity.IsActive = false;
+    public static void Activate(Department entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(Department entity)
+    {
+        entity.IsActive = false;
+    }
 }

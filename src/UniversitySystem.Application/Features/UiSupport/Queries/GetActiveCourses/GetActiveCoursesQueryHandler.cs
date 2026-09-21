@@ -6,5 +6,8 @@ namespace UniversitySystem.Application.Features.UiSupport.Queries.GetActiveCours
 /// <summary>تحویل درخواست خواندن اطلاعات UI به سرویس، بدون وابستگی به EF.</summary>
 public sealed class GetActiveCoursesQueryHandler(UiSupportService service) : IRequestHandler<GetActiveCoursesQuery, ICollection<CourseOptionDto>>
 {
-    public Task<ICollection<CourseOptionDto>> Handle(GetActiveCoursesQuery request, CancellationToken cancellationToken) => service.GetCoursesAsync(request.MajorId, cancellationToken);
+    public Task<ICollection<CourseOptionDto>> Handle(GetActiveCoursesQuery request, CancellationToken cancellationToken)
+    {
+        return service.GetCoursesAsync(request.MajorId, cancellationToken);
+    }
 }

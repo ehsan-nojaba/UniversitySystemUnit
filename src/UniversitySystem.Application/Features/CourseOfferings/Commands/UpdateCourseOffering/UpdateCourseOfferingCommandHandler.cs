@@ -11,5 +11,7 @@ public sealed class UpdateCourseOfferingCommandHandler(ICourseOfferingService se
     : IRequestHandler<UpdateCourseOfferingCommand, CourseOfferingDto>
 {
     public Task<CourseOfferingDto> Handle(UpdateCourseOfferingCommand request, CancellationToken cancellationToken)
-        => service.UpdateOfferingAsync(request.Id, request.Capacity, request.IsActive, cancellationToken);
+    {
+        return service.UpdateOfferingAsync(request.Id, request.Capacity, request.IsActive, cancellationToken);
+    }
 }

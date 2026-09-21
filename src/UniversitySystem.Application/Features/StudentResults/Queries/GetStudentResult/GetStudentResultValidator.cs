@@ -7,5 +7,8 @@ namespace UniversitySystem.Application.Features.StudentResults.Queries.GetStuden
 /// </summary>
 public sealed class GetStudentResultValidator : AbstractValidator<GetStudentResultQuery>
 {
-    public GetStudentResultValidator() => RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    public GetStudentResultValidator()
+    {
+        RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    }
 }

@@ -11,5 +11,7 @@ public sealed class CreateCourseOfferingCommandHandler(ICourseOfferingService se
     : IRequestHandler<CreateCourseOfferingCommand, CourseOfferingDto>
 {
     public Task<CourseOfferingDto> Handle(CreateCourseOfferingCommand request, CancellationToken cancellationToken)
-        => service.CreateOfferingAsync(request.AcademicTermId, request.CourseId, request.Capacity, cancellationToken);
+    {
+        return service.CreateOfferingAsync(request.AcademicTermId, request.CourseId, request.Capacity, cancellationToken);
+    }
 }

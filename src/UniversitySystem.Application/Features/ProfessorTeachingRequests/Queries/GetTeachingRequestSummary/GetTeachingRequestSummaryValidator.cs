@@ -7,5 +7,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Querie
 /// </summary>
 public sealed class GetTeachingRequestSummaryValidator : AbstractValidator<GetTeachingRequestSummaryQuery>
 {
-    public GetTeachingRequestSummaryValidator() => RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    public GetTeachingRequestSummaryValidator()
+    {
+        RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    }
 }

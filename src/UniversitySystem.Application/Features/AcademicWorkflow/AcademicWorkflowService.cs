@@ -39,27 +39,30 @@ public sealed class AcademicWorkflowService(IAcademicWorkflowRepository reposito
         await unitOfWork.SaveChangesAsync(ct);
         return ids;
     }
-    public Task<bool> SetFinalizedAsync(long offeringId, bool finalize, CancellationToken ct) => enrollments.ExecuteSerializableAsync(async () =>
+    public Task<bool> SetFinalizedAsync(long offeringId, bool finalize, CancellationToken ct)
     {
-        var offering = await enrollments.GetOfferingAsync(offeringId, ct) ?? throw new NotFoundException("ارائه پیدا نشد.");
-        if (!offering.AcademicTerm.IsActive) { throw new BusinessException("ترم غیرفعال قابل تغییر نیست."); }
-        if (finalize)
+        return enrollments.ExecuteSerializableAsync(async () =>
         {
-            if (!offering.IsActive || !offering.Course.IsActive || offering.Capacity <= 0 || !offering.TeachingAssignments.Any() || !offering.Schedules.Any()) { throw new BusinessException("برای نهایی‌کردن، درس و ارائه باید فعال و ظرفیت، استاد و زمان کلاس مشخص باشند."); }
-            foreach (var assignment in offering.TeachingAssignments)
+            var offering = await enrollments.GetOfferingAsync(offeringId, ct) ?? throw new NotFoundException("ارائه پیدا نشد.");
+            if (!offering.AcademicTerm.IsActive) { throw new BusinessException("ترم غیرفعال قابل تغییر نیست."); }
+            if (finalize)
             {
-                var allowed = await repository.GetAllowedCourseIdsAsync(assignment.ProfessorId, ct);
-                if (!assignment.Professor.User.IsActive || !allowed.Contains(offering.CourseId) || !await repository.HasSubmittedProposalAsync(assignment.ProfessorId, offering.CourseId, offering.AcademicTermId, ct)) { throw new BusinessException("هر استاد باید برای همین درس مجاز باشد و پیشنهاد زمانی آن را ارسال کرده باشد."); }
+                if (!offering.IsActive || !offering.Course.IsActive || offering.Capacity <= 0 || !offering.TeachingAssignments.Any() || !offering.Schedules.Any()) { throw new BusinessException("برای نهایی‌کردن، درس و ارائه باید فعال و ظرفیت، استاد و زمان کلاس مشخص باشند."); }
+                foreach (var assignment in offering.TeachingAssignments)
+                {
+                    var allowed = await repository.GetAllowedCourseIdsAsync(assignment.ProfessorId, ct);
+                    if (!assignment.Professor.User.IsActive || !allowed.Contains(offering.CourseId) || !await repository.HasSubmittedProposalAsync(assignment.ProfessorId, offering.CourseId, offering.AcademicTermId, ct)) { throw new BusinessException("هر استاد باید برای همین درس مجاز باشد و پیشنهاد زمانی آن را ارسال کرده باشد."); }
+                }
+                await conflicts.CheckConflictsAsync(offering.Id, offering.Schedules.Select(s => new CourseOfferingScheduleSlotDto { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), ct);
+                CourseOfferingLogic.FinalizePlanning(offering);
             }
-            await conflicts.CheckConflictsAsync(offering.Id, offering.Schedules.Select(s => new CourseOfferingScheduleSlotDto { DayOfWeek = s.DayOfWeek, StartTime = s.StartTime, EndTime = s.EndTime }).ToList(), ct);
-            CourseOfferingLogic.FinalizePlanning(            offering);
-        }
-        else
-        {
-            if (await enrollments.GetEnrollmentCountAsync(offering.Id, ct) > 0) { throw new BusinessException("برای این کلاس ثبت‌نام انجام شده و بازگشت به برنامه‌ریزی مجاز نیست."); }
-            CourseOfferingLogic.ReopenPlanning(            offering);
-        }
-        await unitOfWork.SaveChangesAsync(ct);
-        return offering.IsFinalized;
-    }, ct);
+            else
+            {
+                if (await enrollments.GetEnrollmentCountAsync(offering.Id, ct) > 0) { throw new BusinessException("برای این کلاس ثبت‌نام انجام شده و بازگشت به برنامه‌ریزی مجاز نیست."); }
+                CourseOfferingLogic.ReopenPlanning(offering);
+            }
+            await unitOfWork.SaveChangesAsync(ct);
+            return offering.IsFinalized;
+        }, ct);
+    }
 }

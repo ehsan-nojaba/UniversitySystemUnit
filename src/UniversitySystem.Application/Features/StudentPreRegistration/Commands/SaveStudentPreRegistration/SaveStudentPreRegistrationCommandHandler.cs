@@ -11,5 +11,7 @@ public sealed class SaveStudentPreRegistrationCommandHandler(IStudentPreRegistra
     : IRequestHandler<SaveStudentPreRegistrationCommand, StudentPreRegistrationDto>
 {
     public Task<StudentPreRegistrationDto> Handle(SaveStudentPreRegistrationCommand request, CancellationToken cancellationToken)
-        => service.SaveDraftAsync(request.AcademicTermId, request.Courses, cancellationToken);
+    {
+        return service.SaveDraftAsync(request.AcademicTermId, request.Courses, cancellationToken);
+    }
 }

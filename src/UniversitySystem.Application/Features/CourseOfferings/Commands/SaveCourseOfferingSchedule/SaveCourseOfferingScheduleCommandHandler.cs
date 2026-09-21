@@ -11,5 +11,7 @@ public sealed class SaveCourseOfferingScheduleCommandHandler(ICourseOfferingServ
     : IRequestHandler<SaveCourseOfferingScheduleCommand, ICollection<CourseOfferingScheduleDto>>
 {
     public Task<ICollection<CourseOfferingScheduleDto>> Handle(SaveCourseOfferingScheduleCommand request, CancellationToken cancellationToken)
-        => service.SaveScheduleAsync(request.CourseOfferingId, request.Slots, cancellationToken);
+    {
+        return service.SaveScheduleAsync(request.CourseOfferingId, request.Slots, cancellationToken);
+    }
 }

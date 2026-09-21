@@ -11,5 +11,7 @@ public sealed class GetCourseDemandSummaryQueryHandler(IAdminPreRegistrationServ
     : IRequestHandler<GetCourseDemandSummaryQuery, ICollection<CourseDemandDto>>
 {
     public Task<ICollection<CourseDemandDto>> Handle(GetCourseDemandSummaryQuery request, CancellationToken cancellationToken)
-        => preRegistrationService.GetCourseDemandSummaryAsync(request.AcademicTermId, cancellationToken);
+    {
+        return preRegistrationService.GetCourseDemandSummaryAsync(request.AcademicTermId, cancellationToken);
+    }
 }

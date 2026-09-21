@@ -11,5 +11,7 @@ public sealed class AssignProfessorCommandHandler(ITeachingAssignmentService ser
     : IRequestHandler<AssignProfessorCommand, TeachingAssignmentDto>
 {
     public Task<TeachingAssignmentDto> Handle(AssignProfessorCommand request, CancellationToken cancellationToken)
-        => service.AssignProfessorAsync(request.CourseOfferingId, request.ProfessorId, cancellationToken);
+    {
+        return service.AssignProfessorAsync(request.CourseOfferingId, request.ProfessorId, cancellationToken);
+    }
 }

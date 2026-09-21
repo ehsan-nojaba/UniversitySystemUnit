@@ -11,5 +11,7 @@ public sealed class GetStudentPreRegistrationQueryHandler(IStudentPreRegistratio
     : IRequestHandler<GetStudentPreRegistrationQuery, StudentPreRegistrationDto?>
 {
     public Task<StudentPreRegistrationDto?> Handle(GetStudentPreRegistrationQuery request, CancellationToken cancellationToken)
-        => service.GetByTermAsync(request.AcademicTermId, cancellationToken);
+    {
+        return service.GetByTermAsync(request.AcademicTermId, cancellationToken);
+    }
 }

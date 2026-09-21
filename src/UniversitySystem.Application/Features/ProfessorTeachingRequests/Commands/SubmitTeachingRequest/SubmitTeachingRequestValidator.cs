@@ -7,5 +7,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Comman
 /// </summary>
 public sealed class SubmitTeachingRequestValidator : AbstractValidator<SubmitTeachingRequestCommand>
 {
-    public SubmitTeachingRequestValidator() => RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    public SubmitTeachingRequestValidator()
+    {
+        RuleFor(x => x.AcademicTermId).GreaterThan(0);
+    }
 }

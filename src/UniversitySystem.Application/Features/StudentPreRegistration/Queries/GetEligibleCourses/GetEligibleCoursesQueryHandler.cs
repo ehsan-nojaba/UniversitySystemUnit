@@ -11,5 +11,7 @@ public sealed class GetEligibleCoursesQueryHandler(IStudentPreRegistrationServic
     : IRequestHandler<GetEligibleCoursesQuery, ICollection<EligibleCourseDto>>
 {
     public Task<ICollection<EligibleCourseDto>> Handle(GetEligibleCoursesQuery request, CancellationToken cancellationToken)
-        => service.GetEligibleCoursesAsync(request.AcademicTermId, cancellationToken);
+    {
+        return service.GetEligibleCoursesAsync(request.AcademicTermId, cancellationToken);
+    }
 }

@@ -17,9 +17,18 @@ public static class UserLogic
         return entity;
     }
 
-    public static string GetFullName(User entity) => $"{entity.FirstName} {entity.LastName}";
-    public static void Activate(User entity) => entity.IsActive = true;
-    public static void Deactivate(User entity) => entity.IsActive = false;
+    public static string GetFullName(User entity)
+    {
+        return $"{entity.FirstName} {entity.LastName}";
+    }
+    public static void Activate(User entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(User entity)
+    {
+        entity.IsActive = false;
+    }
     public static void AssignRole(User entity, Role role)
     {
         bool alreadyAssigned = entity.UserRoles.Any(ur => ur.RoleId == role.Id);

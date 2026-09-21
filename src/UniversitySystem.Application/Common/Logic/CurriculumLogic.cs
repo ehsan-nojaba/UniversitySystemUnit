@@ -44,6 +44,12 @@ public static class CurriculumLogic
         }
     }
 
-    public static void Activate(Curriculum entity) => entity.IsActive = true;
-    public static void Deactivate(Curriculum entity) => entity.IsActive = false;
+    public static void Activate(Curriculum entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(Curriculum entity)
+    {
+        entity.IsActive = false;
+    }
 }

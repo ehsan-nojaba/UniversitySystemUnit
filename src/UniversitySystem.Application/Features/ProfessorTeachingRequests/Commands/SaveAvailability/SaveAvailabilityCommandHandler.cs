@@ -8,5 +8,8 @@ namespace UniversitySystem.Application.Features.ProfessorTeachingRequests.Comman
 /// </summary>
 public sealed class SaveAvailabilityCommandHandler(ProfessorTeachingRequestService service) : IRequestHandler<SaveAvailabilityCommand, TeachingRequestDto>
 {
-    public Task<TeachingRequestDto> Handle(SaveAvailabilityCommand r, CancellationToken ct) => service.SaveAvailabilityAsync(r.AcademicTermId, r.Availability, ct);
+    public Task<TeachingRequestDto> Handle(SaveAvailabilityCommand r, CancellationToken ct)
+    {
+        return service.SaveAvailabilityAsync(r.AcademicTermId, r.Availability, ct);
+    }
 }

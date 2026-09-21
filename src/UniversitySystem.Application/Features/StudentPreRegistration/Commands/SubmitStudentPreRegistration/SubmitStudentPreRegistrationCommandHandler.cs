@@ -11,5 +11,7 @@ public sealed class SubmitStudentPreRegistrationCommandHandler(IStudentPreRegist
     : IRequestHandler<SubmitStudentPreRegistrationCommand, StudentPreRegistrationDto>
 {
     public Task<StudentPreRegistrationDto> Handle(SubmitStudentPreRegistrationCommand request, CancellationToken cancellationToken)
-        => service.SubmitAsync(request.AcademicTermId, cancellationToken);
+    {
+        return service.SubmitAsync(request.AcademicTermId, cancellationToken);
+    }
 }

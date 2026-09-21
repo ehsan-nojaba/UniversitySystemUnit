@@ -11,5 +11,7 @@ public sealed class GetTeachingAssignmentsQueryHandler(ITeachingAssignmentServic
     : IRequestHandler<GetTeachingAssignmentsQuery, ICollection<TeachingAssignmentDto>>
 {
     public Task<ICollection<TeachingAssignmentDto>> Handle(GetTeachingAssignmentsQuery request, CancellationToken cancellationToken)
-        => service.GetAssignmentsAsync(request.CourseOfferingId, cancellationToken);
+    {
+        return service.GetAssignmentsAsync(request.CourseOfferingId, cancellationToken);
+    }
 }

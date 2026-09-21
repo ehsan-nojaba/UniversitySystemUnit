@@ -25,6 +25,12 @@ public static class FacultyLogic
         return entity;
     }
 
-    public static void Activate(Faculty entity) => entity.IsActive = true;
-    public static void Deactivate(Faculty entity) => entity.IsActive = false;
+    public static void Activate(Faculty entity)
+    {
+        entity.IsActive = true;
+    }
+    public static void Deactivate(Faculty entity)
+    {
+        entity.IsActive = false;
+    }
 }

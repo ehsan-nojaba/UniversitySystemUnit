@@ -8,8 +8,14 @@ namespace UniversitySystem.Application.Features.CourseOfferings.Services;
 /// </summary>
 public sealed class ProfessorScheduleConflictChecker(IProfessorScheduleRepository repository) : IProfessorScheduleConflictChecker
 {
-    public Task CheckConflictsAsync(long courseOfferingId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default) => CheckAsync(courseOfferingId, slots, null, cancellationToken);
-    public Task CheckProfessorAssignmentAsync(long courseOfferingId, long professorId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default) => CheckAsync(courseOfferingId, slots, professorId, cancellationToken);
+    public Task CheckConflictsAsync(long courseOfferingId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
+    {
+        return CheckAsync(courseOfferingId, slots, null, cancellationToken);
+    }
+    public Task CheckProfessorAssignmentAsync(long courseOfferingId, long professorId, ICollection<CourseOfferingScheduleSlotDto> slots, CancellationToken cancellationToken = default)
+    {
+        return CheckAsync(courseOfferingId, slots, professorId, cancellationToken);
+    }
     private async Task CheckAsync(long offeringId, ICollection<CourseOfferingScheduleSlotDto> slots, long? professorId, CancellationToken cancellationToken)
     {
         if (slots.Count == 0)
