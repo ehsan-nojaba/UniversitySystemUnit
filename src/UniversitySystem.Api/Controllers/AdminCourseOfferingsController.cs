@@ -25,14 +25,14 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/course-offerings")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminCourseOfferingsController(ISender _mediator) : ControllerBase
+public sealed class AdminCourseOfferingsController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpPost("{id:long}/finalize")]
     [SwaggerOperation(Summary = "نهایی‌کردن برنامه کلاس", Description = "پس از کنترل استاد، پیشنهاد زمان، ظرفیت و تداخل، ارائه را برای دانشجو منتشر می‌کند.")]
     [SwaggerResponse(200, "برنامه نهایی شد", typeof(bool))]
     public async Task<IActionResult> FinalizeOffering(long id, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new FinalizeOfferingCommand(id, true), cancellationToken);
+        var response = await Mediator.Send(new FinalizeOfferingCommand(id, true), cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -41,7 +41,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     [SwaggerResponse(200, "برنامه قابل ویرایش است", typeof(bool))]
     public async Task<IActionResult> ReopenOffering(long id, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new FinalizeOfferingCommand(id, false), cancellationToken);
+        var response = await Mediator.Send(new FinalizeOfferingCommand(id, false), cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -54,7 +54,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
         {
             AcademicTermId = academicTermId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -64,7 +64,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     public async Task<IActionResult> Create([FromBody] CreateCourseOfferingRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<CreateCourseOfferingCommand>();
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse(nameof(GetByTerm), new { academicTermId = response.AcademicTermId });
     }
 
@@ -75,7 +75,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     {
         var param = request.Adapt<UpdateCourseOfferingCommand>();
         param.Id = id;
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -88,7 +88,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
         {
             CourseOfferingId = courseOfferingId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -99,7 +99,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     {
         var param = request.Adapt<AssignProfessorCommand>();
         param.CourseOfferingId = courseOfferingId;
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse(nameof(GetProfessors), new { courseOfferingId });
     }
 
@@ -109,7 +109,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     public async Task<IActionResult> RemoveProfessor([FromRoute] long courseOfferingId, [FromRoute] long professorId, CancellationToken cancellationToken)
     {
         var param = new RemoveProfessorAssignmentCommand { CourseOfferingId = courseOfferingId, ProfessorId = professorId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse(204);
     }
 
@@ -122,7 +122,7 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
         {
             CourseOfferingId = courseOfferingId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -133,7 +133,8 @@ public sealed class AdminCourseOfferingsController(ISender _mediator) : Controll
     {
         var param = request.Adapt<SaveCourseOfferingScheduleCommand>();
         param.CourseOfferingId = courseOfferingId;
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

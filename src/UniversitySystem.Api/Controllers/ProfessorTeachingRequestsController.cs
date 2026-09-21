@@ -21,14 +21,14 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/professor/teaching-request")]
 [Authorize(Roles = RoleNames.Professor)]
-public sealed class ProfessorTeachingRequestsController(ISender _mediator) : ControllerBase
+public sealed class ProfessorTeachingRequestsController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("final-schedule")]
     [SwaggerOperation(Summary = "برنامه نهایی کلاس‌های استاد", Description = "کلاس‌هایی که آموزش برای استاد جاری نهایی و منتشر کرده است.")]
     [SwaggerResponse(200, "برنامه نهایی", typeof(ICollection<FinalTeachingOffering>))]
     public async Task<IActionResult> GetFinalSchedule([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new MyFinalScheduleQuery(academicTermId), cancellationToken);
+        var response = await Mediator.Send(new MyFinalScheduleQuery(academicTermId), cancellationToken);
         return response.ToApiResponse();
     }
     [HttpGet("eligible-courses")]
@@ -36,7 +36,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     [SwaggerResponse(200, "درس‌ها", typeof(ICollection<ProfessorCourseOption>))]
     public async Task<IActionResult> GetEligibleCourses([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new MyTeachingCoursesQuery(academicTermId), cancellationToken);
+        var response = await Mediator.Send(new MyTeachingCoursesQuery(academicTermId), cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -46,7 +46,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     public async Task<IActionResult> Get([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetTeachingRequestQuery(academicTermId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -56,7 +56,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     public async Task<IActionResult> Save([FromRoute] long academicTermId, [FromBody] SaveProfessorTeachingRequestRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<SaveTeachingRequestCommand>() with { AcademicTermId = academicTermId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -66,7 +66,7 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     public async Task<IActionResult> SaveAvailability([FromRoute] long academicTermId, [FromBody] SaveProfessorAvailabilityRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<SaveAvailabilityCommand>() with { AcademicTermId = academicTermId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -76,7 +76,8 @@ public sealed class ProfessorTeachingRequestsController(ISender _mediator) : Con
     public async Task<IActionResult> Submit([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new SubmitTeachingRequestCommand(academicTermId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

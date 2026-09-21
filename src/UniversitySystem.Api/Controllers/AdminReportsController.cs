@@ -15,7 +15,7 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/reports")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminReportsController(ISender _mediator) : ControllerBase
+public sealed class AdminReportsController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet]
     [SwaggerOperation(Summary = "مشاهده اطلاعات", Description = "عملیات مشاهده اطلاعات؛ دسترسی مطابق نقش مجاز این مسیر است.")]
@@ -23,7 +23,8 @@ public sealed class AdminReportsController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetAdminReportQuery(academicTermId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

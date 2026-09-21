@@ -14,14 +14,14 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/majors")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class MajorCurriculaController(ISender _mediator) : ControllerBase
+public sealed class MajorCurriculaController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet]
     [SwaggerOperation(Summary = "فهرست رشته‌ها", Description = "رشته‌ها و گروه آموزشی برای مدیریت چارت.")]
     [SwaggerResponse(200, "رشته‌ها", typeof(ICollection<MajorOptionDto>))]
     public async Task<IActionResult> GetMajors(CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetMajorsQuery(), cancellationToken);
+        var response = await Mediator.Send(new GetMajorsQuery(), cancellationToken);
         return response.ToApiResponse();
     }
     [HttpGet("{majorId:long}/curriculum")]
@@ -29,7 +29,7 @@ public sealed class MajorCurriculaController(ISender _mediator) : ControllerBase
     [SwaggerResponse(200, "چارت رشته", typeof(MajorCurriculumDto))]
     public async Task<IActionResult> GetCurriculum(long majorId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetMajorCurriculumQuery(majorId), cancellationToken);
+        var response = await Mediator.Send(new GetMajorCurriculumQuery(majorId), cancellationToken);
         return response.ToApiResponse();
     }
     [HttpPut("{majorId:long}/curriculum")]
@@ -38,7 +38,7 @@ public sealed class MajorCurriculaController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> Save(long majorId, [FromBody] SaveMajorCurriculumRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<SaveMajorCurriculumCommand>() with { MajorId = majorId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
     [HttpPost("{majorId:long}/courses")]
@@ -47,7 +47,8 @@ public sealed class MajorCurriculaController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> CreateCourse(long majorId, [FromBody] CreateMajorCourseRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<CreateMajorCourseCommand>() with { MajorId = majorId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse(nameof(GetCurriculum), new { majorId });
     }
 }
+

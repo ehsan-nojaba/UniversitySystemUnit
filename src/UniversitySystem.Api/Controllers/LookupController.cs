@@ -14,7 +14,7 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/lookups")]
 [Authorize(Roles = RoleNames.Student + "," + RoleNames.Professor + "," + RoleNames.EducationAdmin)]
-public sealed class LookupController(ISender _mediator) : ControllerBase
+public sealed class LookupController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("academic-terms")]
     [SwaggerOperation(Summary = "فهرست ترم‌ها", Description = "عملیات فهرست ترم‌ها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
@@ -22,7 +22,7 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> GetTerms(CancellationToken cancellationToken)
     {
         var param = new GetAcademicTermsQuery();
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -33,7 +33,7 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> GetCourses([FromQuery] long? majorId, CancellationToken cancellationToken)
     {
         var param = new GetActiveCoursesQuery(majorId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -44,7 +44,8 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> GetProfessors(CancellationToken cancellationToken)
     {
         var param = new GetActiveProfessorsQuery();
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

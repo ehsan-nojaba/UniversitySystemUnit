@@ -14,14 +14,8 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/pre-registration")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminPreRegistrationController : ControllerBase
+public sealed class AdminPreRegistrationController(ISender mediator) : ApiControllerBase(mediator)
 {
-    private readonly ISender _mediator;
-    public AdminPreRegistrationController(ISender mediator)
-    {
-        _mediator = mediator;
-    }
-
     /// <summary>
     /// Retrieves aggregated student demand summary per course for a specified academic term.
     /// Only submitted pre-registrations are included.
@@ -39,7 +33,7 @@ public sealed class AdminPreRegistrationController : ControllerBase
         {
             AcademicTermId = academicTermId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }

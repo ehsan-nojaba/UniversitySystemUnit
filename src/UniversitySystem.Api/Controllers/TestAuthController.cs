@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 using UniversitySystem.Application.Common.Interfaces;
 using UniversitySystem.Domain.Constants;
 
@@ -9,13 +10,8 @@ namespace UniversitySystem.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/test")]
-public sealed class TestAuthController : ControllerBase
+public sealed class TestAuthController(ISender mediator, ICurrentUserService currentUserService) : ApiControllerBase(mediator)
 {
-    private readonly ICurrentUserService _currentUserService;
-    public TestAuthController(ICurrentUserService currentUserService)
-    {
-        _currentUserService = currentUserService;
-    }
 
     /// <summary>
     /// Student-only test endpoint.
@@ -24,7 +20,7 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.Student)]
     public IActionResult StudentEndpoint()
     {
-        return Ok(new { Message = "Access granted to Student endpoint.", _currentUserService.UserId, _currentUserService.Roles });
+        return Ok(new { Message = "Access granted to Student endpoint.", currentUserService.UserId, currentUserService.Roles });
     }
 
     /// <summary>
@@ -34,7 +30,7 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.Professor)]
     public IActionResult ProfessorEndpoint()
     {
-        return Ok(new { Message = "Access granted to Professor endpoint.", _currentUserService.UserId, _currentUserService.Roles });
+        return Ok(new { Message = "Access granted to Professor endpoint.", currentUserService.UserId, currentUserService.Roles });
     }
 
     /// <summary>
@@ -44,6 +40,6 @@ public sealed class TestAuthController : ControllerBase
     [Authorize(Roles = RoleNames.EducationAdmin)]
     public IActionResult AdminEndpoint()
     {
-        return Ok(new { Message = "Access granted to EducationAdmin endpoint.", _currentUserService.UserId, _currentUserService.Roles });
+        return Ok(new { Message = "Access granted to EducationAdmin endpoint.", currentUserService.UserId, currentUserService.Roles });
     }
 }

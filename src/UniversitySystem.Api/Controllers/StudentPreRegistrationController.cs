@@ -19,14 +19,8 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/student/pre-registration")]
 [Authorize(Roles = RoleNames.Student)]
-public sealed class StudentPreRegistrationController : ControllerBase
+public sealed class StudentPreRegistrationController(ISender mediator) : ApiControllerBase(mediator)
 {
-    private readonly ISender _mediator;
-    public StudentPreRegistrationController(ISender mediator)
-    {
-        _mediator = mediator;
-    }
-
     /// <summary>
     /// Retrieves courses eligible for the current student to pre-register for the given academic term.
     /// Filters courses based on active curriculum, passed course history, and satisfied prerequisites.
@@ -43,7 +37,7 @@ public sealed class StudentPreRegistrationController : ControllerBase
         {
             AcademicTermId = academicTermId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -56,7 +50,7 @@ public sealed class StudentPreRegistrationController : ControllerBase
     public async Task<IActionResult> GetPreRegistration([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetStudentPreRegistrationQuery { AcademicTermId = academicTermId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -70,7 +64,7 @@ public sealed class StudentPreRegistrationController : ControllerBase
     {
         var param = request.Adapt<SaveStudentPreRegistrationCommand>();
         param.AcademicTermId = academicTermId;
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 
@@ -86,7 +80,7 @@ public sealed class StudentPreRegistrationController : ControllerBase
         {
             AcademicTermId = academicTermId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }

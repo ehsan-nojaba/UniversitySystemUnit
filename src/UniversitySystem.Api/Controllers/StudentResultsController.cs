@@ -15,7 +15,7 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/student/pre-registration")]
 [Authorize(Roles = RoleNames.Student)]
-public sealed class StudentResultsController(ISender _mediator) : ControllerBase
+public sealed class StudentResultsController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("{academicTermId:long}/result")]
     [SwaggerOperation(Summary = "مشاهده نتیجه پیش‌انتخاب و ارائه‌های قابل ثبت‌نام", Description = "عملیات مشاهده نتیجه پیش‌انتخاب و ارائه‌های قابل ثبت‌نام؛ دسترسی مطابق نقش مجاز این مسیر است.")]
@@ -23,7 +23,8 @@ public sealed class StudentResultsController(ISender _mediator) : ControllerBase
     public async Task<IActionResult> Get([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetStudentResultQuery(academicTermId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

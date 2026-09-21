@@ -14,11 +14,8 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/planning")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminPlanningController : ControllerBase
+public sealed class AdminPlanningController(ISender mediator) : ApiControllerBase(mediator)
 {
-    private readonly ISender _mediator;
-    public AdminPlanningController(ISender mediator) => _mediator = mediator;
-
     [HttpGet("overview")]
     [SwaggerOperation(Summary = "نمای برنامه‌ریزی آموزش", Description = "عملیات نمای برنامه‌ریزی آموزش؛ دسترسی مطابق نقش مجاز این مسیر است.")]
     [SwaggerResponse(200, "عملیات موفق", typeof(AcademicPlanningOverviewDto))]
@@ -28,7 +25,7 @@ public sealed class AdminPlanningController : ControllerBase
         {
             AcademicTermId = academicTermId
         };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }

@@ -15,7 +15,7 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/teaching-requests")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class AdminTeachingRequestsController(ISender _mediator) : ControllerBase
+public sealed class AdminTeachingRequestsController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet]
     [SwaggerOperation(Summary = "مشاهده درخواست‌های تدریس استادها", Description = "عملیات مشاهده درخواست‌های تدریس استادها؛ دسترسی مطابق نقش مجاز این مسیر است.")]
@@ -23,7 +23,8 @@ public sealed class AdminTeachingRequestsController(ISender _mediator) : Control
     public async Task<IActionResult> Get([FromQuery] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new GetTeachingRequestSummaryQuery(academicTermId);
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
+

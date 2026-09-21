@@ -13,14 +13,14 @@ namespace UniversitySystem.Api.Controllers;
 [ApiController]
 [Route("api/v1/admin/professors")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
-public sealed class ProfessorCoursesController(ISender _mediator) : ControllerBase
+public sealed class ProfessorCoursesController(ISender mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("{professorId:long}/courses")]
     [SwaggerOperation(Summary = "درس‌های مجاز استاد", Description = "شناسه درس‌هایی که این استاد اجازه پیشنهاد تدریس آن‌ها را دارد.")]
     [SwaggerResponse(200, "درس‌های استاد", typeof(ICollection<long>))]
     public async Task<IActionResult> Get(long professorId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new ProfessorCoursesQuery(professorId), cancellationToken);
+        var response = await Mediator.Send(new ProfessorCoursesQuery(professorId), cancellationToken);
         return response.ToApiResponse();
     }
     [HttpPut("{professorId:long}/courses")]
@@ -29,10 +29,11 @@ public sealed class ProfessorCoursesController(ISender _mediator) : ControllerBa
     public async Task<IActionResult> Save(long professorId, [FromBody] SaveProfessorCoursesRequest request, CancellationToken cancellationToken)
     {
         var param = request.Adapt<SaveProfessorCoursesCommand>() with { ProfessorId = professorId };
-        var response = await _mediator.Send(param, cancellationToken);
+        var response = await Mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }
 }
 
 /// <summary>درس‌های مجاز منتخب آموزش برای یک استاد.</summary>
 public sealed record SaveProfessorCoursesRequest(ICollection<long> CourseIds);
+

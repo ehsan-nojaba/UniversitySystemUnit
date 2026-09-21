@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UniversitySystem.Api.Controllers;
@@ -5,7 +6,7 @@ namespace UniversitySystem.Api.Controllers;
 /// کلاس پایه مشترک کنترلرهای API؛ محل ویژگی‌های مشترک HTTP است.
 /// </summary>
 [ApiController]
-[Route("api/v1/[controller]")]
-public abstract class ApiControllerBase : ControllerBase
+public abstract class ApiControllerBase(ISender mediator) : ControllerBase
 {
+    protected ISender Mediator { get; } = mediator;
 }
