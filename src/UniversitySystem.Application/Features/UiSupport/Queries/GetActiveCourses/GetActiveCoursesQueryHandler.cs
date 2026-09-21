@@ -8,6 +8,6 @@ public sealed class GetActiveCoursesQueryHandler(UiSupportService service) : IRe
 {
     public Task<ICollection<CourseOptionDto>> Handle(GetActiveCoursesQuery request, CancellationToken cancellationToken)
     {
-        return service.GetCoursesAsync(request.MajorId, cancellationToken);
+        return service.GetCoursesAsync(request.MajorId, request.IncludeAll, cancellationToken);
     }
 }

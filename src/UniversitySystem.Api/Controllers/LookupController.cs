@@ -36,6 +36,17 @@ public sealed class LookupController(ISender mediator) : ApiControllerBase(media
         return response.ToApiResponse();
     }
 
+    [HttpGet("courses/catalog")]
+    [Authorize(Roles = RoleNames.EducationAdmin)]
+    [SwaggerOperation(Summary = "فهرست درس‌های قابل افزودن", Description = "فهرست درس‌های فعال گروه آموزشی رشته برای افزودن به چارت؛ ارتباط درس با رشته پس از ذخیره چارت ثبت می‌شود.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOptionDto>))]
+    public async Task<IActionResult> GetCourseCatalog([FromQuery] long? majorId, CancellationToken cancellationToken)
+    {
+        var param = new GetActiveCoursesQuery(majorId, IncludeAll: true);
+        var response = await Mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
+
     [HttpGet("professors")]
     [Authorize(Roles = RoleNames.EducationAdmin)]
     [SwaggerOperation(Summary = "فهرست استادهای فعال", Description = "عملیات فهرست استادهای فعال؛ دسترسی مطابق نقش مجاز این مسیر است.")]

@@ -11,9 +11,20 @@ public sealed class UiSupportRepository(ApplicationDbContext _context) : IUiSupp
     {
         return await _context.AcademicTerms.AsNoTracking().Where(t => t.IsActive).OrderByDescending(t => t.StartDate).ThenBy(t => t.Id).Select(t => new AcademicTermOptionDto(t.Id, t.Code, t.Title, t.IsActive, t.StartDate, t.EndDate)).ToListAsync(cancellationToken);
     }
-    public async Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, CancellationToken cancellationToken)
+    public async Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, bool includeAll, CancellationToken cancellationToken)
     {
-        return await _context.Courses.AsNoTracking().Where(c => c.IsActive && (majorId == null || c.CurriculumCourses.Any(cc => cc.Curriculum.MajorId == majorId))).OrderBy(c => c.Code).Select(c => new CourseOptionDto(c.Id, c.Code, c.Title, c.Credits)).ToListAsync(cancellationToken);
+        var query = _context.Courses.AsNoTracking().Where(c => c.IsActive);
+        if (majorId.HasValue && includeAll)
+        {
+            var departmentIds = _context.Majors.Where(m => m.Id == majorId.Value).Select(m => m.DepartmentId);
+            query = query.Where(c => c.CurriculumCourses.Any(cc => departmentIds.Contains(cc.Curriculum.Major.DepartmentId)));
+        }
+        else if (majorId.HasValue)
+        {
+            query = query.Where(c => c.CurriculumCourses.Any(cc => cc.Curriculum.MajorId == majorId.Value));
+        }
+
+        return await query.OrderBy(c => c.Code).Select(c => new CourseOptionDto(c.Id, c.Code, c.Title, c.Credits)).ToListAsync(cancellationToken);
     }
     public async Task<ICollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken)
     {

@@ -21,6 +21,17 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (exception is OperationCanceledException)
+        {
+            _logger.LogDebug("Request was cancelled: {Path}", httpContext.Request.Path);
+            if (!httpContext.Response.HasStarted)
+            {
+                httpContext.Response.StatusCode = 499;
+            }
+
+            return true;
+        }
+
         _logger.LogError(exception, "Unhandled exception occurred: {Message}", exception.Message);
 
         var (statusCode, title, detail, extensions) = MapException(exception);

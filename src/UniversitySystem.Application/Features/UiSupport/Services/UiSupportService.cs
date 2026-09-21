@@ -10,9 +10,9 @@ public sealed class UiSupportService(IUiSupportRepository repository, ICurrentUs
     {
         return repository.GetTermsAsync(cancellationToken);
     }
-    public Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, CancellationToken cancellationToken)
+    public Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, bool includeAll, CancellationToken cancellationToken)
     {
-        return repository.GetCoursesAsync(majorId, cancellationToken);
+        return repository.GetCoursesAsync(majorId, includeAll, cancellationToken);
     }
     public Task<ICollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken)
     {

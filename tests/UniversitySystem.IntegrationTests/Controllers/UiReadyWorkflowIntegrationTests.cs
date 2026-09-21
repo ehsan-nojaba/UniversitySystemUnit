@@ -37,19 +37,23 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         db.Add(department);
         await db.SaveChangesAsync();
         var major = MajorLogic.Create(department.Id,"M" + suffix,"مهندسی کامپیوتر");
+        var relatedMajor = MajorLogic.Create(department.Id,"R" + suffix,"مهندسی نرم‌افزار");
         var course = CourseLogic.Create("C" + suffix,"پایگاه داده",3);
+        var catalogCourse = CourseLogic.Create("K" + suffix,"سیستم عامل",3);
         var inactive = CourseLogic.Create("I" + suffix,"غیرفعال",3);
         CourseLogic.Deactivate(        inactive);
         var studentUser = UserLogic.Create("s" + suffix,hasher.Hash("TestPassword123!"),"دانشجو","نمونه");
         var professorUser = UserLogic.Create("p" + suffix,hasher.Hash("TestPassword123!"),"استاد","نمونه");
         var adminUser = UserLogic.Create("a" + suffix,hasher.Hash("TestPassword123!"),"آموزش","نمونه");
-        db.AddRange(major, course, inactive, studentUser, professorUser, adminUser);
+        db.AddRange(major, relatedMajor, course, catalogCourse, inactive, studentUser, professorUser, adminUser);
         await db.SaveChangesAsync();
         var student = StudentLogic.Create(studentUser.Id,"S" + suffix,major.Id,1403);
         var professor = ProfessorLogic.Create(professorUser.Id,"P" + suffix);
         var curriculum = CurriculumLogic.Create(major.Id,"چارت",suffix);
         CurriculumLogic.AddCourse(        curriculum,course.Id,1,true);
-        db.AddRange(student, professor, curriculum);
+        var relatedCurriculum = CurriculumLogic.Create(relatedMajor.Id,"چارت",suffix);
+        CurriculumLogic.AddCourse(relatedCurriculum,catalogCourse.Id,1,true);
+        db.AddRange(student, professor, curriculum, relatedCurriculum);
         await db.SaveChangesAsync();
         foreach (var pair in new[]
         {
@@ -82,6 +86,20 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         var courses = await professorClient.GetFromJsonAsync<List<CourseOptionDto>>("/api/v1/lookups/courses");
         Assert.Contains(courses!, c => c.Id == course.Id);
         Assert.DoesNotContain(courses!, c => c.Id == inactive.Id);
+        var majorCourses = await adminClient.GetFromJsonAsync<List<CourseOptionDto>>($"/api/v1/lookups/courses?majorId={major.Id}");
+        Assert.Contains(majorCourses!, c => c.Id == course.Id);
+        Assert.DoesNotContain(majorCourses!, c => c.Id == catalogCourse.Id);
+        var courseCatalog = await adminClient.GetFromJsonAsync<List<CourseOptionDto>>($"/api/v1/lookups/courses/catalog?majorId={major.Id}");
+        Assert.Contains(courseCatalog!, c => c.Id == catalogCourse.Id);
+        Assert.DoesNotContain(courseCatalog!, c => c.Id == inactive.Id);
+        var addedToCurriculum = await adminClient.PutAsJsonAsync($"/api/v1/admin/majors/{major.Id}/curriculum", new { courses = new[] { new { courseId = course.Id, recommendedTerm = 1, isRequired = true }, new { courseId = catalogCourse.Id, recommendedTerm = 1, isRequired = true } } });
+        Assert.Equal(HttpStatusCode.OK, addedToCurriculum.StatusCode);
+        var removedFromCurriculum = await adminClient.PutAsJsonAsync($"/api/v1/admin/majors/{major.Id}/curriculum", new { courses = new[] { new { courseId = course.Id, recommendedTerm = 1, isRequired = true } } });
+        Assert.Equal(HttpStatusCode.OK, removedFromCurriculum.StatusCode);
+        var createdAfterRemoval = await adminClient.PostAsJsonAsync($"/api/v1/admin/majors/{major.Id}/courses", new { title = "درس جدید پس از حذف", credits = 3, recommendedTerm = 1, isRequired = true });
+        Assert.Equal(HttpStatusCode.Created, createdAfterRemoval.StatusCode);
+        var refreshedCatalog = await adminClient.GetFromJsonAsync<List<CourseOptionDto>>($"/api/v1/lookups/courses/catalog?majorId={major.Id}");
+        Assert.Contains(refreshedCatalog!, c => c.Id == catalogCourse.Id);
         var terms = await studentClient.GetFromJsonAsync<List<AcademicTermOptionDto>>("/api/v1/lookups/academic-terms");
         Assert.Contains(terms!, t => t.Id == term.Id);
         var professors = await adminClient.GetFromJsonAsync<List<ProfessorOptionDto>>("/api/v1/lookups/professors");
@@ -153,6 +171,7 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         Assert.True(paths.TryGetProperty("/api/v1/auth/me", out _));
         Assert.True(paths.TryGetProperty("/api/v1/lookups/academic-terms", out _));
         Assert.True(paths.TryGetProperty("/api/v1/lookups/courses", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/lookups/courses/catalog", out _));
         Assert.True(paths.TryGetProperty("/api/v1/lookups/professors", out _));
         Assert.Equal("bearer", document.RootElement.GetProperty("components").GetProperty("securitySchemes").GetProperty("Bearer").GetProperty("scheme").GetString());
         Assert.Equal("Bearer", paths.GetProperty("/api/v1/auth/me").GetProperty("get").GetProperty("security")[0].EnumerateObject().First().Name);

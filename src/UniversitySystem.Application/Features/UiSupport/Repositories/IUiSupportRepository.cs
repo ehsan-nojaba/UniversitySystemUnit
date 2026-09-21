@@ -5,7 +5,7 @@ namespace UniversitySystem.Application.Features.UiSupport.Repositories;
 public interface IUiSupportRepository
 {
     Task<ICollection<AcademicTermOptionDto>> GetTermsAsync(CancellationToken cancellationToken);
-    Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, CancellationToken cancellationToken);
+    Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, bool includeAll, CancellationToken cancellationToken);
     Task<ICollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken);
     Task<CurrentUserDto?> GetCurrentUserAsync(long userId, CancellationToken cancellationToken);
 }
