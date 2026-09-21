@@ -11,7 +11,6 @@ using UniversitySystem.Domain.Constants;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>مدیریت رشته و درس‌های چارت، فقط برای آموزش؛ دانشجو رشته خود را از پروفایل دریافت می‌کند.</summary>
-[ApiController]
 [Route("api/v1/admin/majors")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class MajorCurriculaController(ISender mediator) : ApiControllerBase(mediator)
@@ -30,6 +29,14 @@ public sealed class MajorCurriculaController(ISender mediator) : ApiControllerBa
     public async Task<IActionResult> GetCurriculum(long majorId, CancellationToken cancellationToken)
     {
         var response = await Mediator.Send(new GetMajorCurriculumQuery(majorId), cancellationToken);
+        return response.ToApiResponse();
+    }
+    [HttpGet("{majorId:long}/courses/next-code")]
+    [SwaggerOperation(Summary = "کد بعدی درس", Description = "کد درس جدید را با الگوی CE-Number تولید می‌کند.")]
+    [SwaggerResponse(200, "کد آمادهٔ ثبت", typeof(NextCourseCodeDto))]
+    public async Task<IActionResult> GetNextCourseCode(long majorId, CancellationToken cancellationToken)
+    {
+        var response = await Mediator.Send(new GetNextCourseCodeQuery(majorId), cancellationToken);
         return response.ToApiResponse();
     }
     [HttpPut("{majorId:long}/curriculum")]

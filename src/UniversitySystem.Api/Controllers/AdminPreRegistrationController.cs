@@ -11,7 +11,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «تقاضای دانشجوها برای درس‌های یک ترم»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/admin/pre-registration")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminPreRegistrationController(ISender mediator) : ApiControllerBase(mediator)

@@ -22,7 +22,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «ارائه درس، تخصیص استاد و برنامه زمانی کلاس»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/admin/course-offerings")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminCourseOfferingsController(ISender mediator) : ApiControllerBase(mediator)

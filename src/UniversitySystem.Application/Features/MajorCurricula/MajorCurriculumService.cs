@@ -10,6 +10,12 @@ public sealed class MajorCurriculumService(IMajorCurriculumRepository repository
 {
     public Task<ICollection<MajorOptionDto>> GetMajorsAsync(CancellationToken ct) => repository.GetMajorsAsync(ct);
 
+    public async Task<NextCourseCodeDto> GetNextCourseCodeAsync(long majorId, CancellationToken ct)
+    {
+        _ = await GetMajorAsync(majorId, false, ct);
+        return new(await repository.GetNextCourseCodeAsync(ct));
+    }
+
     private async Task<Major> GetMajorAsync(long majorId, bool editable, CancellationToken ct)
     {
         var major = await repository.GetMajorAsync(majorId, ct) ?? throw new NotFoundException("رشته انتخاب‌شده پیدا نشد.");
@@ -55,10 +61,10 @@ public sealed class MajorCurriculumService(IMajorCurriculumRepository repository
     public Task<MajorCurriculumDto> CreateCourseAsync(long majorId, NewMajorCourseInput input, CancellationToken ct) => repository.ExecuteSerializableAsync(async () =>
     {
         var major = await GetMajorAsync(majorId, true, ct);
-        if (input is null || string.IsNullOrWhiteSpace(input.Code) || input.Code.Trim().Length > 50 || string.IsNullOrWhiteSpace(input.Title) || input.Title.Trim().Length > 200 || input.Credits <= 0 || input.Credits > 6 || input.RecommendedTerm <= 0) { throw new BusinessException("کد و نام درس و ترم پیشنهادی باید معتبر و تعداد واحد بین ۱ تا ۶ باشد."); }
-        if (await repository.CodeExistsAsync(input.Code.Trim(), ct)) { throw new BusinessException("این کد درس قبلاً ثبت شده است؛ درس را از فهرست درس‌های موجود انتخاب کنید."); }
+        if (input is null || string.IsNullOrWhiteSpace(input.Title) || input.Title.Trim().Length > 200 || input.Credits <= 0 || input.Credits > 6 || input.RecommendedTerm <= 0) { throw new BusinessException("نام درس و ترم پیشنهادی باید معتبر و تعداد واحد بین ۱ تا ۶ باشد."); }
         var curriculum = await GetOrCreateAsync(major, ct);
-        var course = CourseLogic.Create(input.Code,input.Title,input.Credits);
+        var code = await repository.GetNextCourseCodeAsync(ct);
+        var course = CourseLogic.Create(code,input.Title.Trim(),input.Credits);
         repository.Add(course);
         await unitOfWork.SaveChangesAsync(ct);
         CurriculumLogic.AddCourse(        curriculum,course.Id,input.RecommendedTerm,input.IsRequired);

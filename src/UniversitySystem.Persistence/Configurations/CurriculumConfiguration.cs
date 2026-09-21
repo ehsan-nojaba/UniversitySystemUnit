@@ -37,9 +37,5 @@ public sealed class CurriculumConfiguration : IEntityTypeConfiguration<Curriculu
             .HasForeignKey(cu => cu.MajorId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(cu => cu.CurriculumCourses)
-            .WithOne(cc => cc.Curriculum)
-            .HasForeignKey(cc => cc.CurriculumId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

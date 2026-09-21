@@ -70,8 +70,9 @@ Availability از درخواست پیش‌نویس موجود استفاده م�
 
 - `GET /api/v1/admin/majors`: فهرست رشته‌ها شامل `id`، `code`، `title`، `departmentTitle` و `isActive`.
 - `GET /api/v1/admin/majors/{majorId}/curriculum`: آخرین چارت فعال رشته؛ درس‌ها دارای `courseId`، کد، عنوان، تعداد واحد، `recommendedTerm`، `isRequired` و `isActive` هستند. نبود چارت پاسخ خالی معتبر است.
+- `GET /api/v1/admin/majors/{majorId}/courses/next-code`: کد بعدی درس را با الگوی `CE-Number` برمی‌گرداند؛ نمونه پاسخ `{ "code": "CE-106" }`.
 - `PUT /api/v1/admin/majors/{majorId}/curriculum`: ذخیره فهرست کامل درس‌های چارت با بدنه `{ "courses": [{ "courseId": 1, "recommendedTerm": 1, "isRequired": true }] }`.
-- `POST /api/v1/admin/majors/{majorId}/courses`: ساخت درس جدید و اتصال آن به چارت رشته در یک تراکنش؛ بدنه `{ "code": "CE-105", "title": "برنامه‌نویسی پیشرفته", "credits": 3, "recommendedTerm": 2, "isRequired": true }` و پاسخ ۲۰۱ با چارت به‌روز.
+- `POST /api/v1/admin/majors/{majorId}/courses`: ساخت درس جدید و اتصال آن به چارت رشته در یک تراکنش؛ کد درس خودکار ساخته می‌شود و بدنه فقط `{ "title": "برنامه‌نویسی پیشرفته", "credits": 3, "recommendedTerm": 2, "isRequired": true }` است. پاسخ ۲۰۱ چارت به‌روز را برمی‌گرداند.
 
 کد درس در کل دانشگاه یکتا است. برای استفاده از یک درس مشترک در چند رشته، همان درس موجود را به چارت‌ها متصل کنید. حذف از چارت، Course را حذف نمی‌کند؛ حذف درس دارای پیش‌انتخاب یا ثبت‌نام در ترم فعالِ دانشجویان همان رشته رد می‌شود. رشته غیرفعال فقط قابل مشاهده است. ترم پیشنهادی و الزامی بودن ویژگی ارتباط درس با همان رشته‌اند.
 

@@ -12,7 +12,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «مشاهده درخواست‌های تدریس ارسال‌شده استادها»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/admin/teaching-requests")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminTeachingRequestsController(ISender mediator) : ApiControllerBase(mediator)

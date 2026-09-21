@@ -8,7 +8,6 @@ using UniversitySystem.Application.Features.UiSupport.Queries.GetCurrentUser;
 
 namespace UniversitySystem.Api.Controllers;
 /// <summary>اطلاعات حساب احراز‌شده برای نمایش نام، نقش و پروفایل در UI.</summary>
-[ApiController]
 [Route("api/v1/auth/me")]
 [Authorize]
 public sealed class CurrentUserController(ISender mediator) : ApiControllerBase(mediator)

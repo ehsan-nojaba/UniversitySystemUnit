@@ -18,7 +18,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «ثبت، مشاهده و ارسال درخواست تدریس و زمان آزاد استاد»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/professor/teaching-request")]
 [Authorize(Roles = RoleNames.Professor)]
 public sealed class ProfessorTeachingRequestsController(ISender mediator) : ApiControllerBase(mediator)

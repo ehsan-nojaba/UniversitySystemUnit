@@ -15,7 +15,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «ثبت‌نام قطعی و مشاهده ثبت‌نام دانشجو»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/student/enrollments")]
 [Authorize(Roles = RoleNames.Student)]
 public sealed class StudentEnrollmentsController(ISender mediator) : ApiControllerBase(mediator)

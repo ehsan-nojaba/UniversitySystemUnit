@@ -9,8 +9,11 @@ public sealed record MajorCourseDto(long CourseId, string Code, string Title, in
 /// <summary>چارت جاری رشته؛ نبود چارت به شکل فهرست خالی برمی‌گردد و در اولین ذخیره ایجاد می‌شود.</summary>
 public sealed record MajorCurriculumDto(long MajorId, string MajorTitle, long? CurriculumId, string? Title, string? Version, ICollection<MajorCourseDto> Courses);
 
+/// <summary>کد بعدی درس که سامانه برای درس جدید پیشنهاد می‌کند.</summary>
+public sealed record NextCourseCodeDto(string Code);
+
 /// <summary>ورودی ارتباط درس موجود با چارت رشته.</summary>
 public sealed record CurriculumCourseInput(long CourseId, int RecommendedTerm, bool IsRequired);
 
-/// <summary>اطلاعات ساخت درس جدید و افزودن همزمان آن به چارت رشته منتخب.</summary>
-public sealed record NewMajorCourseInput(string Code, string Title, int Credits, int RecommendedTerm, bool IsRequired);
+/// <summary>اطلاعات ساخت درس جدید و افزودن همزمان آن به چارت رشته منتخب؛ کد درس توسط سامانه ساخته می‌شود.</summary>
+public sealed record NewMajorCourseInput(string Title, int Credits, int RecommendedTerm, bool IsRequired);

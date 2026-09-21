@@ -8,7 +8,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// مسیرهای موقت بررسی دسترسی نقش‌ها؛ فرایند آموزشی واقعی انجام نمی‌دهد.
 /// </summary>
-[ApiController]
 [Route("api/v1/test")]
 public sealed class TestAuthController(ISender mediator, ICurrentUserService currentUserService) : ApiControllerBase(mediator)
 {

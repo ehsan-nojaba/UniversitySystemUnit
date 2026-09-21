@@ -16,7 +16,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «درس‌های مجاز، ذخیره و ارسال پیش‌انتخاب دانشجو»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/student/pre-registration")]
 [Authorize(Roles = RoleNames.Student)]
 public sealed class StudentPreRegistrationController(ISender mediator) : ApiControllerBase(mediator)

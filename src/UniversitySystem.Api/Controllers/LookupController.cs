@@ -11,7 +11,6 @@ using UniversitySystem.Domain.Constants;
 
 namespace UniversitySystem.Api.Controllers;
 /// <summary>فهرست گزینه‌های لازم فرم‌های UI؛ استاد فقط درس‌ها و آموزش فهرست استادها را دریافت می‌کند.</summary>
-[ApiController]
 [Route("api/v1/lookups")]
 [Authorize(Roles = RoleNames.Student + "," + RoleNames.Professor + "," + RoleNames.EducationAdmin)]
 public sealed class LookupController(ISender mediator) : ApiControllerBase(mediator)

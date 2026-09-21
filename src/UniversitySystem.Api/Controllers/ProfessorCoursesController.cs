@@ -10,7 +10,6 @@ using UniversitySystem.Domain.Constants;
 namespace UniversitySystem.Api.Controllers;
 
 /// <summary>آموزش ارتباط پایه استاد و درس‌های مجاز او را مدیریت می‌کند.</summary>
-[ApiController]
 [Route("api/v1/admin/professors")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class ProfessorCoursesController(ISender mediator) : ApiControllerBase(mediator)

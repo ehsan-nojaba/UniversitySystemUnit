@@ -11,7 +11,6 @@ namespace UniversitySystem.Api.Controllers;
 /// <summary>
 /// ورودی HTTP بخش «نمای برنامه‌ریزی آموزش»؛ نقش مجاز را تعیین می‌کند و عملیات را به MediatR می‌سپارد.
 /// </summary>
-[ApiController]
 [Route("api/v1/admin/planning")]
 [Authorize(Roles = RoleNames.EducationAdmin)]
 public sealed class AdminPlanningController(ISender mediator) : ApiControllerBase(mediator)

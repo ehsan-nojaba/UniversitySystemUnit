@@ -9,7 +9,7 @@ public interface IMajorCurriculumRepository
     Task<Major?> GetMajorAsync(long majorId, CancellationToken ct);
     Task<Curriculum?> GetCurrentAsync(long majorId, CancellationToken ct);
     Task<ICollection<Course>> GetCoursesAsync(ICollection<long> ids, CancellationToken ct);
-    Task<bool> CodeExistsAsync(string code, CancellationToken ct);
+    Task<string> GetNextCourseCodeAsync(CancellationToken ct);
     Task<bool> HasCurrentStudentUseAsync(long majorId, ICollection<long> courseIds, CancellationToken ct);
     void Add(Curriculum curriculum);
     void Add(Course course);
