@@ -11,5 +11,6 @@ public class Course : BaseAuditableEntity
     public int Credits { get; set; }
     public bool IsActive { get; set; }
     public ICollection<CoursePrerequisite> Prerequisites { get; set; } = new List<CoursePrerequisite>();
+    public ICollection<CurriculumCourse> CurriculumCourses { get; set; } = new List<CurriculumCourse>();
     public ICollection<CourseOffering> Offerings { get; set; } = new List<CourseOffering>();
 }

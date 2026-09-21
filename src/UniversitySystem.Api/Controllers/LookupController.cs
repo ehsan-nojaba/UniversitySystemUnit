@@ -30,9 +30,9 @@ public sealed class LookupController(ISender _mediator) : ControllerBase
     [Authorize(Roles = RoleNames.Professor + "," + RoleNames.EducationAdmin)]
     [SwaggerOperation(Summary = "فهرست درس‌های فعال", Description = "عملیات فهرست درس‌های فعال؛ دسترسی مطابق نقش مجاز این مسیر است.")]
     [SwaggerResponse(200, "عملیات موفق", typeof(ICollection<CourseOptionDto>))]
-    public async Task<IActionResult> GetCourses(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCourses([FromQuery] long? majorId, CancellationToken cancellationToken)
     {
-        var param = new GetActiveCoursesQuery();
+        var param = new GetActiveCoursesQuery(majorId);
         var response = await _mediator.Send(param, cancellationToken);
         return response.ToApiResponse();
     }

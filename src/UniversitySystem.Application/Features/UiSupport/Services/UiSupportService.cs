@@ -7,7 +7,7 @@ namespace UniversitySystem.Application.Features.UiSupport.Services;
 public sealed class UiSupportService(IUiSupportRepository repository, ICurrentUserService currentUser)
 {
     public Task<ICollection<AcademicTermOptionDto>> GetTermsAsync(CancellationToken cancellationToken) => repository.GetTermsAsync(cancellationToken);
-    public Task<ICollection<CourseOptionDto>> GetCoursesAsync(CancellationToken cancellationToken) => repository.GetCoursesAsync(cancellationToken);
+    public Task<ICollection<CourseOptionDto>> GetCoursesAsync(long? majorId, CancellationToken cancellationToken) => repository.GetCoursesAsync(majorId, cancellationToken);
     public Task<ICollection<ProfessorOptionDto>> GetProfessorsAsync(CancellationToken cancellationToken) => repository.GetProfessorsAsync(cancellationToken);
     public async Task<CurrentUserDto> GetCurrentUserAsync(CancellationToken cancellationToken)
     {
