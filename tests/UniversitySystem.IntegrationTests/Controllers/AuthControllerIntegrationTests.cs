@@ -17,7 +17,7 @@ public class AuthControllerIntegrationTests : IClassFixture<UniversityApiFactory
     }
 
     [Fact]
-    public async Task Login_WhenCredentialsEmpty_ReturnsBadRequestWithValidationErrors()
+    public async Task Login_WhenCredentialsEmpty_ReturnsBadRequestWithBusinessError()
     {
         // Arrange
         var command = new LoginCommand { Username = "", Password = "" };
@@ -31,8 +31,8 @@ public class AuthControllerIntegrationTests : IClassFixture<UniversityApiFactory
         var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.NotNull(problemDetails);
         Assert.Equal(400, problemDetails.Status);
-        Assert.Equal("Validation Error", problemDetails.Title);
-        Assert.True(problemDetails.Extensions.ContainsKey("errors"));
+        Assert.Equal("Business Rule Violation", problemDetails.Title);
+        Assert.Contains("الزامی", problemDetails.Detail!, StringComparison.Ordinal);
     }
 
     [Fact]

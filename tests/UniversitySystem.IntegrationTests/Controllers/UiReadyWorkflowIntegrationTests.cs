@@ -89,9 +89,11 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         var studentPath = $"/api/v1/student/pre-registration/{term.Id}";
         Assert.Equal(HttpStatusCode.OK, (await studentClient.PutAsJsonAsync(studentPath, new { courses = new[] { new { courseId = course.Id, priority = 1 } } })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await studentClient.PostAsync(studentPath + "/submit", null)).StatusCode);
+        var allowedCourses = await adminClient.PutAsJsonAsync($"/api/v1/admin/professors/{professor.Id}/courses", new { courseIds = new[] { course.Id } });
+        Assert.Equal(HttpStatusCode.OK, allowedCourses.StatusCode);
         var professorPath = $"/api/v1/professor/teaching-request/{term.Id}";
         Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 1 } } })).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath + "/availability", new { availability = new[] { new { dayOfWeek = 6, startTime = "08:00:00", endTime = "12:00:00" } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath + "/availability", new { availability = new[] { new { courseId = course.Id, dayOfWeek = 6, startTime = "08:00:00", endTime = "12:00:00" } } })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await professorClient.PostAsync(professorPath + "/submit", null)).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 2 } } })).StatusCode);
         var created = await adminClient.PostAsJsonAsync("/api/v1/admin/course-offerings", new { academicTermId = term.Id, courseId = course.Id, capacity = 1 });
@@ -100,6 +102,7 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         var offeringPath = $"/api/v1/admin/course-offerings/{offering.CourseOfferingId}";
         Assert.Equal(HttpStatusCode.Created, (await adminClient.PostAsJsonAsync(offeringPath + "/professors", new { professorId = professor.Id })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await adminClient.PutAsJsonAsync(offeringPath + "/schedule", new { slots = new[] { new { dayOfWeek = 6, startTime = "08:00:00", endTime = "10:00:00" } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await adminClient.PostAsync(offeringPath + "/finalize", null)).StatusCode);
         var resultResponse = await studentClient.GetAsync(studentPath + "/result");
         Assert.Equal(HttpStatusCode.OK, resultResponse.StatusCode);
         using var result = JsonDocument.Parse(await resultResponse.Content.ReadAsStringAsync());
