@@ -16,7 +16,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured. " + "Set it in appsettings.json or via environment variable " + "ConnectionStrings__DefaultConnection.");
+        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("رشته اتصال پیش‌فرض تنظیم نشده است. آن را در appsettings.json یا متغیر محیطی ConnectionStrings__DefaultConnection قرار دهید.");
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, sqlServerOptions =>
         {
             // Migrations are co-located with the DbContext in this assembly.

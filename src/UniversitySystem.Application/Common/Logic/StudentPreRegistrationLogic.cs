@@ -50,7 +50,7 @@ public static class StudentPreRegistrationLogic
         StudentPreRegistrationLogic.EnsureEditable(entity);
         if (entity.Items.Count == 0)
         {
-            throw new InvalidOperationException("Cannot submit a pre-registration with no courses selected.");
+            throw new InvalidOperationException("پیش‌ثبت‌نام بدون انتخاب درس قابل ارسال نیست.");
         }
 
         entity.Status = RequestStatus.Submitted;
@@ -71,7 +71,7 @@ public static class StudentPreRegistrationLogic
     {
         if (entity.Status != RequestStatus.Draft)
         {
-            throw new InvalidOperationException("Pre-registration can only be modified while in Draft status.");
+            throw new InvalidOperationException("پیش‌ثبت‌نام فقط در وضعیت پیش‌نویس قابل ویرایش است.");
         }
     }
 }

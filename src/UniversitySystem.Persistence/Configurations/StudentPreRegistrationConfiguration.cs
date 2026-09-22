@@ -22,6 +22,10 @@ public sealed class StudentPreRegistrationConfiguration : IEntityTypeConfigurati
         builder.Property(spr => spr.AcademicTermId)
             .IsRequired();
 
+        builder.Property(spr => spr.AttemptCount)
+            .IsRequired()
+            .HasDefaultValue(0);
+
         builder.Property(spr => spr.Status)
             .IsRequired()
             .HasConversion<byte>();

@@ -66,7 +66,7 @@ public sealed class TeachingAssignmentService(ITeachingAssignmentRepository repo
         var term = await offeringRepository.GetAcademicTermAsync(offering.AcademicTermId, cancellationToken);
         if (!offering.IsActive || term is null || !term.IsActive)
         {
-            throw new BusinessException("Offering and academic term must be active.");
+            throw new BusinessException("ارائه درس و ترم تحصیلی باید فعال باشند.");
         }
 
         var schedules = await offeringRepository.GetSchedulesByOfferingIdAsync(courseOfferingId, cancellationToken);

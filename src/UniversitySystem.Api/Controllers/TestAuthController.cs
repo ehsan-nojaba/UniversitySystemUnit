@@ -19,7 +19,7 @@ public sealed class TestAuthController(ISender mediator, ICurrentUserService cur
     [Authorize(Roles = RoleNames.Student)]
     public IActionResult StudentEndpoint()
     {
-        return Ok(new { Message = "Access granted to Student endpoint.", currentUserService.UserId, currentUserService.Roles });
+        return Ok(new { Message = "دسترسی به بخش دانشجو تأیید شد.", currentUserService.UserId, currentUserService.Roles });
     }
 
     /// <summary>
@@ -29,7 +29,7 @@ public sealed class TestAuthController(ISender mediator, ICurrentUserService cur
     [Authorize(Roles = RoleNames.Professor)]
     public IActionResult ProfessorEndpoint()
     {
-        return Ok(new { Message = "Access granted to Professor endpoint.", currentUserService.UserId, currentUserService.Roles });
+        return Ok(new { Message = "دسترسی به بخش استاد تأیید شد.", currentUserService.UserId, currentUserService.Roles });
     }
 
     /// <summary>
@@ -39,6 +39,6 @@ public sealed class TestAuthController(ISender mediator, ICurrentUserService cur
     [Authorize(Roles = RoleNames.EducationAdmin)]
     public IActionResult AdminEndpoint()
     {
-        return Ok(new { Message = "Access granted to EducationAdmin endpoint.", currentUserService.UserId, currentUserService.Roles });
+        return Ok(new { Message = "دسترسی به بخش آموزش تأیید شد.", currentUserService.UserId, currentUserService.Roles });
     }
 }

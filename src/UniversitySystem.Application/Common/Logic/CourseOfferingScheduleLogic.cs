@@ -11,17 +11,17 @@ public static class CourseOfferingScheduleLogic
         var entity = new CourseOfferingSchedule();
         if (courseOfferingId <= 0)
         {
-            throw new ArgumentException("CourseOfferingSchedule must have a valid CourseOffering.", nameof(courseOfferingId));
+            throw new ArgumentException("شناسه ارائه درس برای برنامه زمانی باید معتبر باشد.", nameof(courseOfferingId));
         }
 
         if (!Enum.IsDefined(dayOfWeek))
         {
-            throw new ArgumentOutOfRangeException(nameof(dayOfWeek), "Invalid DayOfWeek value.");
+            throw new ArgumentOutOfRangeException(nameof(dayOfWeek), "روز هفته نامعتبر است.");
         }
 
         if (endTime <= startTime)
         {
-            throw new ArgumentException("EndTime must be after StartTime.", nameof(endTime));
+            throw new ArgumentException("زمان پایان باید بعد از زمان شروع باشد.", nameof(endTime));
         }
 
         entity.CourseOfferingId = courseOfferingId;

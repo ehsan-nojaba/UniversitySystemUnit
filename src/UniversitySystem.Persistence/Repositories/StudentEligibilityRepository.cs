@@ -18,27 +18,34 @@ public sealed class StudentEligibilityRepository : IStudentEligibilityRepository
 
     public async Task<EligibilityData> GetDataAsync(long studentId, CancellationToken cancellationToken = default)
     {
-        var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == studentId && s.Major.IsActive, cancellationToken);
+        var student = await _context.Students.AsNoTracking().Where(s => s.Id == studentId && s.Major.IsActive).Select(s => new { s.Id, s.MajorId, DepartmentId = s.Major.DepartmentId }).FirstOrDefaultAsync(cancellationToken);
         if (student is null)
         {
             return new EligibilityData([], new HashSet<long>());
         }
 
-        // 1. Resolve active curriculum for student's major
+        // 1. گروه آموزشی رشته را پیدا می‌کنیم تا کاتالوگ درس‌های همان گروه مشخص شود.
+        var departmentCourseIds = await _context.CurriculumCourses.AsNoTracking().Where(cc => cc.Course.IsActive && cc.Curriculum.IsActive && cc.Curriculum.Major.DepartmentId == student.DepartmentId).Select(cc => cc.CourseId).Distinct().ToListAsync(cancellationToken);
+        if (departmentCourseIds.Count == 0)
+        {
+            return new EligibilityData([], new HashSet<long>());
+        }
+
+        // 2. از کاتالوگ گروه فقط چارت فعال رشته/گرایش خود دانشجو را نگه می‌داریم.
         var curriculum = await _context.Curriculums.AsNoTracking().Where(c => c.MajorId == student.MajorId && c.IsActive).OrderByDescending(c => c.Id).FirstOrDefaultAsync(cancellationToken);
         if (curriculum is null)
         {
             return new EligibilityData([], new HashSet<long>());
         }
 
-        // 2. Fetch active curriculum courses
-        var curriculumCourses = await _context.CurriculumCourses.AsNoTracking().Where(cc => cc.CurriculumId == curriculum.Id && cc.Course.IsActive).Select(cc => new { cc.CourseId, cc.Course.Code, cc.Course.Title, cc.Course.Credits, cc.RecommendedTerm, cc.IsRequired }).ToListAsync(cancellationToken);
+        // 3. Fetch active courses from the exact major curriculum.
+        var curriculumCourses = await _context.CurriculumCourses.AsNoTracking().Where(cc => cc.CurriculumId == curriculum.Id && departmentCourseIds.Contains(cc.CourseId) && cc.Course.IsActive).Select(cc => new { cc.CourseId, cc.Course.Code, cc.Course.Title, cc.Course.Credits, cc.RecommendedTerm, cc.IsRequired }).ToListAsync(cancellationToken);
         if (curriculumCourses.Count == 0)
         {
             return new EligibilityData([], new HashSet<long>());
         }
 
-        // 3. Gather passed courses from history & enrollments
+        // 4. Gather passed courses from history & enrollments
         var passedFromHistory = await _context.StudentCourseHistories.AsNoTracking().Where(h => h.StudentId == student.Id && h.Status == CourseEnrollmentStatus.Passed).Select(h => h.CourseId).ToListAsync(cancellationToken);
         var passedFromEnrollment = await (from e in _context.Enrollments.AsNoTracking() join co in _context.CourseOfferings on e.CourseOfferingId equals co.Id where e.StudentId == student.Id && e.Status == EnrollmentStatus.Completed select co.CourseId).ToListAsync(cancellationToken);
         var passedSet = new HashSet<long>(passedFromHistory.Concat(passedFromEnrollment));

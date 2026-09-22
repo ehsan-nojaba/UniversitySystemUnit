@@ -40,7 +40,7 @@ public class SaveCourseOfferingScheduleRequestConverter : JsonConverter<SaveCour
             return new SaveCourseOfferingScheduleRequest();
         }
 
-        throw new JsonException("Invalid JSON format for SaveCourseOfferingScheduleRequest. Expected array or object with 'slots'.");
+        throw new JsonException("قالب اطلاعات زمان‌بندی نامعتبر است؛ فهرست بازه‌ها یا شیء دارای فهرست «slots» ارسال کنید.");
     }
 
     public override void Write(Utf8JsonWriter writer, SaveCourseOfferingScheduleRequest value, JsonSerializerOptions options)

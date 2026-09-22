@@ -22,9 +22,9 @@ public sealed class UiSupportService(IUiSupportRepository repository, ICurrentUs
     {
         if (!long.TryParse(currentUser.UserId, out var userId))
         {
-            throw new UnauthorizedAccessException("Authenticated user is required.");
+            throw new UnauthorizedAccessException("ورود کاربر به سامانه الزامی است.");
         }
 
-        return await repository.GetCurrentUserAsync(userId, cancellationToken) ?? throw new UnauthorizedAccessException("User account is missing or inactive.");
+        return await repository.GetCurrentUserAsync(userId, cancellationToken) ?? throw new UnauthorizedAccessException("حساب کاربری پیدا نشد یا غیرفعال است.");
     }
 }

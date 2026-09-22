@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Commands.SaveAvailability;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Commands.SaveTeachingRequest;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Commands.SubmitTeachingRequest;
+using UniversitySystem.Application.Features.ProfessorTeachingRequests.Commands.ReopenTeachingRequest;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.DTOs;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests.Queries.GetTeachingRequest;
 using UniversitySystem.Application.Features.ProfessorTeachingRequests;
@@ -76,6 +77,15 @@ public sealed class ProfessorTeachingRequestsController(ISender mediator) : ApiC
     {
         var param = new SubmitTeachingRequestCommand(academicTermId);
         var response = await Mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
+
+    [HttpPost("{academicTermId:long}/reopen")]
+    [SwaggerOperation(Summary = "بازکردن درخواست برای ویرایش", Description = "استاد تا قبل از تخصیص درس توسط آموزش می‌تواند درخواست ارسال‌شده را دوباره برای افزودن یا ویرایش درس و زمان باز کند.")]
+    [SwaggerResponse(200, "درخواست برای ویرایش باز شد", typeof(TeachingRequestDto))]
+    public async Task<IActionResult> Reopen([FromRoute] long academicTermId, CancellationToken cancellationToken)
+    {
+        var response = await Mediator.Send(new ReopenTeachingRequestCommand(academicTermId), cancellationToken);
         return response.ToApiResponse();
     }
 }

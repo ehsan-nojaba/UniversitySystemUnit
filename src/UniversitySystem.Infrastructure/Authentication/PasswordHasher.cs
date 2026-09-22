@@ -17,7 +17,7 @@ public sealed class PasswordHasher : IPasswordHasher
     {
         if (string.IsNullOrWhiteSpace(password))
         {
-            throw new ArgumentException("Password cannot be empty.", nameof(password));
+            throw new ArgumentException("کلمه عبور نمی‌تواند خالی باشد.", nameof(password));
         }
 
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);

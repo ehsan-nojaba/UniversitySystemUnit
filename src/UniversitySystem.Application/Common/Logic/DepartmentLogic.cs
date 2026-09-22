@@ -11,17 +11,17 @@ public static class DepartmentLogic
         var entity = new Department();
         if (facultyId <= 0)
         {
-            throw new ArgumentException("Department must have a valid Faculty.", nameof(facultyId));
+            throw new ArgumentException("شناسه دانشکده برای گروه آموزشی باید معتبر باشد.", nameof(facultyId));
         }
 
         if (string.IsNullOrWhiteSpace(code))
         {
-            throw new ArgumentException("Department code cannot be empty.", nameof(code));
+            throw new ArgumentException("کد گروه آموزشی نمی‌تواند خالی باشد.", nameof(code));
         }
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new ArgumentException("Department title cannot be empty.", nameof(title));
+            throw new ArgumentException("عنوان گروه آموزشی نمی‌تواند خالی باشد.", nameof(title));
         }
 
         entity.FacultyId = facultyId;

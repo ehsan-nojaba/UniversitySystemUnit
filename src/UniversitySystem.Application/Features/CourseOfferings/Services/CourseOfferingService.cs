@@ -110,7 +110,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
         if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }
         if (await enrollmentRepository.GetEnrollmentCountAsync(id, cancellationToken) > capacity)
         {
-            throw new BusinessException("Capacity cannot be less than the number of enrolled students.");
+            throw new BusinessException("ظرفیت کلاس نمی‌تواند کمتر از تعداد دانشجویان ثبت‌نام‌شده باشد.");
         }
 
         CourseOfferingLogic.UpdateCapacity(
@@ -175,7 +175,7 @@ public sealed class CourseOfferingService(ICourseOfferingRepository repository, 
         var term = await repository.GetAcademicTermAsync(offering.AcademicTermId, cancellationToken);
         if (!offering.IsActive || term is null || !term.IsActive)
         {
-            throw new BusinessException("Offering and academic term must be active.");
+            throw new BusinessException("ارائه درس و ترم تحصیلی باید فعال باشند.");
         }
 
         if (offering.IsFinalized) { throw new BusinessException("ابتدا ارائه را به برنامه‌ریزی برگردانید."); }

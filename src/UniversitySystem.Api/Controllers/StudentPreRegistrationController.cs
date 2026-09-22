@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniversitySystem.Api.Contracts;
 using UniversitySystem.Application.Features.StudentPreRegistration.Commands.SaveStudentPreRegistration;
 using UniversitySystem.Application.Features.StudentPreRegistration.Commands.SubmitStudentPreRegistration;
+using UniversitySystem.Application.Features.StudentPreRegistration.Commands.StartNewStudentPreRegistrationAttempt;
 using UniversitySystem.Application.Features.StudentPreRegistration.DTOs;
 using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetEligibleCourses;
 using UniversitySystem.Application.Features.StudentPreRegistration.Queries.GetStudentPreRegistration;
@@ -76,6 +77,19 @@ public sealed class StudentPreRegistrationController(ISender mediator) : ApiCont
     public async Task<IActionResult> SubmitPreRegistration([FromRoute] long academicTermId, CancellationToken cancellationToken)
     {
         var param = new SubmitStudentPreRegistrationCommand
+        {
+            AcademicTermId = academicTermId
+        };
+        var response = await Mediator.Send(param, cancellationToken);
+        return response.ToApiResponse();
+    }
+
+    [HttpPost("{academicTermId:long}/new-attempt")]
+    [SwaggerOperation(Summary = "شروع نوبت دوم پیش‌انتخاب", Description = "پس از ارسال نوبت اول، حداکثر یک بار نوبت دوم را فعال می‌کند.")]
+    [SwaggerResponse(200, "عملیات موفق", typeof(StudentPreRegistrationDto))]
+    public async Task<IActionResult> StartNewAttempt([FromRoute] long academicTermId, CancellationToken cancellationToken)
+    {
+        var param = new StartNewStudentPreRegistrationAttemptCommand
         {
             AcademicTermId = academicTermId
         };

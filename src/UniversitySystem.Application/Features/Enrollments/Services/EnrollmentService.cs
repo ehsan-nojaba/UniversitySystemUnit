@@ -20,7 +20,7 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
             throw new UnauthorizedAccessException();
         }
 
-        return await studentRepository.GetStudentByUserIdAsync(id, cancellationToken) ?? throw new NotFoundException("Student profile was not found.");
+        return await studentRepository.GetStudentByUserIdAsync(id, cancellationToken) ?? throw new NotFoundException("پروفایل دانشجویی پیدا نشد.");
     }
 
     public async Task<ICollection<EnrollmentDto>> GetAsync(long termId, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
             var offering = await repository.GetOfferingAsync(offeringId, cancellationToken) ?? throw new NotFoundException(nameof(CourseOffering), offeringId);
             if (!offering.IsActive || !offering.Course.IsActive || !offering.AcademicTerm.IsActive)
             {
-                throw new BusinessException("Course, offering and academic term must be active.");
+                throw new BusinessException("درس، ارائه درس و ترم تحصیلی باید فعال باشند.");
             }
 
             if (!offering.IsFinalized) { throw new BusinessException("برنامه این کلاس هنوز توسط آموزش نهایی نشده است."); }
@@ -56,29 +56,29 @@ public sealed class EnrollmentService(IEnrollmentRepository repository, IStudent
             var registration = await studentRepository.GetPreRegistrationWithItemsAsync(student.Id, offering.AcademicTermId, cancellationToken);
             if (registration is null || registration.Status != RequestStatus.Submitted || !registration.Items.Any(i => i.CourseId == offering.CourseId))
             {
-                throw new BusinessException("Course must be in the student's submitted pre-registration.");
+                throw new BusinessException("این درس باید در پیش‌ثبت‌نام ارسال‌شده دانشجو وجود داشته باشد.");
             }
 
             var eligible = await eligibility.GetEligibleCoursesAsync(student.Id, offering.AcademicTermId, cancellationToken);
             if (!eligible.Any(c => c.CourseId == offering.CourseId))
             {
-                throw new BusinessException("Course is no longer eligible.");
+                throw new BusinessException("این درس دیگر برای انتخاب دانشجو مجاز نیست.");
             }
 
             var enrollments = await repository.GetStudentEnrollmentsAsync(student.Id, offering.AcademicTermId, cancellationToken);
             if (enrollments.Any(e => e.CourseOfferingId == offeringId || (e.CourseOffering.CourseId == offering.CourseId && e.Status == EnrollmentStatus.Enrolled)))
             {
-                throw new BusinessException("Student is already registered for this course or offering.");
+                throw new BusinessException("دانشجو قبلاً در این درس یا ارائه ثبت‌نام کرده است.");
             }
 
             if (await repository.GetEnrollmentCountAsync(offeringId, cancellationToken) >= offering.Capacity)
             {
-                throw new BusinessException("Offering has no remaining capacity.");
+                throw new BusinessException("ظرفیت باقی‌مانده‌ای برای این ارائه درس وجود ندارد.");
             }
 
             if (enrollments.Where(e => e.Status == EnrollmentStatus.Enrolled).SelectMany(e => e.CourseOffering.Schedules).Any(s => offering.Schedules.Any(n => s.DayOfWeek == n.DayOfWeek && s.StartTime < n.EndTime && n.StartTime < s.EndTime)))
             {
-                throw new BusinessException("Offering conflicts with the student's schedule.");
+                throw new BusinessException("زمان این درس با برنامه زمانی یکی از درس‌های انتخاب‌شده شما تداخل دارد؛ لطفاً زمان دیگری را انتخاب کنید.");
             }
 
             var enrollment = EnrollmentLogic.Create(student.Id,offeringId,clock.UtcNow);

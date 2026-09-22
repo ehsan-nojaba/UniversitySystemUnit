@@ -11,17 +11,17 @@ public static class CourseOfferingLogic
         var entity = new CourseOffering();
         if (courseId <= 0)
         {
-            throw new ArgumentException("CourseOffering must have a valid Course.", nameof(courseId));
+            throw new ArgumentException("شناسه درس ارائه باید معتبر باشد.", nameof(courseId));
         }
 
         if (academicTermId <= 0)
         {
-            throw new ArgumentException("CourseOffering must have a valid AcademicTerm.", nameof(academicTermId));
+            throw new ArgumentException("شناسه ترم تحصیلی ارائه باید معتبر باشد.", nameof(academicTermId));
         }
 
         if (capacity <= 0)
         {
-            throw new ArgumentException("Capacity must be a positive number.", nameof(capacity));
+            throw new ArgumentException("ظرفیت باید عددی مثبت باشد.", nameof(capacity));
         }
 
         entity.CourseId = courseId;
@@ -35,7 +35,7 @@ public static class CourseOfferingLogic
     {
         if (capacity <= 0)
         {
-            throw new ArgumentException("Capacity must be a positive number.", nameof(capacity));
+            throw new ArgumentException("ظرفیت باید عددی مثبت باشد.", nameof(capacity));
         }
 
         entity.Capacity = capacity;

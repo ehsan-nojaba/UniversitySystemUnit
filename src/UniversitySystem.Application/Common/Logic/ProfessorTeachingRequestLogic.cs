@@ -134,6 +134,22 @@ public static class ProfessorTeachingRequestLogic
         entity.SubmittedAt = utcNow;
     }
 
+    public static void Reopen(ProfessorTeachingRequest entity)
+    {
+        if (entity.Status == RequestStatus.Draft)
+        {
+            return;
+        }
+
+        if (entity.Status != RequestStatus.Submitted)
+        {
+            throw new BusinessException("درخواست لغوشده قابل بازکردن نیست.");
+        }
+
+        entity.Status = RequestStatus.Draft;
+        entity.SubmittedAt = null;
+    }
+
     public static void Cancel(ProfessorTeachingRequest entity)
     {
         if (entity.Status == RequestStatus.Cancelled)

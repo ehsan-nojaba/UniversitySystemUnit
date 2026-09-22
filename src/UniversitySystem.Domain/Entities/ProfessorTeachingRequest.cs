@@ -3,7 +3,7 @@ using UniversitySystem.Domain.Enums;
 
 namespace UniversitySystem.Domain.Entities;
 /// <summary>
-/// درخواست تدریس استاد برای یک ترم؛ درس‌ها، اولویت‌ها و زمان‌های آزاد را جمع می‌کند و پس از ارسال قابل ویرایش نیست.
+/// درخواست تدریس استاد برای یک ترم؛ درس‌ها، اولویت‌ها و زمان‌های آزاد را جمع می‌کند و تا قبل از تخصیص توسط آموزش قابل بازکردن است.
 /// </summary>
 public class ProfessorTeachingRequest : BaseAuditableEntity
 {
