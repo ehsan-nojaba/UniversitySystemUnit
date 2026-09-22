@@ -11,6 +11,7 @@ public sealed class StudentCourseEligibilityService(IStudentEligibilityRepositor
     public async Task<ICollection<EligibleCourseDto>> GetEligibleCoursesAsync(long studentId, long academicTermId, CancellationToken cancellationToken = default)
     {
         var data = await repository.GetDataAsync(studentId, cancellationToken);
+
         return data.Courses.Where(c => !data.PassedCourseIds.Contains(c.CourseId) && c.Prerequisites.All(p => data.PassedCourseIds.Contains(p.PrerequisiteCourseId))).OrderBy(c => c.RecommendedTerm).ThenBy(c => c.Code).ToList();
     }
 }

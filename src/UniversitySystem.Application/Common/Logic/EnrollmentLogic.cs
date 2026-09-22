@@ -11,12 +11,12 @@ public static class EnrollmentLogic
         var entity = new Enrollment();
         if (studentId <= 0)
         {
-            throw new ArgumentException("Enrollment must have a valid Student.", nameof(studentId));
+            throw new ArgumentException("شناسه دانشجو برای ثبت‌نام باید معتبر باشد.", nameof(studentId));
         }
 
         if (courseOfferingId <= 0)
         {
-            throw new ArgumentException("Enrollment must have a valid CourseOffering.", nameof(courseOfferingId));
+            throw new ArgumentException("شناسه ارائه درس برای ثبت‌نام باید معتبر باشد.", nameof(courseOfferingId));
         }
 
         entity.StudentId = studentId;
@@ -30,7 +30,7 @@ public static class EnrollmentLogic
     {
         if (grade < 0m || grade > 20m)
         {
-            throw new ArgumentOutOfRangeException(nameof(grade), "Final grade must be between 0 and 20.");
+            throw new ArgumentOutOfRangeException(nameof(grade), "نمره نهایی باید بین صفر تا ۲۰ باشد.");
         }
 
         entity.FinalGrade = grade;
@@ -41,7 +41,7 @@ public static class EnrollmentLogic
     {
         if (entity.Status != EnrollmentStatus.Enrolled)
         {
-            throw new InvalidOperationException("Only active enrollments can be withdrawn.");
+            throw new InvalidOperationException("فقط ثبت‌نام‌های فعال قابل حذف هستند.");
         }
 
         entity.Status = EnrollmentStatus.Withdrawn;

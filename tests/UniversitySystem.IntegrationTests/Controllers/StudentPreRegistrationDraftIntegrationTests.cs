@@ -86,6 +86,27 @@ public class StudentPreRegistrationDraftIntegrationTests : IClassFixture<Univers
     }
 
     [Fact]
+    public async Task TwoAttempts_PreserveCourses_RejectThird_KeepResultReadable()
+    {
+        var (user, _, term, course, _, _) = await SeedScenarioAsync(Guid.NewGuid().ToString("N")[..8]);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GenerateToken(user, RoleNames.Student));
+        var path = $"/api/v1/student/pre-registration/{term.Id}";
+        var save = await _client.PutAsJsonAsync(path, new { courses = new[] { new { courseId = course.Id, priority = 1 } } });
+        Assert.Equal(HttpStatusCode.OK, save.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await _client.PostAsync(path + "/submit", null)).StatusCode);
+        var reopen = await _client.PostAsync(path + "/new-attempt", null);
+        Assert.Equal(HttpStatusCode.OK, reopen.StatusCode);
+        var second = await reopen.Content.ReadFromJsonAsync<StudentPreRegistrationDto>();
+        Assert.Equal(2, second!.AttemptCount);
+        Assert.Single(second.Courses);
+        Assert.Equal(HttpStatusCode.OK, (await _client.PostAsync(path + "/submit", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, (await _client.PostAsync(path + "/new-attempt", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, (await _client.GetAsync($"/api/v1/student/pre-registration/eligible-courses?academicTermId={term.Id}")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await _client.GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await _client.GetAsync(path + "/result")).StatusCode);
+    }
+
+    [Fact]
     public async Task CreateAndGetNewDraft_Succeeds()
     {
         // Arrange

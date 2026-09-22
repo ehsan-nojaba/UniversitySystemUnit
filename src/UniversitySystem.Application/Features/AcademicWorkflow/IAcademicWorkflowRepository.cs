@@ -14,6 +14,7 @@ public interface IAcademicWorkflowRepository
     Task<bool> HasCommittedCoursesAsync(long professorId, ICollection<long> ids, CancellationToken ct);
     Task ReplaceCoursesAsync(long professorId, ICollection<long> ids, CancellationToken ct);
     Task<bool> HasSubmittedProposalAsync(long professorId, long courseId, long termId, CancellationToken ct);
+    Task<bool> HasAssignedCourseAsync(long professorId, long termId, CancellationToken ct);
     Task<ICollection<FinalTeachingOffering>> GetFinalScheduleAsync(long professorId, long termId, CancellationToken ct);
 }
 

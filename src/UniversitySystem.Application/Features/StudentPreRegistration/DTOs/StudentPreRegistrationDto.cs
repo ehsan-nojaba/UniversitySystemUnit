@@ -7,6 +7,8 @@ public class StudentPreRegistrationDto
 {
     public long PreRegistrationId { get; set; }
     public long AcademicTermId { get; set; }
+    public int AttemptCount { get; set; }
+    public int RemainingAttempts { get; set; }
     public string Status { get; set; } = string.Empty;
     public ICollection<PreRegistrationCourseItemDto> Courses { get; set; } = [];
     public int TotalCredits { get; set; }

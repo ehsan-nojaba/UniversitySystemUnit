@@ -11,12 +11,12 @@ public static class TeachingAssignmentLogic
         var entity = new TeachingAssignment();
         if (courseOfferingId <= 0)
         {
-            throw new ArgumentException("TeachingAssignment must have a valid CourseOffering.", nameof(courseOfferingId));
+            throw new ArgumentException("شناسه ارائه درس برای تخصیص استاد باید معتبر باشد.", nameof(courseOfferingId));
         }
 
         if (professorId <= 0)
         {
-            throw new ArgumentException("TeachingAssignment must have a valid Professor.", nameof(professorId));
+            throw new ArgumentException("شناسه استاد برای تخصیص تدریس باید معتبر باشد.", nameof(professorId));
         }
 
         entity.CourseOfferingId = courseOfferingId;

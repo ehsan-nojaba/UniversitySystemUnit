@@ -13,7 +13,7 @@ public static class ApiResponseExtensions
         }
         if (response is null)
         {
-            return new NotFoundObjectResult(new ProblemDetails { Status = StatusCodes.Status404NotFound, Title = "Not Found" });
+            return new NotFoundObjectResult(new ProblemDetails { Status = StatusCodes.Status404NotFound, Title = "اطلاعات پیدا نشد" });
         }
         return new ObjectResult(response) { StatusCode = statusCode };
     }

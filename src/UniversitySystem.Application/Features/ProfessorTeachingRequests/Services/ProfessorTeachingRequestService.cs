@@ -19,7 +19,7 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
             throw new UnauthorizedAccessException();
         }
 
-        return (await repository.GetProfessorAsync(id, cancellationToken) ?? throw new NotFoundException("Professor profile was not found.")).Id;
+        return (await repository.GetProfessorAsync(id, cancellationToken) ?? throw new NotFoundException("پروفایل استاد پیدا نشد.")).Id;
     }
 
     private async Task EnsureTermAsync(long termId, bool active, CancellationToken cancellationToken)
@@ -32,7 +32,15 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         var term = await repository.GetTermAsync(termId, cancellationToken) ?? throw new NotFoundException(nameof(AcademicTerm), termId);
         if (active && !term.IsActive)
         {
-            throw new BusinessException("Academic term must be active.");
+            throw new BusinessException("ترم تحصیلی باید فعال باشد.");
+        }
+    }
+
+    private async Task EnsureNotAssignedAsync(long professorId, long termId, CancellationToken cancellationToken)
+    {
+        if (await workflow.HasAssignedCourseAsync(professorId, termId, cancellationToken))
+        {
+            throw new BusinessException("پس از تخصیص درس به استاد توسط آموزش، درخواست قابل ویرایش نیست.");
         }
     }
 
@@ -40,10 +48,10 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
     {
         var id = await GetProfessorIdAsync(cancellationToken);
         await EnsureTermAsync(termId, true, cancellationToken);
-        var request = await repository.GetAsync(id, termId, cancellationToken) ?? throw new NotFoundException("Teaching request was not found.");
+        var request = await repository.GetAsync(id, termId, cancellationToken) ?? throw new NotFoundException("درخواست تدریس پیدا نشد.");
         if (request.Status != RequestStatus.Draft)
         {
-            throw new BusinessException("Only draft teaching requests can be changed.");
+            throw new BusinessException("فقط درخواست تدریس در وضعیت پیش‌نویس قابل تغییر است.");
         }
 
         return request;
@@ -81,13 +89,14 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
         var id = await GetProfessorIdAsync(cancellationToken);
         await EnsureTermAsync(termId, true, cancellationToken);
+        await EnsureNotAssignedAsync(id, termId, cancellationToken);
         var allowed = await workflow.GetAllowedCourseIdsAsync(id, cancellationToken);
         if (courses.Any(c => !allowed.Contains(c.CourseId))) { throw new BusinessException("فقط درس‌های مجاز تعیین‌شده توسط آموزش قابل انتخاب‌اند."); }
         var ids = courses.Select(c => c.CourseId).ToHashSet();
         var available = await repository.GetCoursesAsync(ids, cancellationToken);
         if (available.Count != ids.Count || available.Any(c => !c.IsActive))
         {
-            throw new BusinessException("All selected courses must exist and be active.");
+            throw new BusinessException("همه درس‌های انتخاب‌شده باید وجود داشته و فعال باشند.");
         }
 
         var request = await repository.GetAsync(id, termId, cancellationToken);
@@ -99,7 +108,7 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
 
         if (request.Status != RequestStatus.Draft)
         {
-            throw new BusinessException("Only drafts can be changed.");
+            throw new BusinessException("فقط پیش‌نویس‌ها قابل تغییر هستند.");
         }
 
         foreach (var c in request.Courses.Where(c => !ids.Contains(c.CourseId)).ToList())
@@ -126,6 +135,7 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
         }
 
         var request = await GetDraftAsync(termId, cancellationToken);
+        await EnsureNotAssignedAsync(request.ProfessorId, termId, cancellationToken);
         if (availability.Any(a => !a.CourseId.HasValue || !request.Courses.Any(c => c.CourseId == a.CourseId))) { throw new BusinessException("برای هر زمان پیشنهادی، یکی از درس‌های انتخاب‌شده را مشخص کنید."); }
         ProfessorTeachingRequestLogic.ReplaceCourseAvailability(        request,availability.Select(a => (a.CourseId!.Value, a.DayOfWeek, a.StartTime, a.EndTime)));
         await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -135,20 +145,35 @@ public sealed class ProfessorTeachingRequestService(IProfessorTeachingRequestRep
     public async Task<TeachingRequestDto> SubmitAsync(long termId, CancellationToken cancellationToken)
     {
         var request = await GetDraftAsync(termId, cancellationToken);
+        await EnsureNotAssignedAsync(request.ProfessorId, termId, cancellationToken);
         if (request.Courses.Count == 0)
         {
-            throw new BusinessException("At least one course is required.");
+            throw new BusinessException("حداقل یک درس لازم است.");
         }
 
         var courses = await repository.GetCoursesAsync(request.Courses.Select(c => c.CourseId).ToList(), cancellationToken);
         if (courses.Any(c => !c.IsActive))
         {
-            throw new BusinessException("Selected courses must be active.");
+            throw new BusinessException("درس‌های انتخاب‌شده باید فعال باشند.");
         }
 
         var allowed = await workflow.GetAllowedCourseIdsAsync(request.ProfessorId, cancellationToken);
         if (request.Courses.Any(c => !allowed.Contains(c.CourseId) || !request.Availabilities.Any(a => a.CourseId == c.CourseId))) { throw new BusinessException("برای هر درس مجاز حداقل یک زمان پیشنهادی ثبت کنید."); }
         ProfessorTeachingRequestLogic.Submit(        request,clock.UtcNow);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Map(request);
+    }
+
+    public async Task<TeachingRequestDto> ReopenAsync(long termId, CancellationToken cancellationToken)
+    {
+        var professorId = await GetProfessorIdAsync(cancellationToken);
+        await EnsureTermAsync(termId, true, cancellationToken);
+        var request = await repository.GetAsync(professorId, termId, cancellationToken)
+            ?? throw new NotFoundException("درخواست تدریس پیدا نشد.");
+
+        await EnsureNotAssignedAsync(professorId, termId, cancellationToken);
+
+        ProfessorTeachingRequestLogic.Reopen(request);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Map(request);
     }

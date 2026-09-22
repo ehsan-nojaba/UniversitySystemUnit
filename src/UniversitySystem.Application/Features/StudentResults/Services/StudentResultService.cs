@@ -25,12 +25,12 @@ public sealed class StudentResultService(IStudentPreRegistrationRepository stude
             throw new UnauthorizedAccessException();
         }
 
-        var student = await studentRepository.GetStudentByUserIdAsync(id, cancellationToken) ?? throw new NotFoundException("Student profile was not found.");
+        var student = await studentRepository.GetStudentByUserIdAsync(id, cancellationToken) ?? throw new NotFoundException("پروفایل دانشجویی پیدا نشد.");
         _ = await studentRepository.GetAcademicTermAsync(termId, cancellationToken) ?? throw new NotFoundException(nameof(AcademicTerm), termId);
-        var registration = await studentRepository.GetPreRegistrationWithItemsAndCoursesAsync(student.Id, termId, cancellationToken) ?? throw new NotFoundException("Pre-registration was not found.");
+        var registration = await studentRepository.GetPreRegistrationWithItemsAndCoursesAsync(student.Id, termId, cancellationToken) ?? throw new NotFoundException("پیش‌ثبت‌نام پیدا نشد.");
         if (registration.Status != RequestStatus.Submitted)
         {
-            throw new BusinessException("Pre-registration must be submitted.");
+            throw new BusinessException("پیش‌ثبت‌نام باید ابتدا ارسال نهایی شود.");
         }
 
         var allOfferings = await offeringRepository.GetOfferingsByTermAsync(termId, cancellationToken);

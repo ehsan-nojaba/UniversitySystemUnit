@@ -114,11 +114,16 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath + "/availability", new { availability = new[] { new { courseId = course.Id, dayOfWeek = 6, startTime = "08:00:00", endTime = "12:00:00" } } })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await professorClient.PostAsync(professorPath + "/submit", null)).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 2 } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PostAsync(professorPath + "/reopen", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath, new { courses = new[] { new { courseId = course.Id, priority = 1 } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PutAsJsonAsync(professorPath + "/availability", new { availability = new[] { new { courseId = course.Id, dayOfWeek = 6, startTime = "08:00:00", endTime = "12:00:00" } } })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await professorClient.PostAsync(professorPath + "/submit", null)).StatusCode);
         var created = await adminClient.PostAsJsonAsync("/api/v1/admin/course-offerings", new { academicTermId = term.Id, courseId = course.Id, capacity = 1 });
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         var offering = (await created.Content.ReadFromJsonAsync<CourseOfferingDto>())!;
         var offeringPath = $"/api/v1/admin/course-offerings/{offering.CourseOfferingId}";
         Assert.Equal(HttpStatusCode.Created, (await adminClient.PostAsJsonAsync(offeringPath + "/professors", new { professorId = professor.Id })).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await professorClient.PostAsync(professorPath + "/reopen", null)).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await adminClient.PutAsJsonAsync(offeringPath + "/schedule", new { slots = new[] { new { dayOfWeek = 6, startTime = "08:00:00", endTime = "10:00:00" } } })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await adminClient.PostAsync(offeringPath + "/finalize", null)).StatusCode);
         var resultResponse = await studentClient.GetAsync(studentPath + "/result");
@@ -173,6 +178,7 @@ public sealed class UiReadyWorkflowIntegrationTests : IClassFixture<UniversityAp
         Assert.True(paths.TryGetProperty("/api/v1/lookups/courses", out _));
         Assert.True(paths.TryGetProperty("/api/v1/lookups/courses/catalog", out _));
         Assert.True(paths.TryGetProperty("/api/v1/lookups/professors", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/professor/teaching-request/{academicTermId}/reopen", out _));
         Assert.Equal("bearer", document.RootElement.GetProperty("components").GetProperty("securitySchemes").GetProperty("Bearer").GetProperty("scheme").GetString());
         Assert.Equal("Bearer", paths.GetProperty("/api/v1/auth/me").GetProperty("get").GetProperty("security")[0].EnumerateObject().First().Name);
         var loginPath = paths.EnumerateObject().Single(path => path.Name.Equals("/api/v1/auth/login", StringComparison.OrdinalIgnoreCase));

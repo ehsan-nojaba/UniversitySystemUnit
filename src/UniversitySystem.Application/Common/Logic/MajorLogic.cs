@@ -11,7 +11,7 @@ public static class MajorLogic
         var entity = new Major();
         if (departmentId <= 0)
         {
-            throw new ArgumentException("Major must have a valid Department.", nameof(departmentId));
+            throw new ArgumentException("شناسه گروه آموزشی برای رشته باید معتبر باشد.", nameof(departmentId));
         }
 
         entity.DepartmentId = departmentId;

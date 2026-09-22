@@ -9,6 +9,7 @@ public class StudentPreRegistration : BaseAuditableEntity
 {
     public long StudentId { get; set; }
     public long AcademicTermId { get; set; }
+    public int AttemptCount { get; set; }
     public RequestStatus Status { get; set; }
     public DateTime? SubmittedAt { get; set; }
     public Student Student { get; set; } = default!;

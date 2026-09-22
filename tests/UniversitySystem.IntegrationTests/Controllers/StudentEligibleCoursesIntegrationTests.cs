@@ -102,7 +102,8 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         await context.SaveChangesAsync();
 
         var major = MajorLogic.Create(department.Id,$"M_{suffix}",$"Major {suffix}");
-        context.Majors.Add(major);
+        var otherMajor = MajorLogic.Create(department.Id,$"M2_{suffix}",$"Other Major {suffix}");
+        context.Majors.AddRange(major, otherMajor);
 
         // 3. User & Student
         var user = UserLogic.Create($"std_{suffix}","hash123","Ali","Rezaei");
@@ -121,8 +122,9 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         var c2 = CourseLogic.Create($"C2_{suffix}","Math 2",3);
         var c3 = CourseLogic.Create($"C3_{suffix}","Physics 1",3);
         var c4 = CourseLogic.Create($"C4_{suffix}","Physics 2",3);
+        var otherMajorCourse = CourseLogic.Create($"CO_{suffix}","Other Major Course",3);
 
-        context.Courses.AddRange(c1, c2, c3, c4);
+        context.Courses.AddRange(c1, c2, c3, c4, otherMajorCourse);
         await context.SaveChangesAsync();
 
         // Add prerequisites: C2 requires C1, C4 requires C3
@@ -141,6 +143,10 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
         CurriculumLogic.AddCourse(        curriculum,c2.Id,2,true);
         CurriculumLogic.AddCourse(        curriculum,c3.Id,1,true);
         CurriculumLogic.AddCourse(        curriculum,c4.Id,2,true);
+        var otherCurriculum = CurriculumLogic.Create(otherMajor.Id,$"Other Curriculum {suffix}","1.0");
+        context.Curriculums.Add(otherCurriculum);
+        await context.SaveChangesAsync();
+        CurriculumLogic.AddCourse(otherCurriculum, otherMajorCourse.Id, 1, true);
 
         // 6. Record Course History: C3 is PASSED by the student
         var c3History = StudentCourseHistoryLogic.Create(student.Id,c3.Id,term.Id);
@@ -179,6 +185,9 @@ public class StudentEligibleCoursesIntegrationTests : IClassFixture<UniversityAp
 
         // 4. Course with passed prerequisite is returned: C4 (requires C3 which was passed)
         Assert.Contains(c4.Id, returnedCourseIds);
+
+        // A course from another specialization in the same department is not eligible.
+        Assert.DoesNotContain(otherMajorCourse.Id, returnedCourseIds);
     }
 }
 

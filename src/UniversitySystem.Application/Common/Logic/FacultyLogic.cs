@@ -11,12 +11,12 @@ public static class FacultyLogic
         var entity = new Faculty();
         if (string.IsNullOrWhiteSpace(code))
         {
-            throw new ArgumentException("Faculty code cannot be empty.", nameof(code));
+            throw new ArgumentException("کد دانشکده نمی‌تواند خالی باشد.", nameof(code));
         }
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            throw new ArgumentException("Faculty title cannot be empty.", nameof(title));
+            throw new ArgumentException("عنوان دانشکده نمی‌تواند خالی باشد.", nameof(title));
         }
 
         entity.Code = code.Trim();

@@ -66,36 +66,43 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         {
             NotFoundException notFoundException => (
                 StatusCodes.Status404NotFound,
-                "Not Found",
+                "اطلاعات پیدا نشد",
                 notFoundException.Message,
                 null
             ),
 
             ForbiddenAccessException forbiddenAccessException => (
                 StatusCodes.Status403Forbidden,
-                "Forbidden",
+                "دسترسی غیرمجاز",
                 forbiddenAccessException.Message,
+                null
+            ),
+
+            PreRegistrationLimitException preRegistrationLimitException => (
+                StatusCodes.Status409Conflict,
+                "سقف پیش‌ثبت‌نام تکمیل شده است",
+                preRegistrationLimitException.Message,
                 null
             ),
 
             UnauthorizedAccessException unauthorizedAccessException => (
                 StatusCodes.Status401Unauthorized,
-                "Unauthorized",
+                "احراز هویت ناموفق بود",
                 unauthorizedAccessException.Message,
                 null
             ),
 
             BusinessException businessException => (
                 StatusCodes.Status400BadRequest,
-                "Business Rule Violation",
+                "عملیات مجاز نیست",
                 businessException.Message,
                 null
             ),
 
             _ => (
                 StatusCodes.Status500InternalServerError,
-                "Internal Server Error",
-                "An unexpected error occurred. Please try again later.",
+                "خطای داخلی سامانه",
+                "خطای پیش‌بینی‌نشده‌ای رخ داد. لطفاً دوباره تلاش کنید.",
                 null
             )
         };

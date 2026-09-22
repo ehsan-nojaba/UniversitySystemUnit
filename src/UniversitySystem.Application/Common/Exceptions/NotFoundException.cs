@@ -9,7 +9,7 @@ public sealed class NotFoundException : Exception
     {
     }
 
-    public NotFoundException(string resourceName, object key) : base($"Resource '{resourceName}' with key '{key}' was not found.")
+    public NotFoundException(string resourceName, object key) : base($"اطلاعات موردنظر با شناسه «{key}» پیدا نشد.")
     {
     }
 }

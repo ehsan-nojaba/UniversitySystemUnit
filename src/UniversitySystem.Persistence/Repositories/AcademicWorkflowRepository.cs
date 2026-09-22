@@ -59,5 +59,10 @@ public sealed class AcademicWorkflowRepository(ApplicationDbContext _context) : 
     {
         return _context.ProfessorTeachingRequests.AnyAsync(r => r.ProfessorId == professorId && r.AcademicTermId == termId && r.Status == RequestStatus.Submitted && r.Courses.Any(c => c.CourseId == courseId) && r.Availabilities.Any(a => a.CourseId == courseId), ct);
     }
+
+    public Task<bool> HasAssignedCourseAsync(long professorId, long termId, CancellationToken ct)
+    {
+        return _context.TeachingAssignments.AnyAsync(a => a.ProfessorId == professorId && a.CourseOffering.AcademicTermId == termId && a.CourseOffering.IsActive, ct);
+    }
 }
 
